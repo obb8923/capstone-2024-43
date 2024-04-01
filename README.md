@@ -10,7 +10,7 @@
 박정빈
 이기서 
 유현석
-[팀페이지로 이동](https://kookmin-sw.github.io/capstone-2023-43/)
+[팀페이지로 이동](https://kookmin-sw.github.io/capstone-2024-43/)
 
 ## 사용법 
 (추가예정)
