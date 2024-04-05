@@ -1,10 +1,14 @@
 # 캡스톤 디자인 43팀
+
+# 중간 발표용 자료
+[ppt 링크](https://docs.google.com/presentation/d/1ic5l_8z1M0HQEwmwFP-ypbiUW4xSqV5K/edit?usp=sharing&ouid=105885965673341678510&rtpof=true&sd=true)
+[중간 보고서 링크](https://drive.google.com/file/d/1l0D16GhmAhauXRc-k0WA7jpPQSjQLIb-/view?usp=sharing)
+<hr>
+
 ## 프로젝트 소개
 2024년 국민대학교 소프트웨어융합대학에서 진행하여 만든 프로젝트입니다.(2024-03-08 ~ 2024-05-27)
 
-- 프로젝트 소개
-  - 프로젝트 설치방법 및 데모, 사용방법, 프리뷰등을 readme.md에 작성.
-  - Api나 사용방법등 내용이 많을경우 wiki에 꾸미고 링크 추가.
+
 ## 팀소개
 남혜영
 박정빈
