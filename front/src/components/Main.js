@@ -1,8 +1,7 @@
-import ToolBar from "./ToolBar";
 function Main(){
 
     return (<>
-        <ToolBar></ToolBar>
+        <h1>hi, main</h1>
     </>);
 }
 
