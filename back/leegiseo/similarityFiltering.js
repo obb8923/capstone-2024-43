@@ -117,16 +117,16 @@ function get_tfidf(bow, idf){
     return tfidf;
 }
 
-function cosine_similarity(tfidf){
-    //0번 문서와 다른 모든 문서를 비교해서 코사인 유사도를 구함
+function cosine_similarity(tfidf, docIndex){
+    // docIndex 문서와 다른 모든 문서를 비교해서 코사인 유사도를 구함
     let cos_sim = [];
-    let normalized_zero = normalize(tfidf[0]);
+    let normalized_doc = normalize(tfidf[docIndex]); // 비교 문서
     
     for(let i in tfidf){
         let scalar_product = 0;
         for(let j in tfidf[i]){
-            // 0번 벡터와 i번 벡터의 스칼라곱
-            scalar_product += tfidf[0][j] * tfidf[i][j];
+            // docIndex번 벡터와 i번 벡터의 스칼라곱
+            scalar_product += tfidf[docIndex][j] * tfidf[i][j];
         }
         
         let cos_sim_temp = 0;
@@ -136,7 +136,7 @@ function cosine_similarity(tfidf){
         }
         else{
             // 분자가 0이 아니면 코사인 유사도 공식 사용
-            cos_sim_temp = scalar_product / (normalized_zero * normalize(tfidf[i]));
+            cos_sim_temp = scalar_product / (normalized_doc * normalize(tfidf[i]));
             cos_sim_temp = Number(cos_sim_temp.toFixed(5));
         }
         
@@ -157,7 +157,7 @@ function cosine_similarity(tfidf){
     return cos_sim;
 }
 
-function similarity_test(document){
+function similarity_test(document, Index){
     // 문서 토큰화
     let tokenized_document = tokenizer(document);
     console.log('tokenized_document : ', tokenized_document);
@@ -174,7 +174,7 @@ function similarity_test(document){
     let tfidf = get_tfidf(bow, idf);
     
     // 0번 문서와 나머지 문서의 유사도 검사
-    let cos_sim = cosine_similarity(tfidf);
+    let cos_sim = cosine_similarity(tfidf, Index);
 }
 
 function normalize(vector){
@@ -198,10 +198,15 @@ module.exports = {
 
 //테스트
 let document = [];
-document.push('배송도 빠르고 잘 왔어요'); //인덱스 0기준으로 유사도 계산을 한다. 여기에 필터링 기준이 되는 모델을 넣으면 될듯
+document.push('배송도 빠르고 잘 왔어요 배송 빠르고 잘 보겠습니다 잘 볼게요 배송이 빠르네요 선물용으로 구매함. 빨리 왔음'); 
 document.push('배송도 빠르고 잘 왔어요');
 document.push('배송 빠르고 잘 보겠습니다');
 document.push('잘 볼게요 배송이 빠르네요');
 document.push('선물용으로 구매함. 빨리 왔음');
 console.log(document);
-similarity_test(document);
+similarity_test(document, 0); //유사도 오름차순 정렬해서 출력
+
+/*
+인덱스 기준 문서로 유사도 계산을 한다. 여기에 필터링 기준이 되는 모델을 넣으면 될듯
+유사도 몇 기준으로 필터링할지??, 필터링 모델을 어떻게 만들지?? 얘기가 필요함
+*/

@@ -8,9 +8,9 @@ function checkTextLength(text) {
     }
 }
 
-// 비속어 필터링
-function negativeWordFilter(text, word) { //리뷰 텍스트, 필터링 단어
-    const pattern = word.split('').join('(?:[^\uAC00-\uD7A3])*'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
+// 비속어 필터링, 스포일러 필터링
+function negativeWordFilter(text, stopword) { //리뷰 텍스트, 필터링 단어
+    const pattern = stopword.split('').join('(?:[^\uAC00-\uD7A3])*'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
     const regex = new RegExp(pattern, 'gi');
     return text.replace(regex, '*');
 }
