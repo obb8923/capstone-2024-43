@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "mecab-ya": "^0.1.1"
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mecab-ya": "^0.1.1",
+    "mysql2": "^3.9.4"
   }
 }
