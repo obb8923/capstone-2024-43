@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
     <ToolBar/>
     <Routes>
-      <Route path="/" element={<Main/>}/>
+      <Route path="/" element={<EmptyPage/>}/>
       <Route path="*" element={<EmptyPage />}></Route>
     </Routes>
    </BrowserRouter>
