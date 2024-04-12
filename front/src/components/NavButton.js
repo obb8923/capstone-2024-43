@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function NavButton(props){
     const nav = props.nav;
  return (<>
-    <div>
+    <div className={styles.button}>
     <Link className={styles.a} to={`/${nav}`}>{nav}</Link>
     </div>
  </>);   
