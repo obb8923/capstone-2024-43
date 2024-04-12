@@ -11,8 +11,7 @@ function App() {
     <ToolBar/>
     <Routes>
       <Route path="/" element={<Main/>}/>
-      <Route path="*" element={<EmptyPage />}></Route>
-      <Route path="/writepage" element={<WritePage />} />
+      <Route path="*" element={<EmptyPage />}/>
     </Routes>
    </BrowserRouter>
   );
