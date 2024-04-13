@@ -1,7 +1,6 @@
 import styles from '../css/ToolBar.module.css';
-
+import NavButton from './NavButton';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 function ToolBar(){
 
@@ -9,9 +8,7 @@ function ToolBar(){
     <div className={styles.toolbarBody}>
         <NavButton nav={"library"}/>
         <NavButton nav={"profile"}/>
-        <Link to="/WritePage">
-            <button>글쓰기</button>
-        </Link>
+        
     </div>
     </>);
 }

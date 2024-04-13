@@ -1,8 +1,6 @@
 import Main from './components/Main';
 import ToolBar from './components/ToolBar';
 import EmptyPage from './components/EmptyPage';
-import WritePage from './components/WritePage';
-
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 
 function App() {
