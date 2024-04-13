@@ -10,7 +10,7 @@ const cors = require('cors');
 app.use(cors()) // cors() middleware 사용
 
 //MYSQL 연결
-const mysql = require('mysql2');
+/*const mysql = require('mysql2');
 var db_config  = require('./db-config.json');
 const connection = mysql.createConnection({
   host:db_config.host,
@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
   database:db_config.database,
 });
 connection.connect();
-
+*/
 //8080 번 포트에서 시작하기
 app.listen(8080, function () {
     console.log('Listening to port 8080')
