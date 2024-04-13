@@ -1,0 +1,16 @@
+#buttonBody{
+    display: flex;
+    justify-content: center;
+}
+
+.button{
+    margin:10px 5px;
+    border: 2px solid #000;
+    border-radius: 20%;
+}
+.button:hover{
+    cursor: pointer;
+}
+#buttonName{
+    text-align: center;
+}

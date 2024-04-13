@@ -23,7 +23,7 @@ connection.connect();
 //8080 번 포트에서 시작하기
 app.listen(8080, function () {
     console.log('Listening to port 8080')
-  }); 
+  });
   
   //react build dir 연결
   app.use(express.static(path.join(__dirname, '/../front/build')));
