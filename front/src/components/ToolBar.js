@@ -6,9 +6,18 @@ function ToolBar(){
 
     return (<>
     <div className={styles.toolbarBody}>
+
+        <div id={styles.lBox} className={styles.box}>
+        <NavButton nav={"filter"}/>
+        </div>
+
+        <div id={styles.logo}>문향</div>
+
+        <div id={styles.rBox} className={styles.box}>
+        <NavButton nav={"post"}/>
         <NavButton nav={"library"}/>
-        <NavButton nav={"profile"}/>
-        
+        <NavButton nav={"more"}/>
+        </div>
     </div>
     </>);
 }

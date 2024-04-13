@@ -1,3 +1,8 @@
+#buttonBody{
+    display: flex;
+    justify-content: center;
+}
+
 .button{
     margin:10px 5px;
     border: 2px solid #000;
@@ -6,7 +11,6 @@
 .button:hover{
     cursor: pointer;
 }
-.a{
-    color: black;
-    text-decoration: none;
+#buttonName{
+    text-align: center;
 }
