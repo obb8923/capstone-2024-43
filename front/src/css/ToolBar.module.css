@@ -7,3 +7,23 @@
     flex-direction: row;
     justify-content: center;
 }
+.box{
+    display:flex;
+    flex-direction: row;
+    align-content: center;
+
+}
+#lBox{
+    justify-content: flex-start;
+    flex-grow: 2;
+}
+#logo{
+    flex-grow: 1;
+    text-align: center;
+    
+}
+#rBox{
+    justify-content: flex-end;
+    flex-grow: 2;
+
+}
