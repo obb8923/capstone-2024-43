@@ -11,7 +11,9 @@ function ToolBar(){
         <NavButton nav={"filter"}/>
         </div>
 
-        <div id={styles.logo}>문향</div>
+        <div id={styles.logoBox}>
+            <NavButton nav={"logo"}/>
+        </div>
 
         <div id={styles.rBox} className={styles.box}>
         <NavButton nav={"post"}/>
