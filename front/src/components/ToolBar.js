@@ -1,14 +1,11 @@
 import styles from '../css/ToolBar.module.css';
 import NavButton from './NavButton';
-import React,{useEffect} from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 
 function ToolBar(){
     const {pathname} = useLocation();
-    useEffect(() => {
-        console.log(pathname);
-      }, [ pathname ])  
 
     return (<>
     <div className={styles.toolbarBody}>
