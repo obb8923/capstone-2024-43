@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import styles from '../css/NavButton.module.css';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import moreImg from '../imgs/more.svg';
 import postImg from '../imgs/post.svg';
 import libraryImg from '../imgs/library.svg'; 
@@ -22,10 +22,7 @@ const customStyles = {//modal css 임시적용
 function NavButton(props) {
    const nav = props.nav; //{filter , post , library , more , logo}
    const navigate = useNavigate();
-   const location = useLocation();
-   useEffect(() => {
-      console.log(location);
-    }, [ location ])
+   
    // 페이지 이동 함수
    function switchPage() {
       if (nav === "filter") {
