@@ -1,13 +1,12 @@
 import React,{useState,useEffect} from 'react';
 import styles from '../css/NavButton.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import moreImg from '../imgs/more.svg';
 import postImg from '../imgs/post.svg';
 import libraryImg from '../imgs/library.svg'; 
 import filterImg from '../imgs/filter.svg';
 import logoImg from '../imgs/logo.svg';
 import Modal from 'react-modal';// 설치 필요 'npm install react-modal'
-
 
 const customStyles = {//modal css 임시적용
    content: {
@@ -23,7 +22,10 @@ const customStyles = {//modal css 임시적용
 function NavButton(props) {
    const nav = props.nav; //{filter , post , library , more , logo}
    const navigate = useNavigate();
-
+   const location = useLocation();
+   useEffect(() => {
+      console.log(location);
+    }, [ location ])
    // 페이지 이동 함수
    function switchPage() {
       if (nav === "filter") {
@@ -54,7 +56,11 @@ function NavButton(props) {
   }, []);
    
    function openModal() {
-       setIsOpen(true);
+      if(nav==='filter'){
+         console.log("open modal ")
+         setIsOpen(true);
+      }
+     
      }
      function afterOpenModal() {
        //modal 이 열리고 난 이후 적용시킬 것을 적으면 된다~
