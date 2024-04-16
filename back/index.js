@@ -10,7 +10,7 @@ const cors = require('cors');
 app.use(cors()) // cors() middleware 사용
 
 //MYSQL 연결
-/*const mysql = require('mysql2');
+const mysql = require('mysql2');
 var db_config  = require('./db-config.json');
 const connection = mysql.createConnection({
   host:db_config.host,
@@ -19,16 +19,30 @@ const connection = mysql.createConnection({
   database:db_config.database,
 });
 connection.connect();
-*/
+
 //8080 번 포트에서 시작하기
 app.listen(8080, function () {
     console.log('Listening to port 8080')
   });
   
-  //react build dir 연결
-  app.use(express.static(path.join(__dirname, '/../front/build')));
+//react build dir 연결
+app.use(express.static(path.join(__dirname, '/../front/build')));
+
+// /api/data 로 users table 내용 보내기
+app.get('/api/recommend_post', (req, res) => {
+  connection.query('SELECT * FROM posts', (error, results) => {
+    if (error) {
+      res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
 
   //react에서 route 사용하기 - 맨 밑에 둘 것
 app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, '/../front/build/index.html'));
-  });
+  res.sendFile(path.join(__dirname, '/../front/build/index.html'));
+});
