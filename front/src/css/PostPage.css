@@ -1,34 +1,42 @@
- .title-input {
-    flex: 1; 
-    font-size: 24px;
-    margin-right: 20px; 
-  }
+.title-input {
+  flex: 1; 
+  border: 1px solid white;
+  font-size: 24px;
+  margin-right: 20px; 
+}
 
-  .post-page-container {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .title-button-container {
-    display: flex;
-    align-items: center; 
-  }
-  
-  .title-input {
-    flex: 1;
-    margin-right: 10px;
-  }
-  
-  .button-container {
-    display: flex;
-  }
-  
-  .save-draft-button,
-  .post-button {
-    flex: 1;
-    margin-right: 10px;
-    height: 30px; 
-    width: 100px;
-  }
+.post-page-Container {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-button-container {
+  display: flex;
+  align-items: center;
+  height: 70px; 
+}
+
+.button-container {
+  display: flex;
+}
+
+.post-button {
+  flex: 1;
+  border: 1px solid white;
+  background-color: gainsboro;
+  margin-right: 10px;
+  height: 30px; 
+  width: 100px;
+}
+
+.book-info {
+  display: flex;
+}
+
+.book-info input {
+  margin-right: 10px;
+}
+
+
   
   
