@@ -5,11 +5,11 @@ function PostFragment(props){
     const navigate = useNavigate();
 
     return (<>
-    <article onClick={() => { navigate('/PostViewPage') }}>
+    <article onClick={() => { navigate(`/post:${props.postID}`) }}>
     <div className={styles.fragmentBody}>
         {props.index}
     </div>
-</article>
+    </article>
 
     </>);
 }
