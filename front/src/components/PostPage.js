@@ -3,7 +3,7 @@ import { EditorState, convertToRaw } from 'draft-js'; // 설치해야 함. npm i
 import { Editor } from 'react-draft-wysiwyg'; // 설치해야 함. npm install react-draft-wysiwyg
 import { useNavigate } from 'react-router-dom'; // 설치되어 있어야 함.
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import '../css/PostPage.css'; 
+import '../css/PostPage.css';
 
 function PostPage() {
   // useState 훅을 이용하여 초기값을 설정.
@@ -59,11 +59,24 @@ function PostPage() {
     ) {
       // 확인 후 포스팅.
       if (window.confirm('포스팅 하시겠습니까?')) {
+
+        // 현재 날짜와 시간을 가져옴
+        const currentDate = new Date();
+
+        // 연도, 월, 일, 시간, 분, 초를 추출
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+        // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
+        const postId = `${year}${month}${day}${hours}${minutes}${seconds}`;
         alert('포스팅 되었습니다.');
-        const postId = Math.floor(Math.random() * 1000);
-        // 페이지 이동. 그러나 저장되어 있지 않기 때문에 랜덤으로 배정된 아이디는 고유하지 못함.
+        //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
-        // 저장하는 것에 대한 논의 필요. postId부여에 대한 논의 필요.
+    
         navigate(`/post/${postId}`, {
           state: {
             title,
@@ -137,4 +150,3 @@ function PostPage() {
 }
 
 export default PostPage;
-
