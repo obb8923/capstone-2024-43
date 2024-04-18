@@ -29,7 +29,7 @@ app.listen(8080, function () {
 app.use(express.static(path.join(__dirname, '/../front/build')));
 
 // /api/data 로 users table 내용 보내기
-app.get('/api/recommend_post', (req, res) => {
+app.get('/api/ScrollView', (req, res) => {
   connection.query('SELECT * FROM posts', (error, results) => {
     if (error) {
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
@@ -39,7 +39,17 @@ app.get('/api/recommend_post', (req, res) => {
   });
 });
 
-
+// /api/post:{postid} 로 post 정보 보내기
+app.get('/api/post/:postId',(req,res)=>{
+  const postId = req.params.postId;
+  connection.query('SELECT * FROM posts WHERE postId=?',[postId],(error,result)=>{
+    if(error){
+      res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
+    }else{
+      res.json(results);
+    }
+  });
+});
 
 
   //react에서 route 사용하기 - 맨 밑에 둘 것
