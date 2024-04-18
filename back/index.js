@@ -39,14 +39,14 @@ app.get('/api/ScrollView', (req, res) => {
   });
 });
 
-// /api/post:{postid} 로 post 정보 보내기
+// /api/post/{postid} 로 post 정보 보내기
 app.get('/api/post/:postId',(req,res)=>{
   const postId = req.params.postId;
-  connection.query('SELECT * FROM posts WHERE postId=?',[postId],(error,result)=>{
+  connection.query('SELECT * FROM posts WHERE postID=?',[postId],(error,result)=>{
     if(error){
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }else{
-      res.json(results);
+      res.json(result);
     }
   });
 });
