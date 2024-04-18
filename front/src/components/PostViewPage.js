@@ -35,7 +35,7 @@ function PostViewPage() {
           readOnly={true} // 읽기 전용 모드로 설정함. 이곳은 편집하는 곳이 아니기 때문.
         />
       </div>
-      <p>ID: {postId}</p> {/*단순히 postId를 확인하기 위해서 나중에 없앨 예정임.*/ }
+      <p>ID: {postId}</p> {/*단순히 postId를 확인하기 위해서 나중에 없앨 예정임.*/}
 
       <div className="center">
         {!showBookInfo && (
@@ -58,18 +58,3 @@ function PostViewPage() {
 }
 
 export default PostViewPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
