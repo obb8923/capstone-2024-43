@@ -50,8 +50,13 @@ app.get('/api/post/:postId',(req,res)=>{
     }
   });
 });
+app.post('/api/filter', (req, res) => {
+  const filter = req.body;
+  console.log('Received filter:', req.body);
 
-
+  // 예시 응답
+  res.json({ status: 'success', message: `Filter received: ${filter}` });
+});
   //react에서 route 사용하기 - 맨 밑에 둘 것
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, '/../front/build/index.html'));
