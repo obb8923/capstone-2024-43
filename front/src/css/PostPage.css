@@ -1,3 +1,9 @@
+.post-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100px; 
+}
+
 .title-input {
   flex: 1; 
   border: 1px solid white;
@@ -5,15 +11,15 @@
   margin-right: 20px; 
 }
 
-.post-page-Container {
-  display: flex;
-  flex-direction: column;
-}
-
 .title-button-container {
   display: flex;
   align-items: center;
   height: 70px; 
+}
+
+.editor-container {
+  flex: 1;
+  margin-bottom: 20px;
 }
 
 .button-container {
@@ -29,13 +35,6 @@
   width: 100px;
 }
 
-.book-info {
-  display: flex;
-}
-
-.book-info input {
-  margin-right: 10px;
-}
 
 
   

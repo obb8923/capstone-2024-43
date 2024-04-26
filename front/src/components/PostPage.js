@@ -1,9 +1,119 @@
 import React, { useState } from 'react';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import classicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useNavigate } from 'react-router-dom';
+//import FontSize from 'ckeditor/ckeditor5-font'//npm install --save @ckeditor/ckeditor5-font
+import '../css/PostPage.css';
+
+function PostPage() {
+  const navigate = useNavigate();
+
+  //editorData는 CKEditor의 데이터 모델에 따라 형식이 지정된 텍스트임. 
+  //HTML 형식이 아니라 CKEditor의 내부 형식에 따라 구조화되어 있음.
+
+  const [editorData, setEditorData] = useState('');
+  const [title, setTitle] = useState('');
+
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    //editor.getData() 메서드가 호출되어 사용자가 편집한 내용을 가져옴. 
+    //CKEditor의 내부 데이터 모델에 따라 구조화된 텍스트이며, 일반적으로 HTML 형식으로 변환됨.
+    setEditorData(data);
+  };
+
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
+  const handlePost = () => {
+    // 제목, 내용, 책 정보가 모두 입력되었는지 확인.
+    if (
+      title.trim() !== '' &&
+      editorData.trim() !== ''
+    ) {
+      // 확인 후 포스팅.
+      if (window.confirm('포스팅 하시겠습니까?')) {
+
+        // 현재 날짜와 시간을 가져옴
+        const currentDate = new Date();
+
+        // 연도, 월, 일, 시간, 분, 초를 추출
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+        // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
+        const postId = `${year}${month}${day}${hours}${minutes}${seconds}`;
+        alert('포스팅 되었습니다.');
+        //postId 시간을 받아서 ->... 
+        // 나갔다가 다시 들어오면 내용 없음.
+
+        // CKEditor의 editorData를 HTML로 변환
+        const htmlContent = editorData;
+    
+        navigate(`/post/${postId}`, {
+          state: {
+            title, 
+            editorData: htmlContent  // HTML 형식의 문자열로 변환된 editorData 전달
+          },
+        });
+      }
+    } else {
+      // 입력이 누락된 경우 알림. 모두 입력해야 함.
+      alert('제목과 내용, 책 정보를 모두 입력해주세요.');
+    }
+  };
+
+  const handleSaveDraft = () => {
+    // 임시 저장 로직 추가
+    console.log('Draft Saved');
+  };
+
+  return (
+    <div className="post-page-container">
+      <div className="title-button-container">
+        <input
+          type="text"
+          placeholder="제목을 입력하세요..."
+          value={title}
+          onChange={handleTitleChange}
+          className="title-input"
+        />
+        <div className="button-container">
+          <button className="post-button" onClick={handleSaveDraft}>임시 저장</button>
+          <button className="post-button" onClick={handlePost}>포스팅</button>
+        </div>
+      </div>
+      <div className="editor-container">
+        <CKEditor
+          editor={classicEditor}
+          data={editorData}
+          onChange={handleEditorChange}
+          config={{
+            toolbar: [
+              'heading', '|', 'bold', 'italic', 'link', '|',
+              'fontSize', 'bulletedList', 'numberedList', '|', 'undo', 'redo' 
+            ]
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default PostPage;
+
+
+/*import React, { useState } from 'react';
 import { EditorState, convertToRaw } from 'draft-js'; // 설치해야 함. npm install draft-js
 import { Editor } from 'react-draft-wysiwyg'; // 설치해야 함. npm install react-draft-wysiwyg
 import { useNavigate } from 'react-router-dom'; // 설치되어 있어야 함.
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import '../css/PostPage.css';
+import '../css/PostPage.css'
+import draftToHtml from 'draftjs-to-html'
 
 function PostPage() {
   // useState 훅을 이용하여 초기값을 설정.
@@ -80,7 +190,7 @@ function PostPage() {
         navigate(`/post/${postId}`, {
           state: {
             title,
-            content: convertToRaw(editorState.getCurrentContent()), 
+            content: draftToHtml(convertToRaw(editorState.getCurrentContent())), 
             // convertToRaw 함수를 사용시 contentState 객체를 JavaScript 객체로 변환할 수 있음.
             postId,
             bookTitle,
@@ -105,7 +215,7 @@ function PostPage() {
           onChange={handleTitleChange}
           className="title-input"
         />
-        {/*일단 사용자가 책 정보를 입력하게 함. 나중에 수정할 예정.*/}
+        {/*일단 사용자가 책 정보를 입력하게 함. 나중에 수정할 예정.*//*}
         <div className="book-info">
           <input
             type="text"
@@ -149,4 +259,4 @@ function PostPage() {
   );
 }
 
-export default PostPage;
+export default PostPage;*/
