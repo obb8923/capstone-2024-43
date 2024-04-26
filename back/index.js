@@ -28,12 +28,14 @@ app.listen(8080, function () {
 //react build dir 연결
 app.use(express.static(path.join(__dirname, '/../front/build')));
 
-// /api/data 로 users table 내용 보내기
+// /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
-  connection.query('SELECT * FROM posts', (error, results) => {
+  let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,postscol FROM posts ORDER BY weight;';
+  connection.query(query, (error, results) => {
     if (error) {
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     } else {
+      console.log(results);
       res.json(results);
     }
   });
