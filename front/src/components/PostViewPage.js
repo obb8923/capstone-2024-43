@@ -1,8 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
+
+function PostViewPage() {
+  const location = useLocation();
+  const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <div>{parse(editorData)}</div> {/* HTML 문자열을 React 구성 요소로 변환 */}
+    </div>
+  );
+}
+
+export default PostViewPage;
+
+/*import React, { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom'; // 설치되어 있어야 함.
 import { EditorState, convertFromRaw } from 'draft-js'; // 설치되어 있어야 함.
 import { Editor } from 'react-draft-wysiwyg'; // 설치되어 있어야 함.
 import '../css/PostViewPage.css'; 
+import draftToHtml from 'draftjs-to-html'
 
 function PostViewPage() {
   const { postId } = useParams(); // useParams()을 사용해 URL 파라미터에서 postId 추출
@@ -22,7 +41,7 @@ function PostViewPage() {
   // ContentState 객체를 기반으로 EditorState를 생성
   // content가 비어있거나 존재하지 않는 경우에는 빈 EditorState를 생성
   const editorState = content
-    ? EditorState.createWithContent(convertFromRaw(content))
+    ? EditorState.createWithContent(draftToHtml(convertFromRaw(content)))
     : EditorState.createEmpty();
 
   return (
@@ -35,7 +54,7 @@ function PostViewPage() {
           readOnly={true} // 읽기 전용 모드로 설정함. 이곳은 편집하는 곳이 아니기 때문.
         />
       </div>
-      <p>ID: {postId}</p> {/*단순히 postId를 확인하기 위해서 나중에 없앨 예정임.*/}
+      <p>ID: {postId}</p> {/*단순히 postId를 확인하기 위해서 나중에 없앨 예정임.*//*}
 
       <div className="center">
         {!showBookInfo && (
@@ -43,7 +62,7 @@ function PostViewPage() {
             <p>책 정보를 확인하시겠습니까?</p>
             <button onClick={handleShowBookInfo}>확인</button>
           </div>
-        )}{/*상태가 false일 경우*/}
+        )}{/*상태가 false일 경우*//*}
         
         {showBookInfo && (
           <div className="book-box">
@@ -51,10 +70,10 @@ function PostViewPage() {
             <p>저자: {author}</p>
             <p>출판사: {publisher}</p>
           </div>
-        )}{/*상태가 true일 경우*/}
+        )}{/*상태가 true일 경우*//*}
       </div>
     </div>
   );
 }
 
-export default PostViewPage;
+export default PostViewPage;*/

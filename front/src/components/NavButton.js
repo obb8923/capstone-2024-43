@@ -81,7 +81,7 @@ function NavButton(props) {
           style={customStyles}
           contentLabel="Example Modal"
         >
-         
+   
           <h2 ref={(_subtitle) => (subtitle = _subtitle)}>modal 내용을 꾸미세요~</h2>
           <button onClick={closeModal}>close</button>
           <div>I am a modal</div>
