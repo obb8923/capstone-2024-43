@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import classicEditor from '@ckeditor/ckeditor5-build-classic';
+import classicEditor from ' @ckeditor/ckeditor5-build-classic';
 import { useNavigate } from 'react-router-dom';
 //import FontSize from 'ckeditor/ckeditor5-font'//npm install --save @ckeditor/ckeditor5-font
 import '../css/PostPage.css';
