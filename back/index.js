@@ -28,6 +28,13 @@ app.listen(8080, function () {
 //react build dir 연결
 app.use(express.static(path.join(__dirname, '/../front/build')));
 
+//모든 요청의 URL과 메소드를 출력
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
   let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,postscol FROM posts ORDER BY weight;';
@@ -35,7 +42,7 @@ app.get('/api/ScrollView', (req, res) => {
     if (error) {
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     } else {
-      console.log(results);
+      //console.log(results);
       res.json(results);
     }
   });
@@ -47,11 +54,12 @@ app.get('/api/post/:postId',(req,res)=>{
   connection.query('SELECT * FROM posts WHERE postID=?',[postId],(error,result)=>{
     if(error){
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
-    }else{
+    }else{      
       res.json(result);
     }
   });
 });
+
 app.post('/api/filter', (req, res) => {
   const filter = req.body;
   console.log('Received filter:', req.body);

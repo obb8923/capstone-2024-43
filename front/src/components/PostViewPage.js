@@ -1,16 +1,31 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect,useState } from 'react';
+import { useLocation,useParams } from 'react-router-dom';
 import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
-  const location = useLocation();
-  const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
-
+  const {postID} = useParams();
+  const[data,setData]=useState({});
+  //postId로 글 찾아오기~
+  useEffect(()=>{
+    fetch(`http://localhost:8080/api/post/${postID}`)
+    .then(res=>res.json())
+    .then(json=>{
+      console.log(json[0]);
+      setData(json[0]);
+    })
+    .catch(error=>console.log(error))
+  },[postID])
+  //const location = useLocation();
+  //const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
   return (
+    <>
     <div>
-      <h1>{title}</h1>
-      <div>{parse(editorData)}</div> {/* HTML 문자열을 React 구성 요소로 변환 */}
+      {data.body}
+      {/* <h1>{title}</h1>
+      <div>{parse(editorData)}</div> HTML 문자열을 React 구성 요소로 변환 */}
     </div>
+    </>
   );
 }
 
@@ -26,9 +41,28 @@ import draftToHtml from 'draftjs-to-html'
 function PostViewPage() {
   const { postId } = useParams(); // useParams()을 사용해 URL 파라미터에서 postId 추출
   const { state } = useLocation(); // useLocation()을 사용해 현재 URL의 상태 정보를 가져옴
+  const [data,setData]=useState({});//post 정보
 
   // 상태 정보에서 제목, 내용, 책 정보 추출함. (없을 경우 빈 객체 사용.)
   const { title, content, bookTitle, author, publisher } = state || {};
+  useEffect(()=>{console.log(data)},[data])
+  //postId로 글 찾아오기~
+  useEffect(()=>{
+    const fetchPostData= async()=>{
+      try{
+        const res = await axios.get(`http://localhost:8080/api/post/${postId}`);
+       console.log(res.data); 
+       console.log(res.data[0]); 
+       console.log(res.data[0].body);
+
+        setData(res.data[0]);
+        
+      }catch(err){
+        console.log(err);
+      }
+    }
+    fetchPostData();
+  },[]);
 
   // 책 정보 표시 여부 상태 및 설정 함수. 처음은 보이지 않게.
   const [showBookInfo, setShowBookInfo] = useState(false); 
@@ -48,6 +82,9 @@ function PostViewPage() {
     <div>
       <h1>{title}</h1>
       <div className="content-box">
+        <div className="dataBody">
+          {data.body}
+        </div>
         <Editor 
           editorState={editorState}
           toolbarHidden={true} // 툴바를 숨김.
