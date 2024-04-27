@@ -1,0 +1,41 @@
+.post-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100px; 
+}
+
+.title-input {
+  flex: 1; 
+  border: 1px solid white;
+  font-size: 24px;
+  margin-right: 20px; 
+}
+
+.title-button-container {
+  display: flex;
+  align-items: center;
+  height: 70px; 
+}
+
+.editor-container {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+}
+
+.post-button {
+  flex: 1;
+  border: 1px solid white;
+  background-color: gainsboro;
+  margin-right: 10px;
+  height: 30px; 
+  width: 100px;
+}
+
+
+
+  
+  
