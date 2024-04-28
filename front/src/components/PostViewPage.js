@@ -4,9 +4,10 @@ import { useLocation,useParams } from 'react-router-dom';
 import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
-  const {postID} = useParams();
+  const location = useLocation();
+  const {postID} = location.state; 
   const[data,setData]=useState({});
-  //postId로 글 찾아오기~
+  //postID로 글 찾아오기~
   useEffect(()=>{
     fetch(`http://localhost:8080/api/post/${postID}`)
     .then(res=>res.json())
@@ -15,8 +16,7 @@ function PostViewPage() {
       setData(json[0]);
     })
     .catch(error=>console.log(error))
-  },[postID])
-  //const location = useLocation();
+  },[])
   //const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
   return (
     <>
