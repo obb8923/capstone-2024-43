@@ -7,9 +7,8 @@ import { useLocation } from 'react-router-dom';
 function ToolBar(){
     const {pathname} = useLocation();
 
-    return (<>
+    return (<div className={styles.frame}>
     <div className={styles.toolbarBody}>
-
         {/*툴바의 왼쪽 구역*/}
         <div id={styles.lBox} className={styles.box}>
             {pathname === '/' && <NavButton nav={"filter"} />}
@@ -26,7 +25,7 @@ function ToolBar(){
         </div>
     </div>
     
-    </>);
+    </div>);
 }
 
 export default ToolBar;
