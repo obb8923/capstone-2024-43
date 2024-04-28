@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextEditor from './TextEditor';
 import '../css/PostPage.css';
+/*
+editor 라이브러리를 위해 수정함. 
+다음과 같이 설치해야 정상적으로 작동함.
+npm install @ckeditor/ckeditor5-build-classic
+npm install @ckeditor/ckeditor5-react
+npm add file:./ckeditor5
+*/
 
 function PostPage() {
   const navigate = useNavigate();
