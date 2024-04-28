@@ -1,3 +1,4 @@
+
 .toolbarBody{
     width: 100vw;
     height:10vh;
@@ -5,6 +6,9 @@
 
     display: flex;
     flex-direction: row;
+
+    position:fixed;
+    top:0;
 }
 .box{
     display:flex;
