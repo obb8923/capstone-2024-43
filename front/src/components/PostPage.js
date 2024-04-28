@@ -48,7 +48,7 @@ function PostPage() {
 
         const htmlContent = editorData;
     
-        navigate(`/${postId}`, {
+        navigate(`/post/${postId}`, {
           state: {
             title, 
             editorData: htmlContent 
