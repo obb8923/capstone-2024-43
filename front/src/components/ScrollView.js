@@ -1,47 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
-import axios from 'axios';
 
-
-function ScrollView() {
-    //
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        const fetchAllData = async () => {
-          try{
-            const res = await axios.get("http://localhost:8080/api/recommend_post");
-            console.log(res.data);
-            setData(res.data);
-          }catch(err){
-            console.log(err)
-          }
-        }
-        fetchAllData()
-      }, [])
-    // 여기서부터 무한 스크롤 설정
-  const count = 10; // 한 번에 추가되는 item의 개수
+function ScrollView() {//무한스크롤
+  const count = 20;
   let index =0;
-  //const [index, setIndex] = useState(0); // item의 index를 상태로 관리
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
-
+  
   useEffect(() => {
     const options = {
       root:null,
       threshold: 0.1
-    };
-
+    };  
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+      entries.forEach(async(entry) => {
         if (entry.isIntersecting) {
-            console.log("entry.isIntersecting")
-          const newFragments = [];
-          for (let i = index; i < index + count; i++) {
-            newFragments.push(<PostFragment key={i} index={i} />);
-          }
-          setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
-          index+=count;
-          //setIndex(prevIndex => prevIndex + count); // index 상태 갱신
+          console.log("entry.isIntersecting");
+          fetch("http://localhost:8080/api/ScrollView")
+          .then(res=>res.json())
+          .then(json=>{
+            const newFragments = [];
+            for (let i = index; i < index + count; i++) {
+              newFragments.push(<PostFragment key={i} postID={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+            }
+            setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
+            index+=count;}
+          )
+          .catch((error)=>{console.log("erorr: "+error)})
+            
         }
       });
     }, options);
@@ -58,19 +43,6 @@ function ScrollView() {
   //
   return (
     <span>
-        <div className="datas">
-        {data.map(d => (
-            <>{/*postID, body, UID, status, create_at, isbn, postscol*/}
-          <div className="postid" key={d.id}>{d.postID}</div>
-          <div className="post" key={d.id}>{d.body}</div>
-          <div className="uid" key={d.id}>{d.UID}</div>
-          <div className="status" key={d.id}>{d.status}</div>
-          <div className="create_at" key={d.id}>{d.create_at}</div>
-          <div className="isbn" key={d.id}>{d.isbn}</div>
-          <div className="postscol" key={d.id}>{d.postscol}</div>
-          </>
-        ))}
-      </div>
       <div className="list">
         {fragments} {/* fragments 배열을 렌더링 */}
       </div>
