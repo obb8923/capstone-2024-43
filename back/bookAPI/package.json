@@ -1,0 +1,14 @@
+{
+  "name": "bookapi",
+  "version": "0.0.1",
+  "description": "moonhyang_bookAPI",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hyeonseok Yoo",
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  }
+}
