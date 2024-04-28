@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
-
+import styles from "../css/ScrollView.module.css"
 function ScrollView() {//무한스크롤
   const count = 20;
   let index =0;
@@ -32,7 +32,7 @@ function ScrollView() {//무한스크롤
     }, options);
     
     // list-end 요소를 관찰
-    const target = document.querySelector('.list-end');
+    const target = document.querySelector(`.${styles.listEnd}`);
     if (target) {
       observer.observe(target);
     }
@@ -42,12 +42,12 @@ function ScrollView() {//무한스크롤
   }, []);
   //
   return (
-    <span>
+    <div className={styles.mainBox}>
       <div className="list">
         {fragments} {/* fragments 배열을 렌더링 */}
       </div>
-      <p className="list-end">list-end</p>
-    </span>
+      <div className={styles.listEnd}></div>
+    </div>
   );
 }
 
