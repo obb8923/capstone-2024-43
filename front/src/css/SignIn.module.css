@@ -1,0 +1,21 @@
+.signInBody{
+    width:30vw;
+    height:60vh;
+    margin:auto auto;
+    box-shadow: 0px 0px 5px #444;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.logo{
+    width:8vw;
+    aspect-ratio: 1/1;
+    background-image: url("../imgs/logo.svg");
+    background-size: cover;
+    
+}
+.button{
+
+    
+}
