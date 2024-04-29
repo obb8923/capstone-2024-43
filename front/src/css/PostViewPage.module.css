@@ -1,0 +1,13 @@
+.postBox{
+    /* border: solid 1px #000 ; */
+    width:50vw;
+    margin: 30px auto;
+    padding: 30px;
+    word-break:break-all
+}
+.line{
+    height: 10px;
+  border: 0;
+  box-shadow: 0 10px 10px -10px #8c8c8c inset;
+  margin:10vh 0;
+}

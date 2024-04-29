@@ -2,14 +2,15 @@ import React from 'react';
 import { useEffect,useState } from 'react';
 import { useLocation,useParams } from 'react-router-dom';
 import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
-
+import ScrollView from "./ScrollView";
+import styles from "../css/PostViewPage.module.css";
 function PostViewPage() {
   const location = useLocation();
-  const {postID} = location.state; 
-  const[data,setData]=useState({});
+  //const {postID} = location.state; 
+  const[data,setData]=useState({body:"https://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwanhttps://github.com/mongwan"});
   //postID로 글 찾아오기~
   useEffect(()=>{
-    fetch(`http://localhost:8080/api/post/${postID}`)
+    fetch(`http://localhost:8080/api/post/${1}`)
     .then(res=>res.json())
     .then(json=>{
       console.log(json[0]);
@@ -20,11 +21,16 @@ function PostViewPage() {
   //const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
   return (
     <>
-    <div>
+    <article>
+    <div className={styles.postBox}>
       {data.body}
       {/* <h1>{title}</h1>
       <div>{parse(editorData)}</div> HTML 문자열을 React 구성 요소로 변환 */}
     </div>
+    </article>
+    <hr className={styles.line}></hr>
+    <ScrollView/>
+
     </>
   );
 }
