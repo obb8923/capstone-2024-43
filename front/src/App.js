@@ -1,11 +1,11 @@
 import React from 'react';
 import Main from './components/Main';
+import SignIn from './components/SignIn';
 import ToolBar from './components/ToolBar';
 import MorePage from './components/MorePage';
-import EmptyPage from './components/EmptyPage';
 import PostPage from './components/PostPage';
+import EmptyPage from './components/EmptyPage';
 import PostViewPage from './components/PostViewPage';
-import SignIn from './components/SignIn';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
