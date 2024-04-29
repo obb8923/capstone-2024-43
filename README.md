@@ -10,10 +10,14 @@
 
 
 ## 팀소개
-남혜영
-박정빈
-이기서
-유현석
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/hyeyeong-nam"><img src="" width="100px;" alt=""/><br /><sub><b>남혜영</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/obb8923"><img src="" width="100px;" alt=""/><br /><sub><b>박정빈</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/leegiseo00"><img src="" width="100px;" alt=""/><br /><sub><b>이기서</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/mongwan"><img src="" width="100px;" alt=""/><br /><sub><b>유현석</b></sub></a><br /></td>
+  </tr>
+</table>
 [팀페이지로 이동](https://kookmin-sw.github.io/capstone-2024-43/)
 
 ## 사용법 
