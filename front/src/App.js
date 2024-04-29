@@ -15,7 +15,7 @@ function App() {
       <Route path="/" element={<Main/>}/>
       <Route path="/post" element={<PostPage/>}/>
       <Route path="/more" element={<MorePage/>}/>
-      <Route path="/post/:postId" element={<PostViewPage />} /> {/* postId를 URL 파라미터로 받음 */}
+      <Route path="/post/:postId" element={<PostViewPage />} /> {/* postID를 URL 파라미터로 받음 */}
       <Route path="*" element={<EmptyPage />}/>
     </Routes>
    </BrowserRouter>
