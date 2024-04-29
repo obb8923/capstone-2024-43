@@ -199,12 +199,14 @@ module.exports = {
 //테스트
 let document = [];
 document.push('배송도 빠르고 잘 왔어요 배송 빠르고 잘 보겠습니다 잘 볼게요 배송이 빠르네요 선물용으로 구매함. 빨리 왔음'); 
+/*
 document.push('배송도 빠르고 잘 왔어요');
 document.push('배송 빠르고 잘 보겠습니다');
 document.push('잘 볼게요 배송이 빠르네요');
 document.push('선물용으로 구매함. 빨리 왔음');
 console.log(document);
-similarity_test(document, 0); //유사도 오름차순 정렬해서 출력
+*/
+tokenizer(document); //유사도 오름차순 정렬해서 출력
 
 /*
 인덱스 기준 문서로 유사도 계산을 한다. 여기에 필터링 기준이 되는 모델을 넣으면 될듯
