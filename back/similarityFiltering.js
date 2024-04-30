@@ -6,6 +6,8 @@
 같이 하면 효과적일 것으로 예상함 -> 무식해보임 1번 방법이 좋을 듯
 */
 
+const { callbackify } = require('util');
+
 function tokenizer(document){
     let mecab = require('mecab-ya');
     let tokenized_document = [];
@@ -27,7 +29,7 @@ function build_bag_of_words(tokenized_document){
             total_document.push(tokenized_document[index][j]);
         }
     }
-    console.log('total document : ', total_document);
+    //console.log('total document : ', total_document);
     
     // 단어에 index 맵핑
     for(let word in total_document){
@@ -62,8 +64,8 @@ function build_bag_of_words(tokenized_document){
         bow.push(bow_temp);
     }
     
-    console.log('vocabulary : ', word_to_index);
-    console.log('bag of words vectors(term frequency) : ', bow);
+    //console.log('vocabulary : ', word_to_index);
+    //console.log('bag of words vectors(term frequency) : ', bow);
     
     return [word_to_index, bow];
 }
@@ -81,7 +83,7 @@ function get_idf(bow){
             }
         }
     }
-    console.log('document frequency : ', df);
+    //console.log('document frequency : ', df);
 
     let idf = [];
     let N = bow.length; // 전체 문서의 수
@@ -92,7 +94,7 @@ function get_idf(bow){
     for(let i in idf){
         idf[i] = 1 + Math.log(N / (1 + df[i])); // 자연로그
     }
-    console.log('inverse document frequency : ',idf);
+    //console.log('inverse document frequency : ',idf);
     
     return idf;
 }
@@ -112,7 +114,7 @@ function get_tfidf(bow, idf){
         
         tfidf.push(tfidf_temp);
     }
-    console.log('TF-IDF : ', tfidf);
+    //console.log('TF-IDF : ', tfidf);
     
     return tfidf;
 }
@@ -199,14 +201,13 @@ module.exports = {
 //테스트
 let document = [];
 document.push('배송도 빠르고 잘 왔어요 배송 빠르고 잘 보겠습니다 잘 볼게요 배송이 빠르네요 선물용으로 구매함. 빨리 왔음'); 
-/*
 document.push('배송도 빠르고 잘 왔어요');
 document.push('배송 빠르고 잘 보겠습니다');
 document.push('잘 볼게요 배송이 빠르네요');
 document.push('선물용으로 구매함. 빨리 왔음');
 console.log(document);
-*/
-tokenizer(document); //유사도 오름차순 정렬해서 출력
+
+similarity_test(document, 0); //유사도 오름차순 정렬해서 출력
 
 /*
 인덱스 기준 문서로 유사도 계산을 한다. 여기에 필터링 기준이 되는 모델을 넣으면 될듯

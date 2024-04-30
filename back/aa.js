@@ -1,7 +1,10 @@
-const mecab = require('mecab-ya');
+let mecab = require('mecab-ya');
+let text = '아버지가방에들어가신다.';
 
-const text = "배송 빠르고 잘 보겠습니다";
-
-const result = mecab.morphsSync(text);
-
-console.log(result);
+console.log(text);
+mecab.pos(text, (err, result) => {
+    console.log('pos : ', result);
+});
+mecab.morphs(text, (err, result) => {
+    console.log('morphs : ', result);
+});

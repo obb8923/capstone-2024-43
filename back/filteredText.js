@@ -1,10 +1,10 @@
 // 글자 수로 필터링
 function checkTextLength(text) {
     // 텍스트의 길이를 확인
-    if (text.length < 100) {
-        return null; // 100자 미만이면 null
+    if (text.length < 50) {
+        return null; // 50자 미만이면 null
     } else {
-        return text; // 100자 이상이면 텍스트 리턴
+        return text; // 50자 이상이면 텍스트 리턴
     }
 }
 
