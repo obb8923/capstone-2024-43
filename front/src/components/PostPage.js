@@ -81,7 +81,7 @@ function PostPage() {
           <button className="post-button" onClick={handlePost}>포스팅</button>
         </div>
       </div>
-      <div className="editor-container">
+      <div className="ck-editor__editable">
          <TextEditor setData={setEditorData}/>
       </div>
     </div>

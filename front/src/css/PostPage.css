@@ -1,7 +1,6 @@
 .post-page-container {
   display: flex;
   flex-direction: column;
-  height: 100px; 
 }
 
 .title-input {
@@ -17,9 +16,12 @@
   height: 70px; 
 }
 
-.editor-container {
-  flex: 1;
-  margin-bottom: 20px;
+/*정해진 .ck-editor__editable를 써야 content style을 자유롭게 편집 가능.*/
+.ck-editor__editable { 
+  margin-left: auto;
+  margin-right: auto;
+  width: 98.5%;
+  height: 500px; 
 }
 
 .button-container {
