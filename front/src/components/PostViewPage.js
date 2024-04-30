@@ -1,3 +1,5 @@
+import ScrollView from "./ScrollView";
+import styles from "../css/PostViewPage.module.css";
 import React from 'react';
 import { useEffect,useState } from 'react';
 import { useLocation,useParams } from 'react-router-dom';
@@ -20,11 +22,16 @@ function PostViewPage() {
   //const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
   return (
     <>
-    <div>
+    <article>
+    <div className={styles.postBox}>
       {data.body}
       {/* <h1>{title}</h1>
       <div>{parse(editorData)}</div> HTML 문자열을 React 구성 요소로 변환 */}
     </div>
+    </article>
+    <hr className={styles.line}></hr>
+    <ScrollView/>
+
     </>
   );
 }
