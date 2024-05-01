@@ -12,7 +12,7 @@ function ScrollView() {//무한스크롤
       threshold: 0.1
     };  
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(async(entry) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
           fetch("http://localhost:8080/api/ScrollView")
