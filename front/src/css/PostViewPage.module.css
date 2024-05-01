@@ -1,6 +1,7 @@
 .postBox{
     /* border: solid 1px #000 ; */
     width:50vw;
+    min-height: 50vh;
     margin: 30px auto;
     padding: 30px;
     word-break:break-all
@@ -10,4 +11,20 @@
   border: 0;
   box-shadow: 0 10px 10px -10px #8c8c8c inset;
   margin:10vh 0;
+}
+.bookInfoBox{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 40vw;
+    
+    border:1px solid black;
+    
+    padding:8px;
+    margin: 30px auto;
+    
+}
+ul{
+    list-style-type: none;
 }
