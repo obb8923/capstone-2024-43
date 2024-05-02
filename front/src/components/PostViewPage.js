@@ -27,11 +27,14 @@ function PostViewPage() {
     <article>
     <div className={styles.postBox}>
       {data.body}
-      {/* <h1>{title}</h1>
-      <div>{parse(editorData)}</div> HTML 문자열을 React 구성 요소로 변환 */}
+      {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 */}
     </div>
     </article>
+    
     <div className={styles.bookInfoBox}>
+      <div className={styles.blurBox}>
+        <button>책 정보 확인하기</button>
+      </div>
       <div className={styles.bookImg}>
         <img src="" alt="bookImg"></img>
       </div>
@@ -45,7 +48,6 @@ function PostViewPage() {
     </div>
     <hr className={styles.line}></hr>
     <ScrollView/>
-      
     </>
   );
 }
