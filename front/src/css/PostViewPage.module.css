@@ -1,3 +1,8 @@
+html{
+    --button-display:block;
+    --blurBox-display:flex;
+
+}
 .postBox{
     /* border: solid 1px #000 ; */
     width:50vw;
@@ -38,11 +43,12 @@ ul{
   height: 100%;
   background-color: rgba(255, 255, 255, 0.5); /* 투명도 설정 */
   backdrop-filter: blur(5px); /* 블러 효과 */
-  display: flex;
+  display: var(--blurBox-display);
   justify-content: center;
   align-items: center;
     
 }
 .blurBox button{
+    display:var(--button-display);
     margin:auto auto;
 }
