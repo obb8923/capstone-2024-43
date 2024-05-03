@@ -6,7 +6,7 @@
 4. 상위 유사도 20개를 사용자에게 포스팅해준다.
 */
 
-function tokenizer(document){
+function tokenizer(document){//모든 단어 추출
     let mecab = require('mecab-ya');
     let tokenized_document = [];
     for(let i in document){
@@ -21,7 +21,7 @@ function tokenizer(document){
     return tokenized_document;
 }
 
-function build_bag_of_words(tokenized_document){
+function build_bag_of_words(tokenized_document){//문서 내 단어 등장횟수 세기
     let word_to_index = new Map();
     let total_bow = [];
     let total_document = [];
@@ -74,7 +74,7 @@ function build_bag_of_words(tokenized_document){
     return [word_to_index, bow];
 }
 
-function get_idf(bow){
+function get_idf(bow){//단어별 중요도 구하기 - 많이 나온 단어는 안중요함
     let df = [];
     df.length = bow[0].length;
     df.fill(0);
@@ -103,7 +103,7 @@ function get_idf(bow){
     return idf;
 }
 
-function get_tfidf(bow, idf){
+function get_tfidf(bow, idf){//build_bag_of_words * get_idf 총 중요도 구하기
     // tfidf 구하기
     let tfidf = [];
     
@@ -123,7 +123,7 @@ function get_tfidf(bow, idf){
     return tfidf;
 }
 
-function cosine_similarity(tfidf, docIndex){
+function cosine_similarity(tfidf, docIndex){//1번 리뷰랑 2번 리뷰 유사도 비교,정렬
     // docIndex 문서와 다른 모든 문서를 비교해서 코사인 유사도를 구함
     let cos_sim = [];
     let normalized_doc = normalize(tfidf[docIndex]); // 비교 문서
@@ -163,7 +163,7 @@ function cosine_similarity(tfidf, docIndex){
     return cos_sim;
 }
 
-function similarity_test(document, Index){
+function similarity_test(document, Index){//다른 함수들 실행시켜줌
     // 문서 토큰화
     let tokenized_document = tokenizer(document);
     console.log('tokenized_document : ', tokenized_document);
@@ -183,7 +183,7 @@ function similarity_test(document, Index){
     let cos_sim = cosine_similarity(tfidf, Index);
 }
 
-function normalize(vector){
+function normalize(vector){//벡터 정규화 기능
     // 벡터 정규화 공식
     let sum_square = 0;
     for(let i in vector){
