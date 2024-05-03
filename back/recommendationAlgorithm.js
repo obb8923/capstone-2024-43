@@ -4,6 +4,10 @@
 2. 카테고리, 최근 작성된 리뷰 20개 이상 가져온다.
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
 4. 상위 유사도 20개를 사용자에게 포스팅해준다.
+
+@@@@@@@@@
+문제점 : 2번 리뷰들에 연관성이 없는 리뷰들만 있다면?? -> 2번 리뷰들끼리 상대적으로 비교하는 것은 한계가 있음, 절대적인 유사도 수치 기준이 필요함 절대적인 유사도 수치가 넘는
+리뷰가 20개 미만이라면?? 
 */
 
 function tokenizer(document){//모든 단어 추출
@@ -203,7 +207,7 @@ module.exports = {
 };
 
 /*
-const mysql = require('mysql');
+const mysql = require('mysql'); //mysql2로 사용
 
 const connection = mysql.createConnection({
   host:aaa,
