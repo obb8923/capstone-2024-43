@@ -15,6 +15,8 @@ function PostPage() {
 
   const [editorData, setEditorData] = useState('');
   const [title, setTitle] = useState('');
+  const [bookSearch, setBookSearch] = useState('');
+
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -46,15 +48,31 @@ function PostPage() {
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
 
+        //저장 구현 시작.
+
         const htmlContent = editorData;
-    
-        navigate(`/post/${postId}`, {
-          state: {
-            title, 
-            editorData: htmlContent 
+
+        const postData = { postId, title, htmlContent};
+
+        fetch('/api/savepost', {
+          method: 'POST',
+          //POST 메서드를 사용했는데, 이는 서버에 데이터를 전송하기 위한 것.
+          headers: {
+            'Content-Type': 'application/json', 
+            //Content-Type 헤더를 설정하여 전송할 데이터의 타입을 명시. application/json은 전송할 데이터가 JSON 형식임을 나타냄.
           },
-        });
-      }
+          body: JSON.stringify(postData),
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            navigate(`/post/${postId}`);
+          })
+          .catch(error => {
+            console.error('데이터를 게시하는 중 오류:', error);
+            alert('포스트를 저장하는 중 오류가 발생했습니다.');
+          });
+        }
     } else {
       // 입력이 누락된 경우 알림. 모두 입력해야 함.
       alert('제목과 내용, 책 정보를 모두 입력해주세요.');
@@ -66,6 +84,10 @@ function PostPage() {
     console.log('Draft Saved');
   };
 
+  const handleBookSearchChange = (event) => {
+    setBookSearch(event.target.value);
+  };
+
   return (
     <div className="post-page-container">
       <div className="title-button-container">
@@ -75,6 +97,13 @@ function PostPage() {
           value={title}
           onChange={handleTitleChange}
           className="title-input"
+        />
+        <input
+          type="text"
+          placeholder="책 검색..."
+          value={bookSearch}
+          onChange={handleBookSearchChange}
+          className="book-search-input"
         />
         <div className="button-container">
           <button className="post-button" onClick={handleSaveDraft}>임시 저장</button>
