@@ -43,41 +43,52 @@ function PostPage() {
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
         // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
-        const postId = `${year}${month}${day}${hours}${minutes}${seconds}`;
+        const postId = `${year+month+day}${hours}${minutes+seconds}`;
         alert('포스팅 되었습니다.');
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
 
+        const exam = '000000';
+
         //저장 구현 시작.
-
-        const htmlContent = editorData;
-
-        const postData = { postId, title, htmlContent};
-
-        fetch('/api/savepost', {
+        const postData = {
+          postId: postId,
+          body: title + editorData,
+          UID: year, 
+          status: month, 
+          create_at: minutes, 
+          isbn: exam,
+        };
+  
+        // 서버에 데이터 전송
+        fetch('/api/postpage', {
           method: 'POST',
-          //POST 메서드를 사용했는데, 이는 서버에 데이터를 전송하기 위한 것.
           headers: {
-            'Content-Type': 'application/json', 
-            //Content-Type 헤더를 설정하여 전송할 데이터의 타입을 명시. application/json은 전송할 데이터가 JSON 형식임을 나타냄.
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(postData),
         })
-          .then(response => response.json())
-          .then(data => {
-            alert(data.message);
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert('포스팅 되었습니다.');
+            // 포스팅이 완료되면 페이지 이동 또는 다른 작업 수행
             navigate(`/post/${postId}`);
-          })
-          .catch(error => {
-            console.error('데이터를 게시하는 중 오류:', error);
-            alert('포스트를 저장하는 중 오류가 발생했습니다.');
-          });
-        }
+          } else {
+            alert('포스팅에 실패했습니다.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('서버와의 통신 중 오류가 발생했습니다.');
+        });
+      }
     } else {
       // 입력이 누락된 경우 알림. 모두 입력해야 함.
       alert('제목과 내용, 책 정보를 모두 입력해주세요.');
     }
   };
+
 
   const handleSaveDraft = () => {
     // 임시 저장 로직 추가

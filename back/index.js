@@ -35,6 +35,27 @@ app.use((req, res, next) => {
 });
 
 
+//저장 구현
+// /api/savePost 로 포스트 정보를 데이터베이스에 저장하기
+app.post('/api/postpage', (req, res) => {
+  const postData = req.body;
+
+  // SQL 쿼리 실행
+  connection.query(
+    "INSERT INTO posts (postID, body, UID, status, create_at, isbn) VALUES (?, ?, ?, ?, ?, ?)",
+    [postData.postId, postData.body, postData.UID, postData.status, new Date(), postData.isbn],
+    (error, results) => {
+      if (error) {
+        console.error('Error inserting post:', error);
+        res.status(500).json({ status: 'error', message: '포스트를 저장하는 중 오류가 발생했습니다.' });
+      } else {
+        console.log('Post inserted successfully');
+        res.json({ status: 'success', message: '포스트가 성공적으로 저장되었습니다.' });
+      }
+    }
+  );
+});
+
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
   let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn FROM posts ORDER BY weight;';
