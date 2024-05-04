@@ -43,7 +43,7 @@ function PostPage() {
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
         // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
-        const postId = `${year+month+day}${hours}${minutes+seconds}`;
+        const postId = `${month}${day}${hours}${minutes}${seconds}`;
         alert('포스팅 되었습니다.');
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
