@@ -1,15 +1,6 @@
 {
-<<<<<<< HEAD
     "host":"moonhyang.chzxmvj9mbkq.ap-northeast-2.rds.amazonaws.com",
     "user":"admin",
     "password":"moonhyang43",
     "database":"moonhyang"
-  }
-  
-=======
-  "host":"moonhyang.chzxmvj9mbkq.ap-northeast-2.rds.amazonaws.com",
-  "user":"admin",
-  "password":"moonhyang43",
-  "database":"moonhyang"
 }
->>>>>>> 0d7a276b556846e0d808810dd6399f9c28dd241e
