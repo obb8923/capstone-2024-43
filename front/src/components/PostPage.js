@@ -15,6 +15,8 @@ function PostPage() {
 
   const [editorData, setEditorData] = useState('');
   const [title, setTitle] = useState('');
+  const [bookSearch, setBookSearch] = useState('');
+
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -41,18 +43,44 @@ function PostPage() {
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
         // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
-        const postId = `${year}${month}${day}${hours}${minutes}${seconds}`;
+        const postId = `${month}${day}${hours}${minutes}${seconds}`;
         alert('포스팅 되었습니다.');
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
 
-        const htmlContent = editorData;
-    
-        navigate(`/post/${postId}`, {
-          state: {
-            title, 
-            editorData: htmlContent 
+        const exam = '000000';
+
+        //저장 구현 시작.
+        const postData = {
+          postId: postId,
+          body: title + editorData,
+          UID: year, 
+          status: month, 
+          create_at: minutes, 
+          isbn: exam,
+        };
+  
+        // 서버에 데이터 전송
+        fetch('/api/postpage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify(postData),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert('포스팅 되었습니다.');
+            // 포스팅이 완료되면 페이지 이동 또는 다른 작업 수행
+            navigate(`/post/${postId}`);
+          } else {
+            alert('포스팅에 실패했습니다.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('서버와의 통신 중 오류가 발생했습니다.');
         });
       }
     } else {
@@ -61,9 +89,14 @@ function PostPage() {
     }
   };
 
+
   const handleSaveDraft = () => {
     // 임시 저장 로직 추가
     console.log('Draft Saved');
+  };
+
+  const handleBookSearchChange = (event) => {
+    setBookSearch(event.target.value);
   };
 
   return (
@@ -75,6 +108,13 @@ function PostPage() {
           value={title}
           onChange={handleTitleChange}
           className="title-input"
+        />
+        <input
+          type="text"
+          placeholder="책 검색..."
+          value={bookSearch}
+          onChange={handleBookSearchChange}
+          className="book-search-input"
         />
         <div className="button-container">
           <button className="post-button" onClick={handleSaveDraft}>임시 저장</button>
