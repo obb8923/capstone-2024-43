@@ -2,13 +2,14 @@ import ScrollView from "./ScrollView";
 import styles from "../css/PostViewPage.module.css";
 import React from 'react';
 import { useEffect,useState } from 'react';
-import { useLocation,Link } from 'react-router-dom';
-import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
+import { useLocation,Link, json } from 'react-router-dom';
+//import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
   
   const location = useLocation();
-  const {postID} = location.state; 
+  const { state } = location;
+  const postId = state ? state.postId : null; // state가 null이 아닌지 확인 
   const [blurBoxDisplay,setBlurBoxDisplay] = useState("flex");
   const [buttonDisplay,setButtonDisplay] = useState("block");
   const[data,setData]=useState({});
@@ -16,15 +17,19 @@ function PostViewPage() {
   useEffect(()=>{
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
     changeBlurBoxState();//blurBox state변경
-    fetch(`http://localhost:8080/api/post/${postID}`)
-    .then(res=>res.json())
-    .then(json=>{
-      console.log(json[0]);
-      setData(json[0]);
-    })
-    .catch(error=>console.log(error))
-  },[postID])
+    if (postId) { // postID가 존재하는 경우에만 fetch 요청 보냄
+      fetch(`http://localhost:8080/api/post/${postId}`)
+        .then(res => res.json())
+        .then(json => {
+          console.log(json[0]);
+          setData(json[0]);
+        })
+        .catch(error => console.log(error));
+    }
+  }, [postId]);
   
+  //console.log(data.body);
+
   function changeBlurBoxState(){
     setBlurBoxDisplay(blurBoxDisplay==="flex"?"none":"flex");
     setButtonDisplay(buttonDisplay==="block"?"none":"block");
@@ -33,6 +38,10 @@ function PostViewPage() {
   }
   return (
     <>
+    <div>
+      {/*parse(data.body)*/}
+      {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 <div dangerouslySetInnerHTML={{ __html: data.body }} /> */}
+    </div>
     <article>
     <div className={styles.postBox}>
       {data.body}
