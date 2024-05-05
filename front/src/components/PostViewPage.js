@@ -9,10 +9,13 @@ function PostViewPage() {
   
   const location = useLocation();
   const {postID} = location.state; 
+  const [blurBoxDisplay,setBlurBoxDisplay] = useState("flex");
+  const [buttonDisplay,setButtonDisplay] = useState("block");
   const[data,setData]=useState({});
   //postID로 글 찾아오기~
   useEffect(()=>{
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
+    changeBlurBoxState();//blurBox state변경
     fetch(`http://localhost:8080/api/post/${postID}`)
     .then(res=>res.json())
     .then(json=>{
@@ -21,10 +24,12 @@ function PostViewPage() {
     })
     .catch(error=>console.log(error))
   },[postID])
-  //const { title, editorData } = location.state; // PostPage에서 전달된 데이터 가져오기
-  function offBlur(){
-    document.documentElement.style.setProperty('--blurBox-display','none');
-    document.documentElement.style.setProperty('--button-display','none');
+  
+  function changeBlurBoxState(){
+    setBlurBoxDisplay(blurBoxDisplay==="flex"?"none":"flex");
+    setButtonDisplay(buttonDisplay==="block"?"none":"block");
+    document.documentElement.style.setProperty('--blurBox-display',blurBoxDisplay);
+    document.documentElement.style.setProperty('--button-display',buttonDisplay);
   }
   return (
     <>
@@ -37,7 +42,7 @@ function PostViewPage() {
 
     <div className={styles.bookInfoBox}>
       <div className={styles.blurBox}>
-        <button onClick={offBlur}>책 정보 확인하기</button>
+        <button onClick={changeBlurBoxState}>책 정보 확인하기</button>
       </div>
       <div className={styles.bookImg}>
         <img src="" alt="bookImg"></img>

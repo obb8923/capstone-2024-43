@@ -67,6 +67,24 @@ app.post('/api/filter', (req, res) => {
   res.json({ status: 'success', message: `Filter received: ${filter}` });
 });
 
+app.post('/api/signIn', (req, res) => {
+  const {id,password} = req.body;
+  console.log('Received data:', req.body);
+  connection.query('SELECT * FROM users WHERE mail=? and password=? ',[id,password],(error,result)=>{
+    if(error){
+      res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
+    }
+    if(result.length==0){// signIn 실패
+      res.status(401).json({ error: '잘못된 사용자 ID 또는 비밀번호', isUserExist: false });
+    }
+    else{//SignIn성공    
+      res.json({isUserExist:true});
+    }
+  });
+});
+
+
+
 
   //react에서 route 사용하기 - 맨 밑에 둘 것
 app.get('*', function (req, res) {

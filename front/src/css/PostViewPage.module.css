@@ -1,7 +1,6 @@
 html{
-    --button-display:block;
     --blurBox-display:flex;
-
+    --button-display:block;
 }
 .postBox{
     /* border: solid 1px #000 ; */
