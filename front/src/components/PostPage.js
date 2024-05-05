@@ -44,7 +44,6 @@ function PostPage() {
 
         // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
         const postId = `${month}${day}${hours}${minutes}${seconds}`;
-        alert('포스팅 되었습니다.');
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
 
@@ -53,11 +52,12 @@ function PostPage() {
         //저장 구현 시작.
         const postData = {
           postId: postId,
-          body: title + editorData,
+          body: editorData,
           UID: year, 
           status: month, 
           create_at: minutes, 
           isbn: exam,
+          title: title,
         };
   
         // 서버에 데이터 전송
@@ -67,6 +67,7 @@ function PostPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(postData),
+          title: JSON.stringify(postData),
         })
         .then(response => response.json())
         .then(data => {

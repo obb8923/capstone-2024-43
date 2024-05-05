@@ -20,7 +20,7 @@ function ScrollView() {//무한스크롤
           .then(json=>{
             const newFragments = [];
             for (let i = index; i < index + count; i++) {
-              newFragments.push(<PostFragment key={i} postID={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+              newFragments.push(<PostFragment key={i} postId={json[i].postId} post={json[i].body}/>);//postID만 가지고 검색할 예정
             }
             setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
             index+=count;}

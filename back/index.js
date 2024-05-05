@@ -42,8 +42,8 @@ app.post('/api/postpage', (req, res) => {
 
   // SQL 쿼리 실행
   connection.query(
-    "INSERT INTO posts (postID, body, UID, status, create_at, isbn) VALUES (?, ?, ?, ?, ?, ?)",
-    [postData.postId, postData.body, postData.UID, postData.status, new Date(), postData.isbn],
+    "INSERT INTO posts (postID, body, UID, status, create_at, isbn, title) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [postData.postId, postData.body, postData.UID, postData.status, new Date(), postData.isbn, postData.title],
     (error, results) => {
       if (error) {
         console.error('Error inserting post:', error);
@@ -58,7 +58,7 @@ app.post('/api/postpage', (req, res) => {
 
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
-  let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn FROM posts ORDER BY weight;';
+  let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,title FROM posts ORDER BY weight;';
   connection.query(query, (error, results) => {
     if (error) {
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
