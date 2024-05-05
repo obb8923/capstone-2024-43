@@ -6,26 +6,29 @@ import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소�
 
 function PostViewPage() {
   const location = useLocation();
-  const { state } = location;
-  const postId = state ? state.postId : null; // state가 null이 아닌지 확인
-  const [data, setData] = useState({});
+  const {postID} = location.state; 
+  const [blurBoxDisplay,setBlurBoxDisplay] = useState("flex");
+  const [buttonDisplay,setButtonDisplay] = useState("block");
+  const[data,setData]=useState({});
+  //postID로 글 찾아오기~
+  useEffect(()=>{
+    window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
+    changeBlurBoxState();//blurBox state변경
+    fetch(`http://localhost:8080/api/post/${postID}`)
+    .then(res=>res.json())
+    .then(json=>{
+      console.log(json[0]);
+      setData(json[0]);
+    })
+    .catch(error=>console.log(error))
+  },[postID])
+  
+  function changeBlurBoxState(){
+    setBlurBoxDisplay(blurBoxDisplay==="flex"?"none":"flex");
+    setButtonDisplay(buttonDisplay==="block"?"none":"block");
+    document.documentElement.style.setProperty('--blurBox-display',blurBoxDisplay);
+    document.documentElement.style.setProperty('--button-display',buttonDisplay);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' }); // 화면 맨 위로 이동
-    if (postId) { // postID가 존재하는 경우에만 fetch 요청 보냄
-      fetch(`http://localhost:8080/api/post/${postId}`)
-        .then(res => res.json())
-        .then(json => {
-          console.log(json[0]);
-          setData(json[0]);
-        })
-        .catch(error => console.log(error));
-    }
-  }, [postId]);
-
-  function offBlur() {
-    document.documentElement.style.setProperty('--blurBox-display', 'none');
-    document.documentElement.style.setProperty('--button-display', 'none');
   }
 
   return (
@@ -36,10 +39,9 @@ function PostViewPage() {
           {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 */}
         </div>
       </article>
-
-      <div className={styles.bookInfoBox}>
-        <div className={styles.blurBox}>
-          <button onClick={offBlur}>책 정보 확인하기</button>
+    <div className={styles.bookInfoBox}>
+      <div className={styles.blurBox}>
+        <button onClick={changeBlurBoxState}>책 정보 확인하기</button>
         </div>
         <div className={styles.bookImg}>
           <img src="" alt="bookImg"></img>
