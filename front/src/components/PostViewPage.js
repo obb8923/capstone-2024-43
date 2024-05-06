@@ -36,6 +36,7 @@ function PostViewPage() {
     document.documentElement.style.setProperty('--blurBox-display',blurBoxDisplay);
     document.documentElement.style.setProperty('--button-display',buttonDisplay);
   }
+  
   return (
     <>
     <div>

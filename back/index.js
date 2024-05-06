@@ -59,12 +59,11 @@ app.post('/api/postpage', (req, res) => {
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
   let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,title FROM posts ORDER BY weight;';
-  connection.query(query, (error, results) => {
+  connection.query(query, (error, result) => {
     if (error) {
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     } else {
-      //console.log(results);
-      res.json(results);
+      res.json(result);
     }
   });
 });
@@ -81,13 +80,27 @@ app.get('/api/post/:postId',(req,res)=>{
   });
 });
 
+//filter정보 받아오기
 app.post('/api/filter', (req, res) => {
-  const filter = req.body;
+  const {literature,history,science,art,language,philosophy}= req.body;
+  const UID = req.body.UID;
+  const filter = [literature,history,science,art,language,philosophy];
+  const filter_db = filter.map(value=>value?1:0).join("");
   console.log('Received filter:', req.body);
-  // 예시 응답
-  res.json({ status: 'success', message: `Filter received: ${filter}` });
+  console.log('filter_db: ',filter_db);
+
+  connection.query('update users set filter=? where UID=?',[filter_db,UID],(error,result)=>{
+    if(error){
+      res.status(500).json({ error: '데이터베이스에 필터를 저장하는 중 오류가 발생했습니다.' });
+    }else{
+      res.json({result});
+
+    }
+  })
+  
 });
 
+//signIn 기능
 app.post('/api/signIn', (req, res) => {
   const {id,password} = req.body;
   console.log('Received data:', req.body);
@@ -99,7 +112,7 @@ app.post('/api/signIn', (req, res) => {
       res.status(401).json({ error: '잘못된 사용자 ID 또는 비밀번호', isUserExist: false });
     }
     else{//SignIn성공    
-      res.json({isUserExist:true});
+      res.json({isUserExist:true,UID:result[0].UID});
     }
   });
 });

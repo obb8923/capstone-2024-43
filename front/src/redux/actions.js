@@ -1,6 +1,7 @@
-export const signIn = () => {
+export const signIn = (UID) => {
     return {
-        type: 'signIn'
+        type: 'signIn',
+        UID:UID
     };
 };
 
