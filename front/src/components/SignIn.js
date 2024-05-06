@@ -33,7 +33,7 @@ function SignIn(){
         .then(data => {
             console.log('Success:', data);
             if(data.isUserExist){//로그인 성공
-                dispatch(signIn());//signIn 상태 변경
+                dispatch(signIn(data.UID));//signIn 상태 변경
                 navigate('/');//홈으로 이동
             }else{//로그인 실패
                 setIsSignInFailed(true);

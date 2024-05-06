@@ -99,7 +99,7 @@ app.post('/api/signIn', (req, res) => {
       res.status(401).json({ error: '잘못된 사용자 ID 또는 비밀번호', isUserExist: false });
     }
     else{//SignIn성공    
-      res.json({isUserExist:true});
+      res.json({isUserExist:true,UID:result[0].UID});
     }
   });
 });

@@ -128,7 +128,6 @@ function NavButton(props) {
             <label><input name="language" type="checkbox" checked={checkboxStates.language} onChange={handleCheckboxChange} />언어</label>
             <label><input name="philosophy" type="checkbox" checked={checkboxStates.philosophy} onChange={handleCheckboxChange} />철학,심리,윤리</label>
             <input type="submit" value="확인"/>
-
           </form>
         </Modal>
       </div>
