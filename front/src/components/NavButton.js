@@ -32,7 +32,10 @@ function NavButton(props) {
       } else if (nav === "logo"){
          navigate(`/`);
       } else {
-         navigate(`/${nav}`);
+        if(UID==='')openModal();
+        else navigate(`/${nav}`);
+        
+         
       }
   } 
 
@@ -152,7 +155,7 @@ function NavButton(props) {
         contentLabel="Example Modal"
       >
         <button onClick={()=>{closeModal(2)}}>close</button>
-        <h3>로그인을 하여 필터를 적용해보세요</h3>
+        <h3>로그인을 하여 기능을 사용해보세요</h3>
         <button onClick={toSignIn}>로그인하기</button>
       </Modal>
     </div>
