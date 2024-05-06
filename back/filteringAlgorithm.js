@@ -7,17 +7,16 @@
 */
 
 /*
-//MYSQL, api 연결
-import { requestAladin } from './bookAPI/aladin.js'
-
-const mysql = require('mysql');
-
+//MYSQL 연결
+const mysql = require('mysql2');
+var db_config  = require('./db-config.json');
 const connection = mysql.createConnection({
-  host:aaa,
-  user:aaa,
-  password:aaa,
-  database:aaa,
+  host:db_config.host,
+  user:db_config.user,
+  password:db_config.password,
+  database:db_config.database,
 });
+connection.connect();
 
 connection.connect((err) => {
   if (err) {
@@ -27,7 +26,7 @@ connection.connect((err) => {
 });
 
 //50자 이상인 리뷰들만 작성 시간 순으로 가져옴
-const query = 'SELECT * FROM 테이블이름 WHERE LENGTH(리뷰 데이터) >= 50 ORDER BY 작성시간 DESC LIMIT 100';
+const query = 'SELECT * FROM 테이블이름 WHERE LENGTH(리뷰 데이터) >= 50 ORDER BY 작성시간 DESC LIMIT 50';
 
 connection.query(query, (error, results, fields) => {
     if (error) throw error;
@@ -38,7 +37,7 @@ connection.query(query, (error, results, fields) => {
 
     for (let i = 0; i < results.length; i++) {
         if (results[i]['리뷰 데이터']) {
-            results[i][리뷰 데이터'] = results[i]['리뷰 데이터'].replace(regex, '*');
+            results[i][리뷰 데이터'] = results[i]['리뷰 데이터'].replace(regex, '***');
         }
     }
 
