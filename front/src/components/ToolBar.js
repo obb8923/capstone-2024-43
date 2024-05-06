@@ -22,7 +22,7 @@ function ToolBar(){
             {/*툴바의 오른쪽 구역*/}
             <div id={styles.rBox} className={styles.box}>
             <NavButton nav={"post"}/>
-            <NavButton nav={"library"}/>
+            {/* <NavButton nav={"library"}/> */}
             <NavButton nav={"more"}/>
             </div>
         </div>    

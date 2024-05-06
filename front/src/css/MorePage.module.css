@@ -1,0 +1,48 @@
+.box{
+    width:100vw;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border:10px solid red;
+}
+.buttonBox{
+    width:100%;
+    height: 10vh;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    border:5px solid blue;
+
+}
+.buttonBox div{
+    width:30px;
+    aspect-ratio: 1/1;
+    background-color: blueviolet;
+}
+.libraryBox{
+    width:100%;
+    min-height: 25vh;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    border:5px solid black;
+
+    position:relative;
+
+}
+.libraryBox div{
+    width:30px;
+    height:20vh;
+    border:0.5px solid green;
+
+}
+.libraryBox h2{
+    position: absolute;
+    top:0px;
+    left:1px;
+    margin:0px;
+}
