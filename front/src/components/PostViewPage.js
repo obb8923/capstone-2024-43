@@ -2,14 +2,11 @@ import ScrollView from "./ScrollView";
 import styles from "../css/PostViewPage.module.css";
 import React from 'react';
 import { useEffect,useState } from 'react';
-import { useLocation,Link } from 'react-router-dom';
-//import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
+import { useParams,Link } from 'react-router-dom';
+import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
-  
-  const location = useLocation();
-  const { state } = location;
-  const postId = state ? state.postId : null; // state가 null이 아닌지 확인 
+  const {postId}=useParams();
   const [blurBoxDisplay,setBlurBoxDisplay] = useState("flex");
   const [buttonDisplay,setButtonDisplay] = useState("block");
   const[data,setData]=useState({});
@@ -41,7 +38,7 @@ function PostViewPage() {
     <article>
     <div className={styles.postBox}>
       {console.log(data.body)}
-      {data.body}
+      {parse(data.body)}
       {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 */}
     </div>
     </article>
