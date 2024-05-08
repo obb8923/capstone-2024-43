@@ -2,7 +2,7 @@ import ScrollView from "./ScrollView";
 import styles from "../css/PostViewPage.module.css";
 import React from 'react';
 import { useEffect,useState } from 'react';
-import { useLocation,Link, json } from 'react-router-dom';
+import { useLocation,Link } from 'react-router-dom';
 //import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
@@ -21,7 +21,7 @@ function PostViewPage() {
       fetch(`http://localhost:8080/api/post/${postId}`)
         .then(res => res.json())
         .then(json => {
-          console.log(json[0]);
+          console.log("data:",json[0]);
           setData(json[0]);
         })
         .catch(error => console.log(error));
@@ -45,6 +45,7 @@ function PostViewPage() {
     </div>
     <article>
     <div className={styles.postBox}>
+      {console.log(data.body)}
       {data.body}
       {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 */}
     </div>

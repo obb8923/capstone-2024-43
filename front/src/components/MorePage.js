@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "../css/MorePage.module.css";
-
+import MoreButton from "./MoreButton";
 function MorePage() {
     const UID = useSelector(state => state.UID);
     const [posts, setPosts] = useState([]); 
 
-    useEffect(() => {
+    useEffect(() => {//화면이 렌더 될 때 글 목록을 가져온다.
         if (UID !== '') {
             fetch("/api/library", {
                 method: "POST",
@@ -30,8 +30,9 @@ function MorePage() {
             <div className={styles.box}>
                 {/* Functional buttons */}
                 <div className={styles.buttonBox}>
-                    {/* 4 elements will be included like this */}
+                    {/* 정보수정,공지사항,문의하기,로그아웃 */}
                     <div></div><div></div><div></div><div></div>
+                   
                 </div>
                 {/* Written Posts */}
                 <div className={styles.libraryBox}>
