@@ -7,7 +7,7 @@ import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소�
 
 function PostViewPage() {
   const {postId}=useParams();
-  const [blurBoxDisplay,setBlurBoxDisplay] = useState("flex");
+  const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
   const[data,setData]=useState({});
   //postID로 글 찾아오기~
@@ -27,9 +27,9 @@ function PostViewPage() {
   
 
   function changeBlurBoxState(){
-    setBlurBoxDisplay(blurBoxDisplay==="flex"?"none":"flex");
+    setbookInfoContainerDisplay(bookInfoContainerDisplay==="flex"?"none":"flex");
     setButtonDisplay(buttonDisplay==="block"?"none":"block");
-    document.documentElement.style.setProperty('--blurBox-display',blurBoxDisplay);
+    document.documentElement.style.setProperty('--bookInfoContainer-display',bookInfoContainerDisplay);
     document.documentElement.style.setProperty('--button-display',buttonDisplay);
   }
   
@@ -44,9 +44,8 @@ function PostViewPage() {
     </article>
 
     <div className={styles.bookInfoBox}>
-      <div className={styles.blurBox}>
         <button onClick={changeBlurBoxState}>책 정보 확인하기</button>
-      </div>
+        <div className={styles.bookInfoContainer}>
       <div className={styles.bookImg}>
         <img src="" alt="bookImg"></img>
       </div>
@@ -55,8 +54,9 @@ function PostViewPage() {
           <li>제목</li>
           <li>작가</li>
           <li>설명</li>
-          <li><Link>서점으로 이동</Link></li>
+          {/* <li><Link>서점으로 이동</Link></li> */}
         </ul>
+      </div>
       </div>
     </div>
     <hr className={styles.line}></hr>
