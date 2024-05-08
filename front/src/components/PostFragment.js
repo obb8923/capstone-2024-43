@@ -6,7 +6,7 @@ import parse from 'html-react-parser';
 function PostFragment(props){
     const navigate = useNavigate();
     return (<>
-    <article onClick={() =>{navigate(`/post/${props.postId}`,{state:{postId:props.postId}})}}>
+    <article onClick={() =>{navigate(`/post/${props.postId}`)}}>
     <div className={styles.fragmentBody}>
         {parse(props.post)}
     </div>
