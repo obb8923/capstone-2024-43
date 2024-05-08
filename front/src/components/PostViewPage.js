@@ -2,7 +2,8 @@ import ScrollView from "./ScrollView";
 import styles from "../css/PostViewPage.module.css";
 import React from 'react';
 import { useEffect,useState } from 'react';
-import { useLocation,Link, json } from 'react-router-dom';
+import { useLocation,Link, json, Route, Routes } from 'react-router-dom';
+import EmptyPage from './EmptyPage';
 //import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
@@ -25,6 +26,16 @@ function PostViewPage() {
           setData(json[0]);
         })
         .catch(error => console.log(error));
+    }
+    else {
+      return (
+      <>
+        <Routes>
+          <Route path="*" element={<EmptyPage />} />
+        </Routes>
+      </>
+    );
+
     }
   }, [postId]);
   

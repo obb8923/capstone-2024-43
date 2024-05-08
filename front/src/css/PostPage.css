@@ -1,27 +1,23 @@
 .post-page-container {
-  display: flex;
+  display: auto;
   flex-direction: column;
 }
 
 .title-input {
-  flex: 1; 
+  display: auto;
   border: 1px solid white;
   font-size: 24px;
   margin-right: 20px; 
-  margin-left: 20px; 
+  margin-left: 20px;
+  height: 70px; 
 }
 
 .book-search-input {
-  flex: 1; 
+  display: auto;
   border: 1px solid white;
   font-size: 24px;
-  margin-right: 20px; 
-}
-
-.title-button-container {
-  display: flex;
-  align-items: center;
-  height: 70px; 
+  margin-right: 20px;
+  margin-top: 60px; 
 }
 
 /*정해진 .ck-editor__editable를 써야 content style을 자유롭게 편집 가능.*/
@@ -29,15 +25,16 @@
   margin-left: auto;
   margin-right: auto;
   width: 98.5%;
-  height: 500px; 
+  height: 350px; 
 }
 
 .button-container {
-  display: flex;
+  display: auto;
 }
 
 .post-button {
   flex: 1;
+  align-items: center;
   border: 1px solid white;
   background-color: gainsboro;
   margin-right: 10px;
