@@ -28,7 +28,6 @@ function PostViewPage() {
     }
   }, [postId]);
   
-  //console.log(data.body);
 
   function changeBlurBoxState(){
     setBlurBoxDisplay(blurBoxDisplay==="flex"?"none":"flex");
@@ -39,10 +38,6 @@ function PostViewPage() {
   
   return (
     <>
-    <div>
-      {/*parse(data.body)*/}
-      {/* data.body 에 html 정보가 저장될 예정, 정보를 변환시켜야함 <div dangerouslySetInnerHTML={{ __html: data.body }} /> */}
-    </div>
     <article>
     <div className={styles.postBox}>
       {data.body}
