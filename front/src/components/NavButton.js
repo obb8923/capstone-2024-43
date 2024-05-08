@@ -25,19 +25,25 @@ function NavButton(props) {
   const nav = props.nav; //{filter , post , library , more , logo}
   const navigate = useNavigate();
    
-  // 페이지 이동 함수
-  function switchPage() {
-      if (nav === "filter") {
-         return;
-      } else if (nav === "logo"){
-         navigate(`/`);
-      } else {
-        if(UID==='')openModal();
-        else navigate(`/${nav}`);
-        
-         
-      }
+  // NavButton click handler
+  function onclickHandler() {
+    if (nav === "filter" && UID!=="") {
+      openModal();
+      return;
+    } else if (nav === "logo"){
+       navigate(`/`);
+    } else {//비회원 post 기능 허용할지 의논필요 
+       if(UID==='')openModal2();
+       else navigate(`/${nav}`);
+    }
   } 
+  function openModal(){
+    console.log("open modal ")
+    setIsOpen(true);}
+  function openModal2() {
+    console.log("signIn please..")
+    setIsOpen2(true);
+  }
 
   function selectImage(){//nav 에 따라 이미지 변경 require로 동적 처리 하려했는데 실패해서 정적처리한 후 일일히 지정
     if(nav==='filter') return filterImg;
@@ -61,16 +67,7 @@ function NavButton(props) {
 
   }, []);
    
-  function openModal() {
-    if(UID===''){
-      console.log("signIn please..")
-      setIsOpen2(true);
-    }
-    else if(nav==='filter'){
-      console.log("open modal ")
-      setIsOpen(true);
-    } 
-  }
+  
   function afterOpenModal() {
        //modal 이 열리고 난 이후 적용시킬 것을 적으면 된다~
        //subtitle.style.color = '#f00';
@@ -115,12 +112,13 @@ function NavButton(props) {
         console.error('Error:', error);
       });
   };
+
   const toSignIn = ()=>{
     navigate('/signIn');
   }
   return (
     <>
-    <span id={styles.buttonBody} onClick={()=>{switchPage();openModal();}}>
+    <span id={styles.buttonBody} onClick={onclickHandler}>
        <img id={styles.img}src={image} alt={nav}/>
        <span id={styles.buttonName}>{nav==='logo'?null:nav}</span>
     </span>
@@ -131,7 +129,7 @@ function NavButton(props) {
         onAfterOpen={afterOpenModal}
         onRequestClose={()=>{closeModal(1)}}
         style={customStyles}
-        contentLabel="Example Modal"
+        contentLabel="Filter Modal"
       >
         <button onClick={()=>{closeModal(1)}}>close</button>
         <h2 ref={(_subtitle) => (subtitle = _subtitle)}>{subtitle}</h2>
@@ -152,7 +150,7 @@ function NavButton(props) {
         isOpen={isOpen2}
         onRequestClose={()=>{closeModal(2)}}
         style={customStyles}
-        contentLabel="Example Modal"
+        contentLabel="SignIn Modal"
       >
         <button onClick={()=>{closeModal(2)}}>close</button>
         <h3>로그인을 하여 기능을 사용해보세요</h3>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextEditor from './TextEditor';
 import '../css/PostPage.css';
+import { useSelector } from 'react-redux';
 /*
 editor 라이브러리를 위해 수정함. 
 다음과 같이 설치해야 정상적으로 작동함.
@@ -13,6 +14,7 @@ npm add file:./ckeditor5
 function PostPage() {
   const navigate = useNavigate();
 
+  const UID = useSelector(state => state.UID);
   const [editorData, setEditorData] = useState('');
   const [title, setTitle] = useState('');
   const [bookSearch, setBookSearch] = useState('');
@@ -35,17 +37,19 @@ function PostPage() {
         const currentDate = new Date();
 
         // 연도, 월, 일, 시간, 분, 초를 추출
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const year = currentDate.getFullYear() % 100;
+        const month = String(currentDate.getMonth() + 1);
         const day = String(currentDate.getDate()).padStart(2, '0');
         const hours = String(currentDate.getHours()).padStart(2, '0');
         const minutes = String(currentDate.getMinutes()).padStart(2, '0');
         const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
         // 연도, 월, 일, 시간, 분, 초를 조합하여 postId 생성
-        const postId = `${day}${hours}${minutes}${seconds}`;
+        const postId = `${UID}${year}${month}${day}${hours}${minutes}${seconds}`;
         //postId 시간을 받아서 ->... 
         // 나갔다가 다시 들어오면 내용 없음.
+
+        const cr_at = year + '-' + month + '-' + day;
 
         const exam = '000000';
 
@@ -53,9 +57,9 @@ function PostPage() {
         const postData = {
           postId: postId,
           body: editorData,
-          UID: year, 
-          status: month, 
-          create_at: minutes, 
+          UID: UID, 
+          status: 'posting', 
+          create_at: cr_at, 
           isbn: exam,
           title: title,
         };
@@ -102,7 +106,6 @@ function PostPage() {
 
   return (
     <div className="post-page-container">
-      <div className="title-button-container">
         <input
           type="text"
           placeholder="제목을 입력하세요..."
@@ -110,20 +113,19 @@ function PostPage() {
           onChange={handleTitleChange}
           className="title-input"
         />
-        <input
+      <div className="ck-editor__editable">
+         <TextEditor setData={setEditorData}/>
+      </div>
+      <input
           type="text"
           placeholder="책 검색..."
           value={bookSearch}
           onChange={handleBookSearchChange}
           className="book-search-input"
         />
-        <div className="button-container">
+      <div className="button-container">
           <button className="post-button" onClick={handleSaveDraft}>임시 저장</button>
           <button className="post-button" onClick={handlePost}>포스팅</button>
-        </div>
-      </div>
-      <div className="ck-editor__editable">
-         <TextEditor setData={setEditorData}/>
       </div>
     </div>
   );
