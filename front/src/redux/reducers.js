@@ -1,7 +1,7 @@
 
 const initialState = {
     isSignIn:false,
-    UID:''
+    UID:'0'
 };
 
 function isSignInReducer(state = initialState, action) {

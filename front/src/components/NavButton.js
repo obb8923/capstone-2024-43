@@ -84,7 +84,8 @@ function NavButton(props) {
       language: false,
       philosophy: false,
       UID:UID
-  });
+ });
+  
   // 체크박스 상태 변경 핸들러
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -112,6 +113,8 @@ function NavButton(props) {
         console.error('Error:', error);
       });
   };
+
+
 
   const toSignIn = ()=>{
     navigate('/signIn');

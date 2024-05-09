@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
-import styles from "../css/ScrollView.module.css"
+import styles from "../css/ScrollView.module.css";
 function ScrollView() {//무한스크롤
   const count = 20;
   let index =0;
@@ -15,6 +15,7 @@ function ScrollView() {//무한스크롤
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
+
           fetch("http://localhost:8080/api/ScrollView")
           .then(res=>res.json())
           .then(json=>{

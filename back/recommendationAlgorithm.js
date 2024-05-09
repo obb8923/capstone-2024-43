@@ -216,6 +216,7 @@ module.exports = {
     get_tfidf,
     cosine_similarity,
     similarity_test,
+    runQueries,
 };
 
 let excludedPostIDs = [];
@@ -309,8 +310,6 @@ async function runQueries() {
         connection.end();
     }
 }
-
-runQueries();
 /*
 //1번 리뷰 데이터
 let document = [];
