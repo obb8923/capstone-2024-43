@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());//post요청 body parser
-
+const run = require("./recommendationAlgorithm");
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
 app.use(cors()) // cors() middleware 사용
@@ -127,8 +127,10 @@ app.post('/api/library',(req,res)=>{
     }
   })
 })
+//console.log(run.runQueries());
 
-
+app.get('/api/recommend',(req,res)=>{
+});
   //react에서 route 사용하기 - 맨 밑에 둘 것
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, '/../front/build/index.html'));
