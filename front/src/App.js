@@ -25,6 +25,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/post" element={<PostPage />} />
+        <Route path="/post/edit/:postId" element={<PostPage />} />
         <Route path="/more" element={<MorePage />} />
         <Route path="/post/:postId" element={<PostViewPage />} />
         <Route path="/signIn" element={<SignIn />} />

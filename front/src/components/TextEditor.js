@@ -1,7 +1,8 @@
+import React, { useEffect } from 'react';
 import  Editor  from 'ckeditor5-custom-build/build/ckeditor';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 
-const TextEditor = ({setData}) => {
+const TextEditor = ({initialData, setData}) => {
     const editorConfig = {
 		toolbar: {
 			items: [
@@ -50,10 +51,15 @@ const TextEditor = ({setData}) => {
         }
     };
 
+	useEffect(() => {
+        setData(initialData);
+    }, [initialData, setData]);
+
     return (
         <CKEditor 
         editor={Editor}
         config={editorConfig}
+		data={initialData}
         onChange={(event, editor) => {
             const data = editor.getData();
             setData(data); // setData(data)를 통해 실제로 에디터에서 작성한 내용이 HTML 형식의 문자열로 전달.
