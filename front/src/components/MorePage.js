@@ -31,8 +31,10 @@ function MorePage() {
                 {/* Functional buttons */}
                 <div className={styles.buttonBox}>
                     {/* 정보수정,공지사항,문의하기,로그아웃 */}
-                    <div></div><div></div><div></div><div></div>
-                   
+                    <MoreButton nav='modifyInfo'/>
+                    <MoreButton nav='announcement'/>
+                    <MoreButton nav='contactUs'/>
+                    <MoreButton nav='signOut'/>                   
                 </div>
                 {/* Written Posts */}
                 <div className={styles.libraryBox}>

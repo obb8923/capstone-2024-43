@@ -85,10 +85,13 @@ app.get('/api/ScrollView', (req, res) => {
 // /api/post/{postid} 로 post 정보 보내기
 app.get('/api/post/:postId',(req,res)=>{
   const postId = req.params.postId;
-  connection.query('SELECT * FROM posts WHERE postID=?',[postId],(error,result)=>{
+  const query ="SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts LEFT JOIN books ON filtered_posts.isbn = books.isbn UNION DISTINCT SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts RIGHT JOIN books ON filtered_posts.isbn = books.isbn";
+  connection.query(query,[postId,postId],(error,result)=>{
     if(error){
+      console.log(error);
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }else{      
+      console.log(result);
       res.json(result);
     }
   });

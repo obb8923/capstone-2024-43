@@ -18,7 +18,7 @@
 .buttonBox div{
     width:40px;
     aspect-ratio: 1/1;
-    background-color: blueviolet;
+    /* background-color: blueviolet; */
 }
 .libraryBox{
     width:91vw;
@@ -36,9 +36,17 @@
     border:5px solid darkcyan;
 }
 .postBox{
-    width:30px;
-    height:20vh;
+
+    /* width:30px;
+    height:20vh; */
     border:0.5px solid green;
     align-content: center;
     margin: 1vh ;
+    padding : 1em;
+    writing-mode: vertical-rl;/* 세로글쓰기 */
+    text-orientation: upright; /* 누운 글자들을 수직으로 세우기 */
+    overflow: hidden; /* 넘어가면 안보이게 */
+    height: 17em;     /* div의 높이를 17em으로 제한*/
+    line-height: 1em; /* 각 글자의 세로 높이를 1em으로 설정 */
+    width: 4.5em;       /* 너비도 1em으로 설정하여 글자가 딱 맞게 들어가도록 함 */
 }

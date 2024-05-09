@@ -8,9 +8,10 @@ import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소�
 
 function PostViewPage() {
   const {postId}=useParams();
+  const[data,setData]=useState({});
+  const [_li,set_Li]=useState([]);
   const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
-  const[data,setData]=useState({});
   //postID로 글 찾아오기~
 
   const [bookData, setBookData] = useState({});
@@ -24,9 +25,18 @@ function PostViewPage() {
       fetch(`http://localhost:8080/api/post/${postId}`)
         .then(res => res.json())
         .then(json => {
-          console.log("data:", json[0]);
+          console.log("json[0]:", json[0]);
           setData(json[0]);
           fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기
+          return json[0];
+        })
+        .then((data)=>{
+          console.log("data: ",data);
+          const li_ = [];
+          li_.push(<li>제목: {data.name}</li>);
+          li_.push(<li>작가: {data.author}</li>);
+          li_.push(<input type='hidden' name='q' value={data.name}></input>);
+          set_Li(prev_Li=>[...prev_Li,...li_]);
         })
         .catch(error => console.log(error));
     }
@@ -101,18 +111,18 @@ function PostViewPage() {
 
 
     <div className={styles.bookInfoBox}>
-        <button onClick={changeBlurBoxState}>책 정보 확인하기</button>
+        <button className={styles.stateButton} onClick={changeBlurBoxState}>책 정보 확인하기</button>
         <div className={styles.bookInfoContainer}>
       <div className={styles.bookImg}>
-        <img src="" alt="bookImg"></img>
+        {/* <img src="" alt="bookImg"></img> */}
       </div>
       <div className={styles.bookInfo}>
-        <ul>
-          <li>제목: {bookData.name}</li>
-          <li>작가: {bookData.author}</li>
-          <li>출판사: {bookData.publisher}</li>
-          <li>서점으로 이동: <Link to={bookData.url}>{bookData.url}</Link></li>
+      <form action="https://www.google.com/search" method="get" target="_blank">
+        <ul className={styles.ul}>
+          {_li}
+          <li><button type="submit">책 정보 검색</button></li>
         </ul>
+      </form>
       </div>
       </div>
     </div>
