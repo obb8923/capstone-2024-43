@@ -1,5 +1,5 @@
 html{
-    --blurBox-display:flex;
+    --bookInfoContainer-display:none;
     --button-display:block;
 }
 .postBox{
@@ -17,37 +17,37 @@ html{
     margin:10vh 0;
 }
 .bookInfoBox{
-    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
     width: 40vw;
+    min-height: 20vh;
     border:1px solid black;    
     padding:8px;
     margin: 30px auto;
     overflow: hidden; /* 내부 요소가 벗어나지 않도록 처리 */
-
 }
-
 
 ul{
     list-style-type: none;
 }
-
-.blurBox{
-    position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.5); /* 투명도 설정 */
-  backdrop-filter: blur(5px); /* 블러 효과 */
-  display: var(--blurBox-display);
-  justify-content: center;
-  align-items: center;
-    
+.bookInfoContainer{
+    display: var(--bookInfoContainer-display);
 }
-.blurBox button{
+.stateButton{
     display:var(--button-display);
     margin:auto auto;
+}
+
+.buttoncontainer {
+    display: auto;
+}
+.editButtons {
+    flex: 1;
+    align-items: center;
+    border: 1px solid white;
+    background-color: gainsboro;
+    margin-right: 10px;
+    height: 30px; 
+    width: 100px;
 }

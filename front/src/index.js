@@ -6,6 +6,19 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import store from './redux/store';
 
+import { initializeApp } from 'firebase/app';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAZxph79NBXXjaC4cThTYfAXvTkkG-6ZQY",
+  authDomain: "moonhyang-book.firebaseapp.com",
+  projectId: "moonhyang-book",
+  storageBucket: "moonhyang-book.appspot.com",
+  messagingSenderId: "752268884988",
+  appId: "1:752268884988:web:b0f8b0b47eb689f3431079"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
