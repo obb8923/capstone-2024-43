@@ -5,6 +5,8 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());//post요청 body parser
 const run = require("./recommendationAlgorithm");
+const PostViewPage_Algorithm = require("./bookReviewList");
+
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
 app.use(cors()) // cors() middleware 사용
@@ -36,7 +38,6 @@ app.use((req, res, next) => {
 
 
 //저장 구현
-// /api/savePost 로 포스트 정보를 데이터베이스에 저장하기
 app.post('/api/postpage', (req, res) => {
   const postData = req.body;
 
@@ -54,18 +55,28 @@ app.post('/api/postpage', (req, res) => {
       }
     }
   );
+}); 
+
+
+// DELETE 요청을 받아 포스트를 삭제.
+app.delete('/api/post/:postId', (req, res) => {
+  const postId = req.params.postId;
+  connection.query('DELETE FROM posts WHERE postID = ?', [postId], (error, result) => {
+    if (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).json({ status: 'error', message: '포스트를 삭제하는 중 오류가 발생했습니다.' });
+    } else {
+      console.log('Post deleted successfully');
+      res.json({ status: 'success', message: '포스트가 성공적으로 삭제되었습니다.' });
+    }
+  });
 });
 
 // /api/data 로 posts table 내용 보내기
-app.get('/api/ScrollView', (req, res) => {
-  let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,title FROM posts ORDER BY weight;';
-  connection.query(query, (error, result) => {
-    if (error) {
-      res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
-    } else {
-      res.json(result);
-    }
-  });
+app.get('/api/ScrollView', async(req, res) => {
+  
+  await run.runQueries();
+  res.json(await run.runQueries());
 });
 
 // /api/post/{postid} 로 post 정보 보내기
@@ -82,6 +93,24 @@ app.get('/api/post/:postId',(req,res)=>{
     }
   });
 });
+
+// /api/books/search/:identifier 로 책 검색 결과 보내기
+app.get('/api/books/search/:identifier', (req, res) => {
+  const identifier = req.params.identifier;
+  const searchQuery = `%${identifier}%`; // 입력된 이름 또는 isbn을 포함하는 책 검색
+  connection.query('SELECT * FROM books WHERE name LIKE ? OR isbn LIKE ?', [searchQuery, searchQuery], (error, result) => {
+    if (error) {
+      res.status(500).json({ error: '데이터베이스에서 책 정보를 가져오는 중 오류가 발생했습니다.' });
+    } else {
+      if (result.length > 0) {
+        res.json(result); // 검색된 책 정보 반환
+      } else {
+        res.status(404).json({ error: '해당 이름 또는 ISBN을 포함하는 책을 찾을 수 없습니다.' });
+      }
+    }
+  });
+});
+
 
 //filter정보 받아오기
 app.post('/api/filter', (req, res) => {
@@ -138,3 +167,5 @@ app.get('/api/recommend',(req,res)=>{
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, '/../front/build/index.html'));
 });
+
+console.log(run.runQueries);
