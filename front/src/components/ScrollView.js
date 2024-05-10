@@ -19,6 +19,8 @@ function ScrollView() {//무한스크롤
           fetch("http://localhost:8080/api/ScrollView")
           .then(res=>res.json())
           .then(json=>{
+            console.log(json);
+            console.log(json[1]);
             const newFragments = [];
             for (let i = index; i < index + count; i++) {
               newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정

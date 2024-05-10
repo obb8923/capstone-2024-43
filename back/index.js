@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());//post요청 body parser
 const run = require("./recommendationAlgorithm");
+const PostViewPage_Algorithm = require("./bookReviewList");
 
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
@@ -73,14 +74,7 @@ app.delete('/api/post/:postId', (req, res) => {
 
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', (req, res) => {
-  let query ='SELECT ROW_NUMBER() OVER (ORDER BY DATEDIFF(CURDATE(), create_at) + postID) AS "index",DATEDIFF(CURDATE(), create_at) + postID AS weight,postID,body,UID,status,create_at,isbn,title FROM posts ORDER BY weight;';
-  connection.query(query, (error, result) => {
-    if (error) {
-      res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
-    } else {
-      res.json(result);
-    }
-  });
+  res.json({result : run.runQueries()})
 });
 
 // /api/post/{postid} 로 post 정보 보내기

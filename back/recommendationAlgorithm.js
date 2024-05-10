@@ -332,7 +332,11 @@ async function runQueries() {
     } finally {
         connection.end();
     }
+
+    return post_obj;
 }
+
+console.log(runQueries());
 /*
 //1번 리뷰 데이터
 let document = [];

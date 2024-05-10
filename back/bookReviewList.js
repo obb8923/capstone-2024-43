@@ -6,7 +6,7 @@
 let excludedPostIDs = [];
 let post_obj = [];
 
-async function bookList() {
+async function bookList(post_id) {
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
@@ -24,8 +24,8 @@ async function bookList() {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT * FROM posts WHERE postID NOT IN (${placeholders}) AND postID = @@ ORDER BY create_at DESC LIMIT 20` :
-            `SELECT * FROM posts WHERE postID = @@ ORDER BY create_at DESC LIMIT 20`;
+            `SELECT * FROM posts WHERE postID NOT IN (${placeholders}) AND postID = ? ORDER BY create_at DESC LIMIT 20` :
+            `SELECT * FROM posts WHERE postID = ? ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
         const newPostIDs = result2.map(post => post.postID);
