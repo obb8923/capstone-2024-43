@@ -74,7 +74,10 @@ app.delete('/api/post/:postId', (req, res) => {
 
 // /api/data 로 posts table 내용 보내기
 app.get('/api/ScrollView', async(req, res) => {
-  res.json(await run.runQueries())
+  
+  await run.runQueries();
+  res.json(await run.runQueries());
+
 });
 
 // /api/post/{postid} 로 post 정보 보내기

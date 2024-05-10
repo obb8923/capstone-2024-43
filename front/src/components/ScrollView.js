@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
 import styles from "../css/ScrollView.module.css";
 function ScrollView() {//무한스크롤
-  const count = 20;
+  const count = 7;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
   
