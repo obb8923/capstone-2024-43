@@ -58,7 +58,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
         reviewData[i] = reviewData[i].replace(regex, '*');
     }
 
-    return
+    return reviewData
 }
 
-spoilerFilter(['안녕하세요', '반갑습니다'], ['안녕', '반갑']);
+console.log(spoilerFilter(['안녕하세요', '반갑습니다'], ['안녕', '반갑']));

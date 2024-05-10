@@ -8,11 +8,25 @@
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
 7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
 
-@@@@@@@@@
 문제점 : 
 1. 추천된 리뷰가 20~39개이다.
-2. 결과값 고려X         결과값 -> body(리뷰) UID(작성자 아이디) create_at(작성날짜)
+
+해야할 것 :
+1. 모달에서 카테고리 받아와서 1차 필터링 추가
+2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
+3. 스포일러 필터링 구현
 */
+
+function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
+    const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
+    const regex = new RegExp(pattern, 'gi');
+
+    for (let i = 0; i < reviewData.length; i++) {
+        reviewData[i] = reviewData[i].replace(regex, '*');
+    }
+
+    return reviewData
+}
 
 function tokenizer(document){//모든 단어 추출
     let mecab = require('mecab-ya');
@@ -216,6 +230,7 @@ module.exports = {
     get_tfidf,
     cosine_similarity,
     similarity_test,
+    runQueries,
 };
 
 let excludedPostIDs = [];
@@ -278,13 +293,14 @@ async function runQueries() {
 
             if (result2.length == 0) {
                 condition = false;
+                break;
             }
 
             // 다음 쿼리에서 제외할 postID 목록 업데이트
             const newPostIDs = result2.map(post => post.postID);
             excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
             
-            let data = [];        
+            let data = [];
             data.push(total_document);
 
             for (let i = 0; i < result2.length; i++) {
@@ -292,16 +308,24 @@ async function runQueries() {
             }
 
             //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
+
             let obj = similarity_test(data, 0, result2);
+            let obj2 = [];
             obj.splice(0, 1);
-            
+
             for (let i = 0; i < obj.length; i++) {
-                post_obj.push(obj[i]);
+                for (let j = 0; j < result2.length; j++) {
+                    if (result2[j].body == obj[i].body) {
+                        obj2[i] = result2[j];
+                    }
+                }
             }
-
-            counter++;
+            
+            for (let i = 0; i < obj2.length; i++) {
+                post_obj.push(obj2[i]);
+            }
         }
-
+        counter++;
         console.log('post_obj : ', post_obj);
     } catch (error) {
         throw error;
