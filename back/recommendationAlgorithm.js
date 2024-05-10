@@ -14,6 +14,7 @@
 해야할 것 :
 1. 모달에서 카테고리 받아와서 1차 필터링 추가
 2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
+3. 더 이상 추천해줄만한 리뷰가 없으면 유사도 0.2 이하도 추천
 */
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
@@ -335,10 +336,15 @@ async function runQueries() {
     } finally {
         connection.end();
     }
-    console.log(post_obj);
+
+    return post_obj;
 }
 
-runQueries();
+async function run(){
+    console.log(await runQueries());
+}
+
+run();
 /*
 //1번 리뷰 데이터
 let document = [];
