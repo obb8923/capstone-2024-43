@@ -3,6 +3,17 @@
 클릭한 객체(리뷰)의 isbn을 DB에서 조회해 같은 isbn을 가진 리뷰들을 작성일자 기준으로 정렬해서 보여준다.
 */
 
+function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
+    const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
+    const regex = new RegExp(pattern, 'gi');
+
+    for (let i = 0; i < reviewData.length; i++) {
+        reviewData[i] = reviewData[i].replace(regex, '*');
+    }
+
+    return reviewData
+}
+
 let excludedPostIDs = [];
 let post_obj = [];
 
@@ -24,8 +35,8 @@ async function bookList(post_id) {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT * FROM posts WHERE postID NOT IN (${placeholders}) AND postID = ? ORDER BY create_at DESC LIMIT 20` :
-            `SELECT * FROM posts WHERE postID = ? ORDER BY create_at DESC LIMIT 20`;
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
         const newPostIDs = result2.map(post => post.postID);
@@ -33,6 +44,7 @@ async function bookList(post_id) {
         
         if (results.length != 0) {
             for (let i = 0; i < results.length; i++) {
+                spoilerFilter();
                 post_obj.push(results[i]);
             }
         }

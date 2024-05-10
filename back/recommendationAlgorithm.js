@@ -14,7 +14,6 @@
 해야할 것 :
 1. 모달에서 카테고리 받아와서 1차 필터링 추가
 2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
-3. 스포일러 필터링 구현
 */
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
@@ -287,8 +286,8 @@ async function runQueries() {
             const placeholders = excludedPostIDs.map(() => '?').join(',');
             const sqlQuery = placeholders ?
                 //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                `SELECT * FROM posts WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                `SELECT * FROM posts ORDER BY create_at DESC LIMIT 20`;
+                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
             let result2 = await query(sqlQuery, excludedPostIDs);
 
             if (result2.length == 0) {
@@ -317,6 +316,11 @@ async function runQueries() {
                 for (let j = 0; j < result2.length; j++) {
                     if (result2[j].body == obj[i].body) {
                         obj2[i] = result2[j];
+
+                        let spoilerWord = [];
+                        spoilerWord.push(obj2[i].title);
+                        spoilerWord.push(obj2[i].author);
+                        obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
                     }
                 }
             }
@@ -326,17 +330,15 @@ async function runQueries() {
             }
         }
         counter++;
-        console.log('post_obj : ', post_obj);
     } catch (error) {
         throw error;
     } finally {
         connection.end();
     }
-
-    return post_obj;
+    console.log(post_obj);
 }
 
-console.log(runQueries());
+runQueries();
 /*
 //1번 리뷰 데이터
 let document = [];
