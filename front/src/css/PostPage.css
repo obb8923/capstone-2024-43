@@ -12,14 +12,6 @@
   height: 70px; 
 }
 
-.book-search-input {
-  display: auto;
-  border: 1px solid white;
-  font-size: 24px;
-  margin-right: 20px;
-  margin-top: 60px; 
-}
-
 /*정해진 .ck-editor__editable를 써야 content style을 자유롭게 편집 가능.*/
 .ck-editor__editable { 
   margin-left: auto;
@@ -32,7 +24,7 @@
   display: auto;
 }
 
-.post-button {
+.post-search-button {
   flex: 1;
   align-items: center;
   border: 1px solid white;
@@ -42,7 +34,32 @@
   width: 100px;
 }
 
+.book-search-input {
+  display: auto;
+  border: 1px solid white;
+  font-size: 24px;
+  margin-right: 20px;
+  margin-top: 41px; 
+}
 
+/* 검색된 책 목록 */
+.searched-books {
+  margin-top: 42px; 
+}
 
-  
-  
+.book-info {
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.book-info:hover {
+  background-color: #f0f0f0;
+}
+
+.book-info.selected {
+  background-color: #d3d3d3;
+}
