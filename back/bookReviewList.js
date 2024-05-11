@@ -36,8 +36,8 @@ async function bookList(post_id) {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = ? NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = ? ORDER BY create_at DESC LIMIT 20`;
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = '${post_id}' NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = '${post_id}' ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
         const newPostIDs = result2.map(post => post.postID);
@@ -64,9 +64,20 @@ async function bookList(post_id) {
     }
 
     if (end == true) {
-        let none = ['none'];
+        let none = {
+            postID: '0',
+            body: 'none' ,
+            UID: 0,
+            status: '0',
+            create_at: new Date(),
+            isbn: '0',
+            title: '0',
+            author: '0'
+        };
 
-        return none;
+        post_obj.push(none);
+
+        return post_obj;
     }
 
     return post_obj;

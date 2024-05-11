@@ -9,19 +9,20 @@
 7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
 8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 날짜 순으로 추천해준다.
 9. DB에서 더 이상 가져올 데이터가 없으면 'none'이 입력된 배열 리턴
+10. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
 
 문제점 : 
 1. 추천된 리뷰가 20~39개이다.
 
 해야할 것 :
 1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
-2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
-3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+2. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
 */
 
 let excludedPostIDs = [];
 let post_obj = []; //유사도 0.2 이상 리뷰 객체
 let post_obj2 = []; //유사도 0.2 이하 리뷰 객체
+let historyNone = false;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
     const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
@@ -258,15 +259,21 @@ async function runQueries() {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     const result1 = await query('SELECT * FROM 유저 기록 테이블 WHERE user_id = '해당 사용자의 ID' ORDER BY 리뷰를 본 날짜 DESC LIMIT 10');
 
-    let document = [];
-    for (let i = 0; i < result1.length; i++) {
-        document.push(result1[i].body);
-    }
-
-    //1번 리뷰들 하나의 문서로 퉁합
     let total_document = [];
-    for(let i in document){
-        total_document += document[i];
+
+    //리뷰가 없다면
+    if (result1.length == 0) {
+        historyNone = true;
+    } else if (result1.length != 0) {
+        let document = [];
+        for (let i = 0; i < result1.length; i++) {
+            document.push(result1[i].body);
+        }
+
+        //1번 리뷰들 하나의 문서로 퉁합
+        for(let i in document){
+            total_document += document[i];
+        }
     }
     */
 
@@ -287,82 +294,124 @@ async function runQueries() {
     let condition = true;
     let counter = 1;
 
-    try {
-        while (post_obj.length < counter * 20 && condition) {
-            const placeholders = excludedPostIDs.map(() => '?').join(',');
-            const sqlQuery = placeholders ?
-                //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
-            let result2 = await query(sqlQuery, excludedPostIDs);
+    if (historyNone == true) {
+        try {
+            while (post_obj.length < counter * 20 && condition) {
+                const placeholders = excludedPostIDs.map(() => '?').join(',');
+                const sqlQuery = placeholders ?
+                    //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
+                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                let result2 = await query(sqlQuery, excludedPostIDs);
 
-            if (result2.length == 0) {
-                condition = false;
-                break;
-            }
+                if (result2.length == 0) {
+                    condition = false;
+                    break;
+                }
 
-            // 다음 쿼리에서 제외할 postID 목록 업데이트
-            const newPostIDs = result2.map(post => post.postID);
-            excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
-            
-            let data = [];
-            data.push(total_document);
-
-            for (let i = 0; i < result2.length; i++) {
-                data.push(result2[i].body);
-            }
-
-            //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
-            let [obj, obj_sim_not] = similarity_test(data, 0, result2);
-            let obj2 = [];
-            let obj_sim_not2 = [];
-            obj.splice(0, 1);
-
-            for (let i = 0; i < obj.length; i++) {
-                for (let j = 0; j < result2.length; j++) {
-                    if (result2[j].body == obj[i].body) {
-                        obj2[i] = result2[j];
-
-                        let spoilerWord = [];
-                        spoilerWord.push(obj2[i].title);
-                        spoilerWord.push(obj2[i].author);
-                        obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
-                    }
+                // 다음 쿼리에서 제외할 postID 목록 업데이트
+                const newPostIDs = result2.map(post => post.postID);
+                excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
+                
+                for (let i = 0; i < result2.length; i++) {
+                    post_obj.push(result2[i]);
                 }
             }
-
-            for (let i = 0; i < obj_sim_not.length; i++) {
-                for (let j = 0; j < result2.length; j++) {
-                    if (result2[j].body == obj_sim_not[i].body) {
-                        obj_sim_not2[i] = result2[j];
-
-                        let spoilerWord = [];
-                        spoilerWord.push(obj_sim_not2[i].title);
-                        spoilerWord.push(obj_sim_not2[i].author);
-                        obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
-                    }
-                }
-            }
-            
-            for (let i = 0; i < obj2.length; i++) {
-                post_obj.push(obj2[i]);
-            }
-            
-            for (let i = 0; i < obj_sim_not2.length; i++) {
-                post_obj2.push(obj_sim_not2[i]);
-            }
+            counter++;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.end();
         }
-        counter++;
-    } catch (error) {
-        throw error;
-    } finally {
-        connection.end();
+    } else if (historyNone == false) {
+        try {
+            while (post_obj.length < counter * 20 && condition) {
+                const placeholders = excludedPostIDs.map(() => '?').join(',');
+                const sqlQuery = placeholders ?
+                    //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
+                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                let result2 = await query(sqlQuery, excludedPostIDs);
+
+                if (result2.length == 0) {
+                    condition = false;
+                    break;
+                }
+
+                // 다음 쿼리에서 제외할 postID 목록 업데이트
+                const newPostIDs = result2.map(post => post.postID);
+                excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
+                
+                let data = [];
+                data.push(total_document);
+
+                for (let i = 0; i < result2.length; i++) {
+                    data.push(result2[i].body);
+                }
+
+                //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
+                let [obj, obj_sim_not] = similarity_test(data, 0);
+                let obj2 = [];
+                let obj_sim_not2 = [];
+                obj.splice(0, 1);
+
+                for (let i = 0; i < obj.length; i++) {
+                    for (let j = 0; j < result2.length; j++) {
+                        if (result2[j].body == obj[i].body) {
+                            obj2[i] = result2[j];
+
+                            let spoilerWord = [];
+                            spoilerWord.push(obj2[i].title);
+                            spoilerWord.push(obj2[i].author);
+                            obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
+                        }
+                    }
+                }
+
+                for (let i = 0; i < obj_sim_not.length; i++) {
+                    for (let j = 0; j < result2.length; j++) {
+                        if (result2[j].body == obj_sim_not[i].body) {
+                            obj_sim_not2[i] = result2[j];
+
+                            let spoilerWord = [];
+                            spoilerWord.push(obj_sim_not2[i].title);
+                            spoilerWord.push(obj_sim_not2[i].author);
+                            obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
+                        }
+                    }
+                }
+                
+                for (let i = 0; i < obj2.length; i++) {
+                    post_obj.push(obj2[i]);
+                }
+                
+                for (let i = 0; i < obj_sim_not2.length; i++) {
+                    post_obj2.push(obj_sim_not2[i]);
+                }
+            }
+            counter++;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.end();
+        }
     }
 
     if (condition == false) {
-        let none = ['none'];
+        let none = {
+            postID: '0',
+            body: 'none' ,
+            UID: 0,
+            status: '0',
+            create_at: new Date(),
+            isbn: '0',
+            title: '0',
+            author: '0'
+        };
 
-        return none;
+        post_obj.push(none);
+
+        return post_obj;
     }
 
     return post_obj;
@@ -373,7 +422,7 @@ async function run(){
     //console.log(post_obj2);
 }
 
-//run();
+run();
 /*
 //1번 리뷰 데이터
 let document = [];
