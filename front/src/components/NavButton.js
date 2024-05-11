@@ -135,7 +135,7 @@ function NavButton(props) {
         contentLabel="Filter Modal"
       >
         <button onClick={()=>{closeModal(1)}}>close</button>
-        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>{subtitle}</h2>
+        <h2 ref={(_subtitle) => (subtitle = _subtitle)}>추천받고 싶지 않는 항목에 체크해주세요</h2>
         <form name="filter" onSubmit={handleSubmit}>
         {/* 총류 / 철학,심리학,윤리학 / 종교 / 사회과학 / 자연과학 / 기술과학 / 예술 / 언어 / 역사 / 문학 */}
           <label><input name="literature" type="checkbox" checked={checkboxStates.literature} onChange={handleCheckboxChange} />문학</label>

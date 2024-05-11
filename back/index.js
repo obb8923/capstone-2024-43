@@ -139,14 +139,20 @@ app.post('/api/filter', (req, res) => {
 
 //signIn 기능
 app.post('/api/signIn', (req, res) => {
-  const {id,password} = req.body;
-  console.log('Received data:', req.body);
-  connection.query('SELECT * FROM users WHERE mail=? and password=? ',[id,password],(error,result)=>{
+  const {uid,email,displayName} = req.body.userData;
+  //console.log('Received data:', req.body.userData);
+  connection.query('SELECT * FROM users WHERE UID=? ',[uid],(error,result)=>{
     if(error){
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }
-    if(result.length==0){// signIn 실패
-      res.status(401).json({ error: '잘못된 사용자 ID 또는 비밀번호', isUserExist: false });
+    if(result.length==0){// userdata not found
+      connection.query('insert into users(UID,name,mail,filter,create_at) VALUE (?,?,?,"000000",now());',[uid,displayName,email],(error,result)=>{
+        if(error){
+          res.status(500).json({ error: '데이터베이스에 데이터 store 중 오류가 발생했습니다.' });
+        }else{//success store new users data into DB
+          res.json({isUserExist:true,UID:uid});
+        }
+      })
     }
     else{//SignIn성공    
       res.json({isUserExist:true,UID:result[0].UID});
