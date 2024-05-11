@@ -72,3 +72,7 @@ async function bookList(post_id) {
 
     return post_obj;
 }
+module.exports = {
+    bookList,
+};
+

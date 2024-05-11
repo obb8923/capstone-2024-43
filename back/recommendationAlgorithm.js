@@ -341,11 +341,11 @@ async function runQueries() {
     return post_obj;
 }
 
-async function run(){
-    console.log(await runQueries());
-}
+// async function run(){
+//     console.log(await runQueries());
+// }
 
-run();
+//run();
 /*
 //1번 리뷰 데이터
 let document = [];
