@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
 import styles from "../css/ScrollView.module.css";
+import { useParams } from 'react-router-dom';
 function ScrollView() {//무한스크롤
-  const count = 7;
+  const {postId} = useParams();
+  const reqPostID = {postID : postId};
+  const count = 1;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
   
@@ -15,12 +18,18 @@ function ScrollView() {//무한스크롤
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
-
-          fetch("http://localhost:8080/api/ScrollView")
+          fetch("http://localhost:8080/api/ScrollView",{
+            method:"POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reqPostID)
+          })
           .then(res=>res.json())
           .then(json=>{
             console.log(json);
             console.log(json[1]);
+            if(json[0]==="none");
             const newFragments = [];
             for (let i = index; i < index + count; i++) {
               newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
