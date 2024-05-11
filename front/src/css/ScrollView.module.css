@@ -1,3 +1,6 @@
+html{
+    --listEndDisplay :block;
+}
 .mainBox{
     display: flex;
     flex-direction: column;
@@ -9,6 +12,7 @@
     }
 }
 .listEnd{
+    display: var(--listEndDisplay);
     width: 1.8vw;
     aspect-ratio: 1 / 1;
     background-image: url("../imgs/logo.svg");

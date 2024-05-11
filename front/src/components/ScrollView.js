@@ -8,7 +8,7 @@ function ScrollView() {//무한스크롤
   const count = 1;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
-  
+  const [listEndDisplay,setListEndDisplay] = useState("block");
   useEffect(() => {
     const options = {
       root:null,
@@ -28,14 +28,19 @@ function ScrollView() {//무한스크롤
           .then(res=>res.json())
           .then(json=>{
             console.log(json);
-            console.log(json[1]);
-            if(json[0]==="none");
-            const newFragments = [];
-            for (let i = index; i < index + count; i++) {
-              newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+            if(json[json.length()-1]==='none'){
+              console.log('none~!');
+              setListEndDisplay('none');
+              document.documentElement.style.setProperty('--listEndDisplay',listEndDisplay);
+            }else{
+              const newFragments = [];
+              for (let i = index; i < index + count; i++) {
+                newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+              }
+              setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
+              index+=count;
             }
-            setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
-            index+=count;}
+            }
           )
           .catch((error)=>{console.log("erorr: "+error)})
             
