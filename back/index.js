@@ -77,10 +77,10 @@ app.delete('/api/post/:postId', (req, res) => {
 app.post('/api/ScrollView', async(req, res) => {
   const postID = req.body.postID;
   console.log("postID: " ,postID);
-  if(postID==undefined){
+  if(postID==undefined){//main page
     const data =await recommendAlgo.runQueries();
    res.json(data);
-  }else{
+  }else{//post page
     const data = await reviewListAlgo.bookList()
     res.json(data);
   }
