@@ -15,7 +15,7 @@ npm add file:./ckeditor5
 function PostPage() {
   const navigate = useNavigate();
 
-  const UID = useSelector(state => state.UID);
+  const UID = localStorage.getItem('UID');
   const [editorData, setEditorData] = useState('');
   const [title, setTitle] = useState('');
   const [bookSearch, setBookSearch] = useState('');

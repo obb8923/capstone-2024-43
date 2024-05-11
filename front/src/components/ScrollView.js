@@ -5,16 +5,16 @@ import { useParams } from 'react-router-dom';
 function ScrollView() {//무한스크롤
   const {postId} = useParams();
   const reqPostID = {postID : postId};
-  const count = 1;
+  const count = 10;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
   const [listEndDisplay,setListEndDisplay] = useState("block");
   useEffect(() => {
     const options = {
-      root:null,
-      threshold: 0.1
+      root:document.querySelector(`.${styles.mainBox}`),
+      threshold: 0.1 
     };  
-    const observer = new IntersectionObserver((entries) => {
+    const callback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
@@ -28,32 +28,32 @@ function ScrollView() {//무한스크롤
           .then(res=>res.json())
           .then(json=>{
             console.log(json);
-            if(json[json.length()-1]==='none'){
-              console.log('none~!');
-              setListEndDisplay('none');
-              document.documentElement.style.setProperty('--listEndDisplay',listEndDisplay);
-            }else{
               const newFragments = [];
               for (let i = index; i < index + count; i++) {
+                if(json[i].body!=='none')
                 newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+                else {
+                  console.log('none~!');
+                  setListEndDisplay('none');
+                  document.documentElement.style.setProperty('--listEndDisplay',listEndDisplay);
+                }
               }
               setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
               index+=count;
-            }
             }
           )
           .catch((error)=>{console.log("erorr: "+error)})
             
         }
       });
-    }, options);
+    }
+    const observer = new IntersectionObserver(callback,options);
     
-    // list-end 요소를 관찰
+    // listEnd 요소를 관찰
     const target = document.querySelector(`.${styles.listEnd}`);
     if (target) {
       observer.observe(target);
     }
-
     // IntersectionObserver 객체를 cleanup하기 위해 return에서 disconnect 호출
     return () => observer.disconnect();
   }, []);
