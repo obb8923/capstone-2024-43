@@ -87,15 +87,29 @@ app.post('/api/ScrollView', async(req, res) => {
 });
 
 // /api/post/{postid} 로 post 정보 보내기
-app.get('/api/post/:postId',(req,res)=>{
+app.post('/api/post/:postId',(req,res)=>{
   const postId = req.params.postId;
-  const query ="SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts LEFT JOIN books ON filtered_posts.isbn = books.isbn UNION DISTINCT SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts RIGHT JOIN books ON filtered_posts.isbn = books.isbn";
+  const {UID} = req.body;
+  console.log("body:",req.body);
+  console.log("UID::",req.body.UID);
+  const query ="SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts JOIN books ON filtered_posts.isbn = books.isbn UNION DISTINCT SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts JOIN books ON filtered_posts.isbn = books.isbn";
   connection.query(query,[postId,postId],(error,result)=>{
     if(error){
-      console.log(error);
+      console.log("error: ",error);
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }else{
-      console.log(result);
+      console.log("post result:",result);
+      console.log(UID);
+      const saveQuery ="insert into history(UID,postID,watch_at) VALUE (?,?,now());"
+      connection.query(saveQuery,[UID,postId],(error,result)=>{
+        if(error){
+          console.log("error: ",error);
+          res.status(500).json({ error: '데이터베이스에서 store at history table 중 오류가 발생했습니다.' });
+        }else{
+          // store success~~!
+          console.log("success store UID: ",UID);
+        }
+      })
       res.json(result);
     }
   });
@@ -162,11 +176,13 @@ app.post('/api/signIn', (req, res) => {
 
 app.post('/api/library',(req,res)=>{
   const {UID} = req.body;
+  console.log("more uid:",UID);
   connection.query('SELECT * FROM posts WHERE UID=? ORDER BY create_at DESC',[UID],(error,result)=>{
     if(error){
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }
     else{
+      console.log(result);
       res.json({result});
     }
   })
