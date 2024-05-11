@@ -373,7 +373,7 @@ async function run(){
     //console.log(post_obj2);
 }
 
-//run();
+run();
 /*
 //1번 리뷰 데이터
 let document = [];
