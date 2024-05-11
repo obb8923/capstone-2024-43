@@ -30,7 +30,8 @@ async function bookList(post_id) {
     });
 
     const query = util.promisify(connection.query).bind(connection);
-
+    let end = false;
+    
     try {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
@@ -54,11 +55,23 @@ async function bookList(post_id) {
             }
         }
         else if (results.length == 0) {
-            //DB에서 가져오는 데이터가 더 이상 없을 때 할 것
+            end = true;
         }
     } catch (error) {
         throw error;
     } finally {
         connection.end();
     }
+
+    if (end == true) {
+        let none = [];
+        none.push('none');
+
+        return none;
+    }
+
+    return post_obj;
 }
+module.exports = {
+    bookList,
+};

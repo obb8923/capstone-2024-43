@@ -4,8 +4,9 @@ const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());//post요청 body parser
-const run = require("./recommendationAlgorithm");
-const PostViewPage_Algorithm = require("./bookReviewList");
+const recommendAlgo = require("./recommendationAlgorithm");
+const reviewListAlgo = require("./bookReviewList");
+
 
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
@@ -72,12 +73,17 @@ app.delete('/api/post/:postId', (req, res) => {
   });
 });
 
-// /api/data 로 posts table 내용 보내기
-app.get('/api/ScrollView', async(req, res) => {
-  
-  await run.runQueries();
-  res.json(await run.runQueries());
-
+//
+app.post('/api/ScrollView', async(req, res) => {
+  const postID = req.body.postID;
+  console.log("postID: " ,postID);
+  if(postID==undefined){
+    const data =await recommendAlgo.runQueries();
+   res.json(data);
+  }else{
+    const data = await reviewListAlgo.bookList()
+    res.json(data);
+  }
 });
 
 // /api/post/{postid} 로 post 정보 보내기
@@ -88,7 +94,7 @@ app.get('/api/post/:postId',(req,res)=>{
     if(error){
       console.log(error);
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
-    }else{      
+    }else{
       console.log(result);
       res.json(result);
     }
@@ -155,18 +161,12 @@ app.post('/api/library',(req,res)=>{
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }
     else{
-      //console.log({result});
       res.json({result});
     }
   })
 })
-//console.log(run.runQueries());
 
-app.get('/api/recommend',(req,res)=>{
-});
   //react에서 route 사용하기 - 맨 밑에 둘 것
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, '/../front/build/index.html'));
 });
-
-console.log(run.runQueries);
