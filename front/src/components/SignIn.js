@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import styles from "../css/SignIn.module.css";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { useDispatch } from 'react-redux';
-import { signIn } from "../redux/actions";
 import { useNavigate } from "react-router-dom";
 function SignIn(){
-    const dispatch = useDispatch();
+    console.log("signInd UID: ",localStorage.getItem('UID'));
     const navigate = useNavigate();
-
-
     const [user, setUser] = useState({});
-
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
     const auth_google = () => signInWithPopup(auth, provider)
@@ -28,7 +23,7 @@ function SignIn(){
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                dispatch(signIn());//signIn 상태 변경
+                localStorage.setItem('UID',result.user.uid);
                 navigate('/');//홈으로 이동
             })
             .catch(error=>console.error('Error:', error));

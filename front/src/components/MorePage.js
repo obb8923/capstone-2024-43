@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import styles from "../css/MorePage.module.css";
 import MoreButton from "./MoreButton";
 function MorePage() {
-    const UID = useSelector(state => state.UID);
+    const UID = localStorage.getItem('UID');
+    console.log("more UID: ",UID);
     const [posts, setPosts] = useState([]); 
 
     useEffect(() => {//화면이 렌더 될 때 글 목록을 가져온다.
-        if (UID !== '') {
+        if (UID !== null) {
             fetch("/api/library", {
                 method: "POST",
                 headers: {

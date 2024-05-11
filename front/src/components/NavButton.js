@@ -1,5 +1,4 @@
 import React,{useState,useEffect} from 'react';
-import { useSelector} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/NavButton.module.css';
 import moreImg from '../imgs/more.svg';
@@ -21,19 +20,19 @@ const customStyles = {//modal css 임시적용
  };
 
 function NavButton(props) {
-  const UID = useSelector(state=>state.UID);
+  const UID = localStorage.getItem('UID');
   const nav = props.nav; //{filter , post , library , more , logo}
   const navigate = useNavigate();
    
   // NavButton click handler
   function onclickHandler() {
-    if (nav === "filter" && UID!=="") {
+    if (nav === "filter" && UID!==null) {
       openModal();
       return;
     } else if (nav === "logo"){
        navigate(`/`);
     } else {//비회원 post 기능 허용할지 의논필요 
-       if(UID==='')openModal2();
+       if(UID===null)openModal2();
        else navigate(`/${nav}`);
     }
   } 

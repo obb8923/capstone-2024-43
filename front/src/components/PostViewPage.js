@@ -8,23 +8,32 @@ import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소�
 
 function PostViewPage() {
   const {postId}=useParams();
-  const[data,setData]=useState({});
+  const [data,setData]=useState({});
   const [_li,set_Li]=useState([]);
   const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
   //postID로 글 찾아오기~
 
   const [bookData, setBookData] = useState({});
-  const UID = useSelector(state => state.UID);
+  const UID = localStorage.getItem('UID')
+  console.log(UID);
   const navigate = useNavigate();
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
     changeBlurBoxState();//blurBox state변경
     if (postId) { // postID가 존재하는 경우에만 fetch 요청 보냄
-      fetch(`http://localhost:8080/api/post/${postId}`)
+      fetch(`http://localhost:8080/api/post/${postId}`,{
+        method:"POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({UID:UID})
+      })
         .then(res => res.json())
         .then(json => {
+          console.log("send UID: ",UID);
+          console.log("json: ",json);
           console.log("json[0]:", json[0]);
           setData(json[0]);
           fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기

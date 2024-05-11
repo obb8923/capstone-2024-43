@@ -1,12 +1,9 @@
 import React from "react";
 import styles from "../css/MoreButton.module.css";
-import { useDispatch } from "react-redux";
-import { signOut } from "../redux/actions";
 import { useNavigate } from "react-router-dom";
 
 function MoreButton({nav}){
     const navigate = useNavigate();
-    const dispatch = useDispatch(); 
     const handleClick =()=>{
         switch(nav){
             case 'modifyInfo':
@@ -23,7 +20,7 @@ function MoreButton({nav}){
         }
     }
     const signOutSequence=()=>{
-        dispatch(signOut());
+        localStorage.clear();
         navigate('/signIn');
     }
     return (<>
