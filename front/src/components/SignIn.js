@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import styles from "../css/SignIn.module.css";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
-
+import { useDispatch } from 'react-redux';
+import { signIn } from "../redux/actions";
+import { useNavigate } from "react-router-dom";
 function SignIn(){
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+
     const [user, setUser] = useState({});
 
     const provider = new GoogleAuthProvider();
@@ -13,11 +18,26 @@ function SignIn(){
             // const credential = GoogleAuthProvider.credentialFromResult(result);
             // const token = credential.accessToken;
             setUser(result.user);
-        }).catch( err => {
+            fetch('/api/signIn',{
+                method:"POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                  },
+                body: JSON.stringify({userData:result.user})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                dispatch(signIn());//signIn 상태 변경
+                navigate('/');//홈으로 이동
+            })
+            .catch(error=>console.error('Error:', error));
+        }).catch( error => {
             // const credential = GoogleAuthProvider.credentialFromError(err);
             // const errorCode = err.code;
             // const errorMessage = err.message;
             // const email = err.customData.email;
+            console.log("error: ",error);
         });
         
     return (<>
