@@ -3,10 +3,12 @@
 1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
 2. 카테고리, 최근 작성된 리뷰 20개 가져온다.
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
-4. 유사도 0.2 미만은 추천하지 않게 필터링한다.
+4. 유사도 0.2 이상만 추천하고 0.2 미만은 다른 객체로 빼놓는다.
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
 7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
+8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 날짜 순으로 추천해준다.
+9. DB에서 더 이상 가져올 데이터가 없으면 'none'이 입력된 배열 리턴
 
 문제점 : 
 1. 추천된 리뷰가 20~39개이다.
@@ -14,9 +16,12 @@
 해야할 것 :
 1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
-3. 더 이상 추천해줄만한 리뷰가 없으면 유사도 0.2 이하도 추천(객체2를 만듦)
-4. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
 */
+
+let excludedPostIDs = [];
+let post_obj = []; //유사도 0.2 이상 리뷰 객체
+let post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
     const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
@@ -203,15 +208,17 @@ function similarity_test(document, Index){//다른 함수들 실행시켜줌
     
     // 0번 문서와 나머지 문서의 유사도 검사
     let cos_sim = cosine_similarity(tfidf, Index, document/**/);
-    
+    let cos_sim_not = [];
+
     // 유사도 0.2이하는 삭제(절대적 추천 수치)
     for (let i = cos_sim.length - 1; i >= 0; i--) {
         if (cos_sim[i].similarity < 0.2) {
+            cos_sim_not.push(cos_sim[i]);
             cos_sim.splice(i, 1);
         }
     }    
 
-    return cos_sim
+    return [cos_sim, cos_sim_not];
 }
 
 function normalize(vector){//벡터 정규화 기능
@@ -233,9 +240,6 @@ module.exports = {
     similarity_test,
     runQueries,
 };
-
-let excludedPostIDs = [];
-let post_obj = [];
 
 async function runQueries() {
     //MYSQL 연결
@@ -309,9 +313,9 @@ async function runQueries() {
             }
 
             //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
-
-            let obj = similarity_test(data, 0, result2);
+            let [obj, obj_sim_not] = similarity_test(data, 0, result2);
             let obj2 = [];
+            let obj_sim_not2 = [];
             obj.splice(0, 1);
 
             for (let i = 0; i < obj.length; i++) {
@@ -326,9 +330,26 @@ async function runQueries() {
                     }
                 }
             }
+
+            for (let i = 0; i < obj_sim_not.length; i++) {
+                for (let j = 0; j < result2.length; j++) {
+                    if (result2[j].body == obj_sim_not[i].body) {
+                        obj_sim_not2[i] = result2[j];
+
+                        let spoilerWord = [];
+                        spoilerWord.push(obj_sim_not2[i].title);
+                        spoilerWord.push(obj_sim_not2[i].author);
+                        obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
+                    }
+                }
+            }
             
             for (let i = 0; i < obj2.length; i++) {
                 post_obj.push(obj2[i]);
+            }
+            
+            for (let i = 0; i < obj_sim_not2.length; i++) {
+                post_obj2.push(obj_sim_not2[i]);
             }
         }
         counter++;
@@ -338,11 +359,18 @@ async function runQueries() {
         connection.end();
     }
 
+    if (condition == false) {
+        let none = ['none'];
+
+        return none;
+    }
+
     return post_obj;
 }
 
 async function run(){
     console.log(await runQueries());
+    //console.log(post_obj2);
 }
 
 run();

@@ -64,8 +64,7 @@ async function bookList(post_id) {
     }
 
     if (end == true) {
-        let none = [];
-        none.push('none');
+        let none = ['none'];
 
         return none;
     }
