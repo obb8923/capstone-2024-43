@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "../css/MorePage.module.css";
 import MoreButton from "./MoreButton";
+import { useNavigate } from "react-router-dom";
 function MorePage() {
+    const navigate = useNavigate();
     const UID = localStorage.getItem('UID');
-    console.log("more UID: ",UID);
     const [posts, setPosts] = useState([]); 
 
     useEffect(() => {//화면이 렌더 될 때 글 목록을 가져온다.
-        if (UID !== null) {
+        if (UID !== null) {//only UID exists at localstorage 
             fetch("/api/library", {
                 method: "POST",
                 headers: {
@@ -24,7 +25,6 @@ function MorePage() {
             });
         }
     }, []);
-
     return (
         <>
             <div className={styles.box}>
@@ -41,7 +41,9 @@ function MorePage() {
                     <h2>내 서재</h2>
                     <div className={styles.postsContainer}>
                         {posts.map(post => (
-                            <div key={post.postID} className={styles.postBox}>
+                            <div key={post.postID} 
+                                className={styles.postBox} 
+                                onClick={()=>{navigate(`/post/${post.postID}`);}}>
                                 {post.title}  {/* Assuming posts have a title property */}
                             </div>
                         ))}

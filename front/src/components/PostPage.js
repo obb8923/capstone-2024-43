@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TextEditor from './TextEditor';
 import '../css/PostPage.css';
-import { useSelector } from 'react-redux';
+
 
 /*
 editor 라이브러리를 위해 수정함. 

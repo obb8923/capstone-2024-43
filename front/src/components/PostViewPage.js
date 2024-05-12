@@ -3,7 +3,6 @@ import styles from "../css/PostViewPage.module.css";
 import React, { useEffect, useState } from 'react';
 import { useParams, Route, Routes, useNavigate, Link } from 'react-router-dom';
 import EmptyPage from './EmptyPage';
-import { useSelector } from 'react-redux';
 import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소로 변환
 
 function PostViewPage() {
@@ -12,13 +11,11 @@ function PostViewPage() {
   const [_li,set_Li]=useState([]);
   const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
-  //postID로 글 찾아오기~
-
   const [bookData, setBookData] = useState({});
   const UID = localStorage.getItem('UID')
-  console.log(UID);
   const navigate = useNavigate();
-  
+
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
     changeBlurBoxState();//blurBox state변경
@@ -32,7 +29,6 @@ function PostViewPage() {
       })
         .then(res => res.json())
         .then(json => {
-          console.log("send UID: ",UID);
           console.log("json: ",json);
           console.log("json[0]:", json[0]);
           setData(json[0]);
@@ -45,6 +41,7 @@ function PostViewPage() {
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
+          li_.push(<li><button onClick={()=>{navigate('/post',{isbn:data.isbn})}}>같은 책으로 후기 쓰러가기</button></li>);
           set_Li(prev_Li=>[...prev_Li,...li_]);
         })
         .catch(error => console.log(error));
@@ -92,7 +89,6 @@ function PostViewPage() {
         .catch(error => console.log(error));
     }
   }
-
   return (
     <>
       <article>
