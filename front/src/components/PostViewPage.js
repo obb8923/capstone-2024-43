@@ -41,7 +41,7 @@ function PostViewPage() {
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
-          li_.push(<li><button onClick={()=>{navigate('/post',{isbn:data.isbn})}}>같은 책으로 후기 쓰러가기</button></li>);
+          li_.push(<li><button onClick={()=>{navigate('/post',{state: {isbn: data.isbn}})}}>같은 책으로 후기 쓰러가기</button></li>);
           set_Li(prev_Li=>[...prev_Li,...li_]);
         })
         .catch(error => console.log(error));
@@ -57,7 +57,7 @@ function PostViewPage() {
 
   function handleEdit() {
     if (postId) {
-      navigate(`/post/edit/${postId}`); // 수정 페이지로 이동하는 경로 수정
+      navigate(`/post/edit/${postId}`);
     }
   }
 
@@ -97,7 +97,7 @@ function PostViewPage() {
           {data ? (
            <>
             {<h1>{data.title}</h1>}
-            {parseInt(UID) === parseInt(data.UID) && (
+            {UID && data.UID && (UID.toString() === data.UID.toString()) && (
               <div className={styles.buttoncontainer}>
                 <button className={styles.editButtons} onClick={handleEdit}>수정</button>
                 <button className={styles.editButtons} onClick={handleDelete}>삭제</button>
