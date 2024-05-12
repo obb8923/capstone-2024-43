@@ -3,7 +3,6 @@ import styles from "../css/SignIn.module.css";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 function SignIn(){
-    console.log("signInd UID: ",localStorage.getItem('UID'));
     const navigate = useNavigate();
     const [user, setUser] = useState({});
     const provider = new GoogleAuthProvider();

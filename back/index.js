@@ -176,7 +176,6 @@ app.post('/api/signIn', (req, res) => {
 
 app.post('/api/library',(req,res)=>{
   const {UID} = req.body;
-  console.log("more uid:",UID);
   connection.query('SELECT * FROM posts WHERE UID=? ORDER BY create_at DESC',[UID],(error,result)=>{
     if(error){
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
