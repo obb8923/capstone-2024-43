@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import TextEditor from './TextEditor';
 import '../css/PostPage.css';
 
@@ -14,6 +14,12 @@ npm add file:./ckeditor5
 
 function PostPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { postId } = useParams();
+  console.log(postId);
+
+  const { isbn } = location.state || {};
 
   const UID = localStorage.getItem('UID');
   const [editorData, setEditorData] = useState('');
@@ -23,16 +29,17 @@ function PostPage() {
   const [selectedBook, setSelectedBook] = useState(null); //선택된 책 상태
 
   //편집하는 경우 
-  const { postId } = useParams();
+  console.log(postId);
 
   //편집하는 경우
   useEffect(() => {
     if (postId) {
       // postId를 사용하여 해당 글의 정보를 가져옴
-      fetch(`http://localhost:8080/api/post/${postId}`)
+      fetch(`http://localhost:8080/api/postpage/${postId}`)
         .then(res => res.json())
         .then(json => {
           // 데이터가 있을 경우 해당 데이터를 적절히 처리하여 state에 저장
+          console.log('fetch ok');
           if (json && json[0]) {
             const { title, body, isbn } = json[0];
             setTitle(title);
@@ -46,6 +53,7 @@ function PostPage() {
               // 가져온 책 정보가 있을 때만 책 검색 칸에 보이게 함
               if (bookData && bookData[0]) {
                 setBookSearch(bookData[0].name);
+                setSelectedBook(bookData[0]); // 선택된 책 설정
               }
             })
             .catch(error => {
@@ -57,8 +65,21 @@ function PostPage() {
           }
         })
         .catch(error => console.error('Error fetching post data:', error));
+    } else if (isbn) { // isbn 정보가 전달된 경우 책 검색
+      fetch(`/api/books/search/${isbn}`)
+        .then(res => res.json())
+        .then(bookData => {
+          // 검색된 책 정보가 있을 때만 책 검색 칸에 보이게 함
+          if (bookData && bookData[0]) {
+            setBookSearch(bookData[0].name);
+            setSelectedBook(bookData[0]); // 선택된 책 설정
+          }
+        })
+        .catch(error => {
+          console.error('책 검색 오류:', error.message);
+        });
     }
-  }, [postId]);
+  }, [postId, isbn]);
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
