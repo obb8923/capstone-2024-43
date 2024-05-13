@@ -38,16 +38,19 @@ function PostViewPage() {
         .then((data)=>{
           console.log("data: ",data);
           console.log("url??: ",data.url);
-            console.log(`{url??}: ${data.url}`);
+          console.log(`{url??}: ${data.url}`);
           const li_ = [];
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
-          li_.push(<li><button onClick={()=>{
-            (data.url!==null)?
-            (window.location.href=data.url):
-            (navigate('/post',{state: {isbn: data.isbn}}));
+          li_.push(<li><button onClick={()=>{navigate('/post',{state: {isbn: data.isbn}})
           }}>같은 책으로 후기 쓰러가기</button></li>);
+          li_.push(<li><button type="submit" onClick={(e)=>{
+            if(data.url!==null){// when url is null
+              e.preventDefault();// prevent submit
+              window.open(data.url, '_blank');//open url in a new tab
+            }
+          }}>책 정보 검색</button></li>);
           set_Li(prev_Li=>[...prev_Li,...li_]);
         })
         .catch(error => console.log(error));
@@ -131,7 +134,6 @@ function PostViewPage() {
       <form action="https://www.google.com/search" method="get" target="_blank">
         <ul className={styles.ul}>
           {_li}
-          <li><button type="submit">책 정보 검색</button></li>
         </ul>
       </form>
       </div>
