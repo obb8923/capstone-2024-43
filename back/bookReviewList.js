@@ -2,7 +2,7 @@
 리뷰를 클릭하면 해당 리뷰 책의 다른 리뷰를 보여준다.
 클릭한 객체(리뷰)의 isbn을 DB에서 조회해 같은 isbn을 가진 리뷰들을 작성일자 기준으로 정렬해서 보여준다.
 */
-
+localStorage.getItem('')
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
     const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
     const regex = new RegExp(pattern, 'gi');

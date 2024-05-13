@@ -29,8 +29,8 @@ function PostViewPage() {
       })
         .then(res => res.json())
         .then(json => {
-          console.log("json: ",json);
-          console.log("json[0]:", json[0]);
+          //console.log("json: ",json);
+          //console.log("json[0]:", json[0]);
           setData(json[0]);
           fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기
           return json[0];

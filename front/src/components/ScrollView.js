@@ -4,11 +4,14 @@ import styles from "../css/ScrollView.module.css";
 import { useParams } from 'react-router-dom';
 function ScrollView() {//무한스크롤
   const {postId} = useParams();
-  const reqPostID = {postID : postId};
+  const reqObject = {
+    postID : postId,
+    UID : localStorage.getItem('UID')
+  };
   const count = 10;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
-  const [listEndDisplay,setListEndDisplay] = useState("block");
+  const [listEndVisibility,setListEndVisibility] = useState("visible");
   useEffect(() => {
     const options = {
       root:document.querySelector(`.${styles.mainBox}`),
@@ -23,7 +26,7 @@ function ScrollView() {//무한스크롤
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(reqPostID)
+            body: JSON.stringify(reqObject)
           })
           .then(res=>res.json())
           .then(json=>{
@@ -34,8 +37,8 @@ function ScrollView() {//무한스크롤
                 newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
                 else {
                   console.log('none~!');
-                  setListEndDisplay('none');
-                  document.documentElement.style.setProperty('--listEndDisplay',listEndDisplay);
+                  setListEndVisibility("hidden");
+                  document.documentElement.style.setProperty('--listEndVisibility',listEndVisibility);
                 }
               }
               setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가

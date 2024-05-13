@@ -22,7 +22,7 @@ function MorePage() {
             })
             .catch(error => {
                 console.error("Error:", error);
-            });
+            })
         }
     }, []);
     return (
