@@ -1,8 +1,12 @@
 .fragmentBody{
     border: solid 1px #000 ;
     width:50vw;
+    max-height: 250px;
     margin: 30px auto;
     padding: 30px;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .fragmentBody:hover{
     cursor:pointer;
