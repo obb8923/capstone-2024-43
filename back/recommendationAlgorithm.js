@@ -8,7 +8,7 @@
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
 7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
 8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 날짜 순으로 추천해준다.
-9. DB에서 더 이상 가져올 데이터가 없으면 'none'이 입력된 배열 리턴
+9. DB에서 더 이상 가져올 데이터가 없으면 'none'이 입력된 객체 리턴
 10. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
 
 문제점 : 
@@ -18,6 +18,7 @@
 1. 웹 사이트 접속하면 UID, 모달 카테고리 받아오기
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+4. 자기가 쓴 리뷰는 안 보이게 하기
 */
 
 let excludedPostIDs = [];
@@ -243,7 +244,7 @@ module.exports = {
     runQueries,
 };
 
-async function runQueries() {
+async function runQueries(UID) {
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
@@ -254,11 +255,15 @@ async function runQueries() {
     password:db_config.password,
     database:db_config.database,
     });
-
-    const query = util.promisify(connection.query).bind(connection);
+    
     /*
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
-    const result1 = await query('SELECT * FROM 유저 기록 테이블 WHERE user_id = '해당 사용자의 ID' ORDER BY 리뷰를 본 날짜 DESC LIMIT 10');
+    if (UID != '') {
+        const result1 = await query('SELECT * FROM history WHERE UID = '${UID}' ORDER BY watch_at DESC LIMIT 10');
+        const result1_modal = await query('SELECT * FROM users WHERE UID = '${UID}' ORDER BY watch_at');
+    } else if (UID == '') {
+        //로그인 안 한 사용자면
+    }
 
     let total_document = [];
 
@@ -292,6 +297,7 @@ async function runQueries() {
         total_document += document[i];
     }
 
+    const query = util.promisify(connection.query).bind(connection);
     let condition = true;
     let counter = 1;
 
