@@ -31,23 +31,23 @@
     display: flex;
     flex-flow: row wrap;
     align-items: center;
-    /* justify-content: space-evenly; */
     border:5px solid darkcyan;
 }
 .postBox{
-
-    /* width:30px;
-    height:20vh; */
     border:0.5px solid green;
-    align-content: center;
     margin: 1vh ;
-    padding : 1em;
     writing-mode: vertical-rl;/* 세로글쓰기 */
-    text-orientation: upright; /* 누운 글자들을 수직으로 세우기 */
+    /* text-orientation: upright; (eng,num) 누운 글자들을 수직으로 세우기 */
     overflow: hidden; /* 넘어가면 안보이게 */
     height: 17em;     /* div의 높이를 17em으로 제한*/
     line-height: 1em; /* 각 글자의 세로 높이를 1em으로 설정 */
-    width: 4.5em;       /* 너비도 1em으로 설정하여 글자가 딱 맞게 들어가도록 함 */
+    width: 3.5em;       /* 너비도 설정하여 글자가 딱 맞게 들어가도록 함 */
+    white-space: nowrap;
+    padding: 1.5em 0px;
+    font-size: 1.5em;
+    text-overflow: ellipsis;
+    align-items: center;
+    display: flex;
 }
 .postBox:hover{
     cursor:pointer;

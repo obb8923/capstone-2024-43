@@ -76,12 +76,13 @@ app.delete('/api/post/:postId', (req, res) => {
 //
 app.post('/api/ScrollView', async(req, res) => {
   const postID = req.body.postID;
+  const UID = req.body.UID;
   console.log("postID: " ,postID);
   if(postID==undefined){//main page
-    const data =await recommendAlgo.runQueries();
+    const data =await recommendAlgo.runQueries(UID);
    res.json(data);
   }else{//post page
-    const data = await reviewListAlgo.bookList()
+    const data = await reviewListAlgo.bookList(UID);
     res.json(data);
   }
 });
