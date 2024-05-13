@@ -19,6 +19,7 @@ let post_obj = [];
 
 async function bookList(UID, post_id) {
     //MYSQL 연결
+    console.log(post_id);
     const mysql = require('mysql2');
     const util = require('util');
     var db_config  = require('./db-config.json');
@@ -31,13 +32,13 @@ async function bookList(UID, post_id) {
 
     const query = util.promisify(connection.query).bind(connection);
     let end = false;
-    
+
     try {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = '${post_id}' NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = '${post_id}' ORDER BY create_at DESC LIMIT 20`;
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20`:
+            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
         const newPostIDs = results.map(post => post.postID);
