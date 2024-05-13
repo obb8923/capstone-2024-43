@@ -260,7 +260,7 @@ async function runQueries(UID) {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != '') {
         const result1 = await query('SELECT * FROM history WHERE UID = '${UID}' ORDER BY watch_at DESC LIMIT 10');
-        const result1_modal = await query('SELECT * FROM users WHERE UID = '${UID}' ORDER BY watch_at');
+        const result1_modal = await query('SELECT filter FROM users WHERE UID = '${UID}'');
     } else if (UID == '') {
         //로그인 안 한 사용자면
     }
