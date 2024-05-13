@@ -262,7 +262,7 @@ async function runQueries(UID) {
         const result1 = await query('SELECT * FROM history WHERE UID = '${UID}' ORDER BY watch_at DESC LIMIT 10');
         const result1_modal = await query('SELECT filter FROM users WHERE UID = '${UID}'');
     } else if (UID == '') {
-        //로그인 안 한 사용자면
+        historyNone = true;
     }
 
     let total_document = [];
