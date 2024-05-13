@@ -40,7 +40,7 @@ async function bookList(post_id) {
             `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = '${post_id}' ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
-        const newPostIDs = result2.map(post => post.postID);
+        const newPostIDs = results.map(post => post.postID);
         excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
         
         if (results.length != 0) {
