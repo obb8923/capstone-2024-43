@@ -37,13 +37,13 @@ function PostViewPage() {
         })
         .then((data)=>{
           console.log("data: ",data);
+          console.log("url??: ",data.url);
+            console.log(`{url??}: ${data.url}`);
           const li_ = [];
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
           li_.push(<li><button onClick={()=>{
-            console.log("url??: ",data.url);
-            console.log(`{url??}: ${data.url}`);
             (data.url!==null)?
             (window.location.href=data.url):
             (navigate('/post',{state: {isbn: data.isbn}}));
