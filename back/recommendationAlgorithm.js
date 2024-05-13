@@ -18,6 +18,7 @@
 1. 웹 사이트 접속하면 UID, 모달 카테고리 받아오기
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+4. 자기가 쓴 리뷰는 안 보이게 하기
 */
 
 let excludedPostIDs = [];
@@ -257,7 +258,12 @@ async function runQueries(UID) {
     
     /*
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
-    const result1 = await query('SELECT * FROM history WHERE UID = '해당 사용자의 ID' ORDER BY watch_at DESC LIMIT 10');
+    if (UID != '') {
+        const result1 = await query('SELECT * FROM history WHERE UID = '${UID}' ORDER BY watch_at DESC LIMIT 10');
+        const result1_modal = await query('SELECT * FROM users WHERE UID = '${UID}' ORDER BY watch_at');
+    } else if (UID == '') {
+        //로그인 안 한 사용자면
+    }
 
     let total_document = [];
 
