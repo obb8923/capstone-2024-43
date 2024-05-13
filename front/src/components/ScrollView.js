@@ -47,7 +47,6 @@ function ScrollView() {//무한스크롤
             }
           )
           .catch((error)=>{console.log("erorr: "+error)})
-            
         }
       });
     }

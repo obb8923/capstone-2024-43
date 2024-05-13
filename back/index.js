@@ -77,6 +77,7 @@ app.delete('/api/post/:postId', (req, res) => {
 app.post('/api/ScrollView', async(req, res) => {
   const postID = req.body.postID;
   const UID = req.body.UID;
+  
   if(postID==undefined){//main page
     const data =await recommendAlgo.runQueries(UID);
    res.json(data);
@@ -112,7 +113,7 @@ app.post('/api/post/:postId',(req,res)=>{
     if(error){
       console.log("error: ",error);
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
-    }else{
+    }else if(UID!==null){
       // store history in history table
       const saveQuery ="insert into history(UID,postID,watch_at) VALUE (?,?,now());"
       connection.query(saveQuery,[UID,postId],(error,result)=>{
@@ -121,7 +122,7 @@ app.post('/api/post/:postId',(req,res)=>{
           res.status(500).json({ error: '데이터베이스에서 store at history table 중 오류가 발생했습니다.' });
         }else{
           // store success~~!
-          console.log("success store UID: ",UID);
+          
         }
       })
       res.json(result);
