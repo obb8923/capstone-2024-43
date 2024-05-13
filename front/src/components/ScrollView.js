@@ -4,9 +4,10 @@ import styles from "../css/ScrollView.module.css";
 import { useParams } from 'react-router-dom';
 function ScrollView() {//무한스크롤
   const {postId} = useParams();
+  const UID = localStorage.getItem('UID');
   const reqObject = {
     postID : postId,
-    UID : localStorage.getItem('UID')
+    UID : UID
   };
   const count = 10;
   let index =0;

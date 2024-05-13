@@ -81,9 +81,8 @@ app.post('/api/ScrollView', async(req, res) => {
     const data =await recommendAlgo.runQueries(UID);
    res.json(data);
   }else{//post page
-
-    const data = await reviewListAlgo.bookList(UID,postID);
-
+    console.log(UID);
+    const data = await reviewListAlgo.bookList(postID);
     res.json(data);
   }
 });
@@ -125,7 +124,6 @@ app.post('/api/post/:postId',(req,res)=>{
           console.log("success store UID: ",UID);
         }
       })
-      console.log('zz',result);
       res.json(result);
     }
   });
