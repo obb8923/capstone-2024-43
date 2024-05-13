@@ -17,7 +17,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
 let excludedPostIDs = [];
 let post_obj = [];
 
-async function bookList(post_id) {
+async function bookList(UID, post_id) {
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
