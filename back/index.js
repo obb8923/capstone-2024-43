@@ -77,12 +77,12 @@ app.delete('/api/post/:postId', (req, res) => {
 app.post('/api/ScrollView', async(req, res) => {
   const postID = req.body.postID;
   const UID = req.body.UID;
-  console.log("postID: " ,postID);
   if(postID==undefined){//main page
     const data =await recommendAlgo.runQueries(UID);
    res.json(data);
   }else{//post page
-    const data = await reviewListAlgo.bookList(UID);
+    console.log(postID);
+    const data = await reviewListAlgo.bookList(UID,postID);
     res.json(data);
   }
 });
@@ -106,16 +106,14 @@ app.get('/api/postpage/:postId',(req,res)=>{
 app.post('/api/post/:postId',(req,res)=>{
   const postId = req.params.postId;
   const {UID} = req.body;
-  console.log("body:",req.body);
-  console.log("UID::",req.body.UID);
+  //fetch posts table 
   const query ="SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts JOIN books ON filtered_posts.isbn = books.isbn UNION DISTINCT SELECT * FROM (SELECT * FROM posts WHERE postID=?) AS filtered_posts JOIN books ON filtered_posts.isbn = books.isbn";
   connection.query(query,[postId,postId],(error,result)=>{
     if(error){
       console.log("error: ",error);
       res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
     }else{
-      console.log("post result:",result);
-      console.log(UID);
+      // store history in history table
       const saveQuery ="insert into history(UID,postID,watch_at) VALUE (?,?,now());"
       connection.query(saveQuery,[UID,postId],(error,result)=>{
         if(error){
@@ -126,6 +124,7 @@ app.post('/api/post/:postId',(req,res)=>{
           console.log("success store UID: ",UID);
         }
       })
+      console.log('zz',result);
       res.json(result);
     }
   });
