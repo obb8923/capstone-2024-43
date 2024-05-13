@@ -83,7 +83,7 @@ app.post('/api/ScrollView', async(req, res) => {
    res.json(data);
   }else{//post page
 
-    const data = await reviewListAlgo.bookList(UID,postID);
+    const data = await reviewListAlgo.bookList(postID);
 
     res.json(data);
   }

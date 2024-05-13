@@ -12,6 +12,7 @@ function SignIn(){
             // const credential = GoogleAuthProvider.credentialFromResult(result);
             // const token = credential.accessToken;
             setUser(result.user);
+            
             fetch('/api/signIn',{
                 method:"POST",
                 headers: {
