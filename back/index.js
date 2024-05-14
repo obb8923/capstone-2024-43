@@ -130,9 +130,9 @@ app.post('/api/post/:postId',(req,res)=>{
         }else{
           // store success~~!
         }
-      })
-      res.json(result);
+      }) 
     }
+    res.json(result);
   });
 });
 

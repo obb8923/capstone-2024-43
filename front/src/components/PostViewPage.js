@@ -28,34 +28,32 @@ function PostViewPage() {
       })
         .then(res => res.json())
         .then(json => {
-          //console.log("json: ",json);
-          //console.log("json[0]:", json[0]);
+          console.log("json: ",json);
+          console.log("json[0]:", json[0]);
           setData(json[0]);
           fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기
           return json[0];
         })
         .then((data)=>{
           console.log("data: ",data);
-          console.log("url??: ",data.url);
-          console.log(`{url??}: ${data.url}`);
           const li_ = [];
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
-          li_.push(<li><button onClick={()=>{
+          li_.push(<li><input type="button" value="같은 책으로 후기 쓰러가기" onClick={()=>{
             if(UID==='null'){
              //modal
             }else{
               navigate('/post',{state: {isbn: data.isbn}});
             }
-            
-          }}>같은 책으로 후기 쓰러가기</button></li>);
-          li_.push(<li><button type="submit" onClick={(e)=>{
+          }}/></li>);
+
+          li_.push(<li><input type="submit" value="책 정보 검색"onClick={(e)=>{
             if(data.url!==null){// when url is null
               e.preventDefault();// prevent submit
               window.open(data.url, '_blank');//open url in a new tab
             }
-          }}>책 정보 검색</button></li>);
+          }}/></li>);
           set_Li(prev_Li=>[...prev_Li,...li_]);
         })
         .catch(error => console.log(error));
