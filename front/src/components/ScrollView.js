@@ -14,8 +14,25 @@ function ScrollView() {
   const count = 15;
   let index = 0;
   const [fragments, setFragments] = useState([]);
-
+  useEffect(()=>{
+    fetch("http://localhost:8080/api/ScrollView", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({isFirst:isFirst})
+          })
+          .then(res => res.json())
+  },[])
   useEffect(() => {
+    fetch("http://localhost:8080/api/ScrollView", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({isFirst:isFirst})
+          })
+          .then(res => res.json())
     const options = {
       root: null,
       threshold: 0.1 
@@ -28,7 +45,7 @@ function ScrollView() {
             pathname: pathname,
             postID: postId,
             UID: UID,
-            isFirst: isFirst, // isFirst 상태 사용
+            //isFirst: isFirst, // isFirst 상태 사용
           };
           fetch("http://localhost:8080/api/ScrollView", {
             method: "POST",
@@ -66,7 +83,7 @@ function ScrollView() {
       observer.observe(target);
     }
     return () => observer.disconnect();
-  }, [isFirst]); // isFirst를 의존성 배열에 추가
+  }, []); // isFirst를 의존성 배열에 추가
 
   useEffect(() => {
     document.documentElement.style.setProperty('--listEndVisibility', listEndVisibility);
