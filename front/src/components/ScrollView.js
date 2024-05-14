@@ -10,13 +10,16 @@ function ScrollView() {//무한스크롤
   const reqObject = {
     pathname : pathname,
     postID:postId,
-    UID : UID
+    UID : UID,
+    isFirst:true,
   };
   const [listEndVisibility,setListEndVisibility] = useState("visible");
   const count = 15;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
-
+  useEffect(()=>{
+    reqObject.isFirst=false;
+  },[fragments])
   useEffect(() => {
     const options = {
       root:null,

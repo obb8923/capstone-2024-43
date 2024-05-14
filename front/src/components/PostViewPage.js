@@ -12,9 +12,8 @@ function PostViewPage() {
   const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
   const [bookData, setBookData] = useState({});
-  const UID = localStorage.getItem('UID')
+  const UID = (localStorage.getItem('UID'))==null?'null':localStorage.getItem('UID');
   const navigate = useNavigate();
-
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
@@ -43,7 +42,13 @@ function PostViewPage() {
           li_.push(<li>제목: {data.name}</li>);
           li_.push(<li>작가: {data.author}</li>);
           li_.push(<input type='hidden' name='q' value={data.name}></input>);
-          li_.push(<li><button onClick={()=>{navigate('/post',{state: {isbn: data.isbn}})
+          li_.push(<li><button onClick={()=>{
+            if(UID==='null'){
+             //modal
+            }else{
+              navigate('/post',{state: {isbn: data.isbn}});
+            }
+            
           }}>같은 책으로 후기 쓰러가기</button></li>);
           li_.push(<li><button type="submit" onClick={(e)=>{
             if(data.url!==null){// when url is null
