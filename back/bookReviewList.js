@@ -16,7 +16,12 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
 var excludedPostIDs = [];
 var post_obj = [];
 
-async function bookList(UID, post_id) {
+async function bookList(UID, post_id, isFirst) {
+    if (isFirst == true) {
+        excludedPostIDs = [];
+        post_obj = [];
+    }
+
     //MYSQL 연결
     console.log(post_id);
     const mysql = require('mysql2');

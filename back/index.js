@@ -75,9 +75,10 @@ app.delete('/api/post/:postId', (req, res) => {
 
 //
 app.post('/api/ScrollView', async(req, res) => {
-  const {pathname,postID,UID} = req.body;  
+  const {pathname,postID,UID,isFirst} = req.body; 
+  console.log("ll",isFirst); 
   if(pathname==='/'){//main page
-    const data =await recommendAlgo.runQueries(UID);
+    const data =await recommendAlgo.runQueries(UID,isFirst);
    res.json(data);
   }else if(pathname==='/announcement'){//announcement page
     connection.query('select * from announcements order by create_at DESC',(error,result)=>{
@@ -90,7 +91,7 @@ app.post('/api/ScrollView', async(req, res) => {
     })
   }
   else{//post page
-    const data = await reviewListAlgo.bookList(UID,postID);
+    const data = await reviewListAlgo.bookList(UID,postID,isFirst);
     res.json(data);
   }
 });

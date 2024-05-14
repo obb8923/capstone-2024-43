@@ -25,7 +25,7 @@ var excludedPostIDs = [];
 var post_obj = []; //유사도 0.2 이상 리뷰 객체
 var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
-var filter;
+//var filter;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
     const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
@@ -265,7 +265,16 @@ async function user_history(user_id) {
     });
 }
 
-async function runQueries(UID) {
+async function runQueries(UID, isFirst) {
+    console.log(isFirst);
+    if (isFirst == true) {
+        excludedPostIDs = [];
+        post_obj = []; //유사도 0.2 이상 리뷰 객체
+        post_obj2 = []; //유사도 0.2 이하 리뷰 객체
+        historyNone = false;
+        console.log(post_obj.length);
+    }
+
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
@@ -449,10 +458,3 @@ async function runQueries(UID) {
 
     return post_obj;
 }
-
-async function run(){
-    console.log(await runQueries());
-    //console.log(post_obj2);
-}
-
-run();
