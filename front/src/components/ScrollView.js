@@ -34,8 +34,11 @@ function ScrollView() {//무한스크롤
             console.log(json);
               const newFragments = [];
               for (let i = index; i < index + count; i++) {
-                if(json[i].body!=='none')
-                newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+                console.log('1');
+                if(json[i].body!=='none'){
+                  console.log('2');
+                  newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+                }
                 else {
                   console.log('none~!');
                   setListEndVisibility("hidden");

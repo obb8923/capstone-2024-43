@@ -13,8 +13,8 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     return reviewData
 }
 
-let excludedPostIDs = [];
-let post_obj = [];
+var excludedPostIDs = [];
+var post_obj = [];
 
 async function bookList(UID, post_id) {
     //MYSQL 연결
@@ -36,8 +36,8 @@ async function bookList(UID, post_id) {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') AND postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20`:
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') ORDER BY create_at DESC LIMIT 20`;
+            `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') AND postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20`:
+            `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
         const newPostIDs = results.map(post => post.postID);
@@ -47,7 +47,7 @@ async function bookList(UID, post_id) {
             for (let i = 0; i < results.length; i++) {
                 let spoilerWord = [];
 
-                spoilerWord.push(results[i].title);
+                spoilerWord.push(results[i].name);
                 spoilerWord.push(results[i].author);
 
                 results[i].body = spoilerFilter(results[i].body, spoilerWord);
@@ -72,7 +72,8 @@ async function bookList(UID, post_id) {
             create_at: new Date(),
             isbn: '0',
             title: '0',
-            author: '0'
+            author: '0',
+            name: '0'
         };
 
         post_obj.push(none);
@@ -82,7 +83,8 @@ async function bookList(UID, post_id) {
 
     return post_obj;
 }
+
 module.exports = {
     bookList,
-};
+}
 

@@ -18,13 +18,14 @@
 1. 
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
-4. 자기가 쓴 리뷰는 안 보이게 하기
+4. 
 */
 
-let excludedPostIDs = [];
-let post_obj = []; //유사도 0.2 이상 리뷰 객체
-let post_obj2 = []; //유사도 0.2 이하 리뷰 객체
-let historyNone = false;
+var excludedPostIDs = [];
+var post_obj = []; //유사도 0.2 이상 리뷰 객체
+var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
+var historyNone = false;
+var filter;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
     const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
@@ -242,7 +243,27 @@ module.exports = {
     cosine_similarity,
     similarity_test,
     runQueries,
-};
+}
+
+async function modal_filter(user_id) {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT filter FROM users WHERE UID = "${user_id}"', (error, results, fields) => {
+        if (error) reject(error);
+        resolve(results);
+      });
+      connection.end();
+    });
+}
+
+async function user_history(user_id) {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM history WHERE UID = "${user_id}" ORDER BY watch_at DESC LIMIT 10', (error, results, fields) => {
+        if (error) reject(error);
+        resolve(results);
+      });
+      connection.end();
+    });
+}
 
 async function runQueries(UID) {
     //MYSQL 연결
@@ -257,11 +278,15 @@ async function runQueries(UID) {
     });
     
     /*
+    let result1 = [];
+
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
-    if (UID != '') {
-        const result1 = await query('SELECT * FROM history WHERE UID = '${UID}' ORDER BY watch_at DESC LIMIT 10');
-        const result1_modal = await query('SELECT filter FROM users WHERE UID = '${UID}'');
-    } else if (UID == '') {
+    if (UID != null) {
+        result1 = await user_history(UID);
+        const result1_modal = await modal_filter(UID);
+        filter = result1_modal[0].filter.toString().split("");
+    } else if (UID == null) {
+        result1 = [];
         historyNone = true;
     }
 
@@ -307,8 +332,8 @@ async function runQueries(UID) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
                     //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
                 let result2 = await query(sqlQuery, excludedPostIDs);
 
                 if (result2.length == 0) {
@@ -336,8 +361,8 @@ async function runQueries(UID) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
                     //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                    `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
                 let result2 = await query(sqlQuery, excludedPostIDs);
 
                 if (result2.length == 0) {
@@ -368,7 +393,7 @@ async function runQueries(UID) {
                             obj2[i] = result2[j];
 
                             let spoilerWord = [];
-                            spoilerWord.push(obj2[i].title);
+                            spoilerWord.push(obj2[i].name);
                             spoilerWord.push(obj2[i].author);
                             obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
                         }
@@ -381,7 +406,7 @@ async function runQueries(UID) {
                             obj_sim_not2[i] = result2[j];
 
                             let spoilerWord = [];
-                            spoilerWord.push(obj_sim_not2[i].title);
+                            spoilerWord.push(obj_sim_not2[i].name);
                             spoilerWord.push(obj_sim_not2[i].author);
                             obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
                         }
@@ -413,7 +438,8 @@ async function runQueries(UID) {
             create_at: new Date(),
             isbn: '0',
             title: '0',
-            author: '0'
+            author: '0',
+            name: '0'
         };
 
         post_obj.push(none);
