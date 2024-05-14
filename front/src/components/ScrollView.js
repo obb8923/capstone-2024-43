@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import PostFragment from './PostFragment';
 import styles from "../css/ScrollView.module.css";
-import { useParams } from 'react-router-dom';
+import { useParams,useLocation } from 'react-router-dom';
 function ScrollView() {//무한스크롤
+  const {pathname}=useLocation();
+  console.log("scrollView pathname: ",pathname);
   const {postId} = useParams();
   const UID = localStorage.getItem('UID');
   const reqObject = {
-    postID : postId,
+    pathname : pathname,
+    postID:postId,
     UID : UID
   };
-  const count = 10;
+  const [listEndVisibility,setListEndVisibility] = useState("visible");
+  const count = 15;
   let index =0;
   const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
-  const [listEndVisibility,setListEndVisibility] = useState("visible");
+
   useEffect(() => {
     const options = {
-      root:document.querySelector(`.${styles.mainBox}`),
+      root:null,
+      //document.querySelector(`.${styles.mainBox}`),
       threshold: 0.1 
     };  
     const callback = (entries) => {
@@ -33,14 +38,14 @@ function ScrollView() {//무한스크롤
           .then(json=>{
             console.log(json);
               const newFragments = [];
-              for (let i = index; i < index + count; i++) {
-                if(json[i].body!=='none')
-                newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
-                else {
-                  console.log('none~!');
+              for (let i = index; i < index+count; i++) {
+                //console.log("i:",i,"json: " ,json);
+                if(json[i]==undefined){
                   setListEndVisibility("hidden");
-                  document.documentElement.style.setProperty('--listEndVisibility',listEndVisibility);
+                  console.log("lack");
+                  break;
                 }
+                newFragments.push(<PostFragment key={i} postId={json[i].postID==undefined?json[i].id:json[i].postID} post={json[i].body}/>);
               }
               setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
               index+=count;
@@ -61,6 +66,9 @@ function ScrollView() {//무한스크롤
     return () => observer.disconnect();
   }, []);
   //
+  useEffect(() => {
+    document.documentElement.style.setProperty('--listEndVisibility', listEndVisibility);
+  }, [listEndVisibility]);
   return (
     <div className={styles.mainBox}>
       <div className="list">
