@@ -266,13 +266,12 @@ async function user_history(user_id) {
 }
 
 async function runQueries(UID, isFirst) {
-    console.log(isFirst);
     if (isFirst == true) {
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
-        console.log(post_obj.length);
+        isFirst = false;
     }
 
     //MYSQL 연결
@@ -437,24 +436,5 @@ async function runQueries(UID, isFirst) {
             connection.end();
         }
     }
-
-    if (condition == false) {
-        let none = {
-            postID: '0',
-            body: 'none' ,
-            UID: 0,
-            status: '0',
-            create_at: new Date(),
-            isbn: '0',
-            title: '0',
-            author: '0',
-            name: '0'
-        };
-
-        post_obj.push(none);
-
-        return post_obj;
-    }
-
     return post_obj;
 }

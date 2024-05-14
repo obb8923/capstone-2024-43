@@ -40,7 +40,6 @@ function ScrollView() {
           .then(res => res.json())
           .then(json => {
             setIsFirst(false); // 첫 로딩 후 isFirst를 false로 설정
-            console.log(fragments.length, isFirst);
             console.log(json);
             const newFragments = [];
             for (let i = index; i < index + count; i++) {

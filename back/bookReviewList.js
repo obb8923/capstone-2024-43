@@ -35,7 +35,6 @@ async function bookList(UID, post_id, isFirst) {
     });
 
     const query = util.promisify(connection.query).bind(connection);
-    let end = false;
 
     try {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
@@ -59,33 +58,12 @@ async function bookList(UID, post_id, isFirst) {
                 post_obj.push(results[i]);
             }
         }
-        else if (results.length == 0) {
-            end = true;
-        }
+    
     } catch (error) {
         throw error;
     } finally {
         connection.end();
     }
-
-    if (end == true) {
-        let none = {
-            postID: '0',
-            body: 'none' ,
-            UID: 0,
-            status: '0',
-            create_at: new Date(),
-            isbn: '0',
-            title: '0',
-            author: '0',
-            name: '0'
-        };
-
-        post_obj.push(none);
-
-        return post_obj;
-    }
-
     return post_obj;
 }
 
