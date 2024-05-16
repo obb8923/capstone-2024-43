@@ -7,9 +7,8 @@
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
 7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
-8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 날짜 순으로 추천해준다.
-9. DB에서 더 이상 가져올 데이터가 없으면 'none'이 입력된 객체 리턴
-10. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
+8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 이전과 같이 정렬한 post_obj2로 추천해준다.
+9. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
 
 문제점 : 
 1. 추천된 리뷰가 20~39개이다.
@@ -17,8 +16,6 @@
 해야할 것 :
 1. 로그인한 사용자에게 추천된 리뷰 다 보여주면 객체2 보지게 해야됨
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
-3.
-4. 
 */
 
 var excludedPostIDs = [];
@@ -238,7 +235,7 @@ module.exports = {
     runQueries,
 }
 
-async function modal_filter(user_id) {
+async function modal_filter(user_id) {//모달 필터 받아오기
     return new Promise((resolve, reject) => {
       connection.query('SELECT filter FROM users WHERE UID = "${user_id}"', (error, results, fields) => {
         if (error) reject(error);
@@ -248,9 +245,9 @@ async function modal_filter(user_id) {
     });
 }
 
-async function user_history(user_id) {
+async function user_history(user_id) {//유저 리뷰 조회기록 받아오기
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM history WHERE UID = "${user_id}" ORDER BY watch_at DESC LIMIT 10', (error, results, fields) => {
+      connection.query(`SELECT * FROM history WHERE UID = "${user_id}" ORDER BY watch_at DESC LIMIT 10`, (error, results, fields) => {
         if (error) reject(error);
         resolve(results);
       });
@@ -258,10 +255,11 @@ async function user_history(user_id) {
     });
 }
 
+
 async function runQueries(UID, isFirst) {
     let result1 = [];
     let total_document = [];
-    
+
     if (isFirst == true) {
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
@@ -284,13 +282,19 @@ async function runQueries(UID, isFirst) {
     database:db_config.database,
     });
 
+    const query = util.promisify(connection.query).bind(connection);
+
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
-        result1 = await user_history(UID);
+        const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
+        const results = await query(user_history);
+
+        result1 = results;
+        
         //const result1_modal = await modal_filter(UID);
         //filter = result1_modal[0].filter.toString().split("");
     } else if (UID == null) {
-        historyNone = true;
+        historyNone = true;c
     }
 
     //리뷰가 없다면
@@ -307,8 +311,6 @@ async function runQueries(UID, isFirst) {
             total_document += document[i];
         }
     }
-
-    const query = util.promisify(connection.query).bind(connection);
 
     if (historyNone == true) {
         try {
