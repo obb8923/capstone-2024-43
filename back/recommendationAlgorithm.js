@@ -242,7 +242,7 @@ async function runQueries(UID, isFirst) {
             let post_obj2_20 = [];
             post_obj2_20.push(post_obj2[i * counter2]);
         }
-
+        counter2++;
         return post_obj2_20;
     }
 
