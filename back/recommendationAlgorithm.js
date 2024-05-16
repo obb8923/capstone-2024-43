@@ -291,8 +291,8 @@ async function runQueries(UID, isFirst) {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
         result1 = await user_history(UID);
-        const result1_modal = await modal_filter(UID);
-        filter = result1_modal[0].filter.toString().split("");
+        //const result1_modal = await modal_filter(UID);
+        //filter = result1_modal[0].filter.toString().split("");
     } else if (UID == null) {
         historyNone = true;
     }
