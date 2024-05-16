@@ -23,7 +23,7 @@ var post_obj = []; //유사도 0.2 이상 리뷰 객체
 var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
-var counter2 = 1;
+var counter2 = 0;
 var condition = true;
 //var filter;
 
@@ -240,9 +240,9 @@ async function runQueries(UID, isFirst) {
     if (condition == false) {
         for (let i = 0; i < 20; i++) {
             let post_obj2_20 = [];
-            post_obj2_20.push(post_obj2[i * counter2]);
+            post_obj2_20.push(post_obj2[i + counter2]);
         }
-        counter2++;
+        counter2+=20;
         return post_obj2_20;
     }
 
@@ -255,7 +255,7 @@ async function runQueries(UID, isFirst) {
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
         counter = 1;
-        counter2 = 1;
+        counter2 = 0;
         condition = true;
 
         return
