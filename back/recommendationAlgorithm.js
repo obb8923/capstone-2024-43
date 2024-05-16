@@ -15,7 +15,7 @@
 1. 추천된 리뷰가 20~39개이다.
 
 해야할 것 :
-1. 
+1. 로그인한 사용자에게 추천된 리뷰 다 보여주면 객체2 보지게 해야됨
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 3.
 4. 
@@ -25,6 +25,8 @@ var excludedPostIDs = [];
 var post_obj = []; //유사도 0.2 이상 리뷰 객체
 var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
+var counter = 1;
+var condition = true;
 //var filter;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
@@ -47,7 +49,6 @@ function tokenizer(document){//모든 단어 추출
                 console.error(err);
                 return;
             }
-            //console.log(result);
         }));
     }
     return tokenized_document;
@@ -65,7 +66,6 @@ function build_bag_of_words(tokenized_document){//문서 내 단어 등장횟수
             total_document.push(tokenized_document[index][j]);
         }
     }
-    //console.log('total document : ', total_document);
     
     // 단어에 index 맵핑
     for(let word in total_document){
@@ -99,10 +99,7 @@ function build_bag_of_words(tokenized_document){//문서 내 단어 등장횟수
         
         bow.push(bow_temp);
     }
-    
-    //console.log('vocabulary : ', word_to_index);
-    //console.log('bag of words vectors(term frequency) : ', bow);
-    
+        
     return [word_to_index, bow];
 }
 
@@ -119,7 +116,6 @@ function get_idf(bow){//단어별 중요도 구하기 - 많이 나온 단어는 
             }
         }
     }
-    //console.log('document frequency : ', df);
 
     let idf = [];
     let N = bow.length; // 전체 문서의 수
@@ -130,7 +126,6 @@ function get_idf(bow){//단어별 중요도 구하기 - 많이 나온 단어는 
     for(let i in idf){
         idf[i] = 1 + Math.log(N / (1 + df[i])); // 자연로그
     }
-    //console.log('inverse document frequency : ',idf);
     
     return idf;
 }
@@ -150,7 +145,6 @@ function get_tfidf(bow, idf){//build_bag_of_words * get_idf 총 중요도 구하
         
         tfidf.push(tfidf_temp);
     }
-    //console.log('TF-IDF : ', tfidf);
     
     return tfidf;
 }
@@ -197,7 +191,6 @@ function cosine_similarity(tfidf, docIndex, document_/**/){//1번 리뷰랑 2번
 function similarity_test(document, Index){//다른 함수들 실행시켜줌
     // 문서 토큰화
     let tokenized_document = tokenizer(document);
-    //console.log('tokenized_document : ', tokenized_document);
     
     // 모든 단어에 index 맵핑
     let result = build_bag_of_words(tokenized_document);
@@ -266,12 +259,17 @@ async function user_history(user_id) {
 }
 
 async function runQueries(UID, isFirst) {
+    let result1 = [];
+    let total_document = [];
+    
     if (isFirst == true) {
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
-        
+        counter = 1;
+        condition = true;
+
         return
     }
 
@@ -285,8 +283,6 @@ async function runQueries(UID, isFirst) {
     password:db_config.password,
     database:db_config.database,
     });
-    
-    let result1 = [];
 
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
@@ -296,8 +292,6 @@ async function runQueries(UID, isFirst) {
     } else if (UID == null) {
         historyNone = true;
     }
-
-    let total_document = [];
 
     //리뷰가 없다면
     if (result1.length == 0) {
@@ -315,12 +309,9 @@ async function runQueries(UID, isFirst) {
     }
 
     const query = util.promisify(connection.query).bind(connection);
-    let condition = true;
-    let counter = 1;
 
     if (historyNone == true) {
         try {
-            console.log('historyNone == true');
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
@@ -333,7 +324,7 @@ async function runQueries(UID, isFirst) {
                     condition = false;
                     break;
                 }
-
+                
                 // 다음 쿼리에서 제외할 postID 목록 업데이트
                 const newPostIDs = result2.map(post => post.postID);
                 excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
@@ -350,7 +341,6 @@ async function runQueries(UID, isFirst) {
         }
     } else if (historyNone == false) {
         try {
-            console.log('historyNone == false');
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
