@@ -23,6 +23,7 @@ var post_obj = []; //유사도 0.2 이상 리뷰 객체
 var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
+var counter2 = 1;
 var condition = true;
 //var filter;
 
@@ -235,28 +236,16 @@ module.exports = {
     runQueries,
 }
 
-async function modal_filter(user_id) {//모달 필터 받아오기
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT filter FROM users WHERE UID = "${user_id}"', (error, results, fields) => {
-        if (error) reject(error);
-        resolve(results);
-      });
-      connection.end();
-    });
-}
-
-async function user_history(user_id) {//유저 리뷰 조회기록 받아오기
-    return new Promise((resolve, reject) => {
-      connection.query(`SELECT * FROM history WHERE UID = "${user_id}" ORDER BY watch_at DESC LIMIT 10`, (error, results, fields) => {
-        if (error) reject(error);
-        resolve(results);
-      });
-      connection.end();
-    });
-}
-
-
 async function runQueries(UID, isFirst) {
+    if (condition == false) {
+        for (let i = 0; i < 20; i++) {
+            let post_obj2_20 = [];
+            post_obj2_20.push(post_obj2[i * counter2]);
+        }
+
+        return post_obj2_20;
+    }
+
     let result1 = [];
     let total_document = [];
 
@@ -266,6 +255,7 @@ async function runQueries(UID, isFirst) {
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
         counter = 1;
+        counter2 = 1;
         condition = true;
 
         return
@@ -287,14 +277,16 @@ async function runQueries(UID, isFirst) {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
         const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
+        //const modal_filter = 'SELECT filter FROM users WHERE UID = "${UID}"';
         const results = await query(user_history);
+        //filter = await query(modal_filter);
 
         result1 = results;
         
         //const result1_modal = await modal_filter(UID);
         //filter = result1_modal[0].filter.toString().split("");
     } else if (UID == null) {
-        historyNone = true;c
+        historyNone = true;
     }
 
     //리뷰가 없다면
