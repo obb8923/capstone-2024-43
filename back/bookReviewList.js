@@ -20,6 +20,8 @@ async function bookList(UID, post_id, isFirst) {
     if (isFirst == true) {
         excludedPostIDs = [];
         post_obj = [];
+
+        return
     }
 
     //MYSQL 연결

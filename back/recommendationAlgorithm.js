@@ -17,7 +17,7 @@
 해야할 것 :
 1. 
 2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
-3. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+3.
 4. 
 */
 
@@ -271,7 +271,8 @@ async function runQueries(UID, isFirst) {
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
-        isFirst = false;
+        
+        return
     }
 
     //MYSQL 연결
@@ -285,7 +286,6 @@ async function runQueries(UID, isFirst) {
     database:db_config.database,
     });
     
-    /*
     let result1 = [];
 
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
@@ -294,7 +294,6 @@ async function runQueries(UID, isFirst) {
         const result1_modal = await modal_filter(UID);
         filter = result1_modal[0].filter.toString().split("");
     } else if (UID == null) {
-        result1 = [];
         historyNone = true;
     }
 
@@ -314,21 +313,6 @@ async function runQueries(UID, isFirst) {
             total_document += document[i];
         }
     }
-    */
-
-    //1번 리뷰 데이터
-    let document = [];
-    document.push('출간소식 전해지자마자 샀네요 ~~^^ 읽는 내내 힘이되고 술술 잘읽혀 너무 신기했습니다. 지혜의 보물창고입니다. 책을 읽는 것과 운동하는 것을 특히 강조하셨는데 자극이됩니다. 손웅정님 너무 존경하고 사랑합니다. 앞으로도 함께하겠습니다. 항상 건강하시고 복많이 받으십시오. ^^ 감사합니다'); 
-    document.push('제목처럼 읽었고 쓰는 대신 밑줄치고 버렸습니다. 인터뷰 내용이 너무 산만하게 느껴져서 차라리 노트와 생각을 정리해서 출간했으면 어땠을까 아쉬웠습니다. ');
-    document.push('독서와 사색의 시간으로 다져진 손웅정 감독님의 삶을 읽는 통찰이 다양한 시각에서 공감을 불러 일으키는 내용으로 묻어났습니다. 인터뷰 형식으로 작성되어 읽기에도 편했구요. 친한 동생에게 조언보다 이 책을 선물하고 싶은 그런 마음입니다.');
-    document.push('첫 번째 책이랑 비슷하겠지? 하고 두번째 책을 샀는데인터뷰형식이라 느낌이 완전 달라 또 다르네요.바로 앞에서 손웅정님이 말해주는 것 처럼 그 분의 어법이 바로 느껴져 쉽게 전달이 됐어요. 손웅정님의 인생ㆍ가정교육ㆍ축구에 대한 철학을 이 책 한권으로 또 배워나갑니다.');
-    document.push('책장을 한장 넘겼을 뿐인데 2시간이 훌쩍 흘렀습니다. 인터뷰 형식으로 되어 있어 호불호가 갈릴 수 있겠으나 저의 경우에는 오히려 더 좋았습니다. 여러 주제에 대한 감독님의 생각을 두루두루 들을 수 있어 간만에 뜻깊은 독서시간이었습니다.');
-
-    //1번 리뷰들 하나의 문서로 퉁합
-    let total_document = [];
-    for(let i in document){
-        total_document += document[i];
-    }
 
     const query = util.promisify(connection.query).bind(connection);
     let condition = true;
@@ -336,6 +320,7 @@ async function runQueries(UID, isFirst) {
 
     if (historyNone == true) {
         try {
+            console.log('historyNone == true');
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
@@ -365,6 +350,7 @@ async function runQueries(UID, isFirst) {
         }
     } else if (historyNone == false) {
         try {
+            console.log('historyNone == false');
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
