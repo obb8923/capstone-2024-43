@@ -50,7 +50,7 @@ function ScrollView() {
             const newFragments = [];
             const jsonLength=json.length;
             console.log("jsonL: ",jsonLength)
-            for (let i = index; i <  jsonLength; i++) {
+            for (let i = index; i < jsonLength; i++) {
               if(jsonLength===0 || json[i]==null || json[i]==undefined){
               //if (json[i] === undefined) {
                 setListEndVisibility("hidden");
