@@ -16,7 +16,6 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
 var excludedPostIDs = [];
 var post_obj = [];
 var post_obj2 = [];
-var lastcount = false;
 var condition = true;
 
 async function bookList(UID, post_id, isFirst) {
@@ -30,8 +29,8 @@ async function bookList(UID, post_id, isFirst) {
         return
     }
 
-    if (lastcount === true) {
-        return [[],false];
+    if (condition === false) {
+        return [[], condition];
     }
 
     //MYSQL 연결
@@ -79,11 +78,10 @@ async function bookList(UID, post_id, isFirst) {
     } finally {
         connection.end();
         if(condition == false){
-            lastcount = true
             return [post_obj2, condition];
         }
     }
-    return [post_obj, true];
+    return [post_obj, condition];
 }
 
 module.exports = {
