@@ -22,6 +22,7 @@ var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
 var condition = true;
+var lastcount = false;
 //var filter;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
@@ -234,34 +235,22 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
-<<<<<<< HEAD
     if (isFirst == true) {
-=======
-    if (isFirst === true) {    
->>>>>>> 0de442a8aa4b2ec987e02357625b8f87d0e4473b
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
         counter = 1;
         condition = true;
+        lastcount = false;
 
         return
     }
-    // if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
 
-    //     return [post_obj2,condition];
-    // }
-
-    let result1 = [];
-    let total_document = [];
-
-    
-
-    if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
-        return post_obj2;
+    if (lastcount === true) {
+        return [[],false];
     }
-
+    
     let result1 = [];
     let total_document = [];
 
@@ -320,6 +309,7 @@ async function runQueries(UID, isFirst) {
 
                 if (result2.length == 0) {
                     condition = false;
+                    
                     break;
                 }
                 
@@ -343,6 +333,10 @@ async function runQueries(UID, isFirst) {
             throw error;
         } finally {
             connection.end();
+            if(condition == false){
+                lastcount = true
+                return [post_obj2, condition];
+            }
         }
     } else if (historyNone == false) {
         try {
@@ -420,8 +414,9 @@ async function runQueries(UID, isFirst) {
             throw error;
         } finally {
             connection.end();
-            if(condition===false){
-                return [post_obj2,condition];
+            if(condition == false){
+                lastcount = true
+                return [[post_obj2, condition]];
             }
         }
     }
