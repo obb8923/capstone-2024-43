@@ -17,6 +17,7 @@
     "mecab-ya": "^0.1.1",
     "mysql2": "^3.9.4",
     "natural": "^7.0.5",
-    "node": "^22.0.0"
+    "node": "^22.0.0",
+    "selenium-webdriver": "^4.20.0"
   }
 }
