@@ -1,9 +1,9 @@
 /*
 컨텐츠 기반 유사도 계산을 한다. 
-1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
-2. 리뷰를 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다.
+1. 최근에 사용자가 본 리뷰 작성날짜기준으로 10개를 데이터베이스에서 가져온다. (1번 리뷰)
+2. 데이터베이스에 있는 모든 리뷰에서 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다. (2번 리뷰)
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
-4. 유사도 0.2 이상만 객체1(post_obj)에 저장하고 0.2 미만은 객체2(post_obj2)로 빼놓는다.
+4. 유사도 0.2 이상만 객체1(post_obj)에 저장하고 0.2 미만은 객체2(post_obj2)로 빼놓는다. 객체에 리뷰를 저장하는 과정에서 제목, 작가를 *로 바꿔서 스포일러 필터링을 한다.
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 0~39개가 객체1(post_obj)에 추가된다. 객체1(post_obj)에는 추천된 리뷰들이 정렬되어있다. 
 7. 유사도 0.2 이상 리뷰들(객체1)을 모두 보여줬으면 따로 빼놓은 유사도 0.2 미만 리뷰들(객체2)을 보여준다.
@@ -27,7 +27,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     const regex = new RegExp(pattern, 'gi');
 
     for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '*');
+        reviewData[i] = reviewData[i].replace(regex, '***');
     }
 
     return reviewData
@@ -232,15 +232,8 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
-
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
-        let post_obj2_20;
-        for (let i = 0; i < 20; i++) {
-            post_obj2_20 = [];
-            post_obj2_20.push(post_obj2[i + counter2]);
-        }
-        counter2+=20;
-        return post_obj2_20;
+        return post_obj2;
     }
 
     let result1 = [];
