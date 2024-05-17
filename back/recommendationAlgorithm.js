@@ -1,21 +1,16 @@
 /*
 컨텐츠 기반 유사도 계산을 한다. 
 1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
-2. 카테고리, 최근 작성된 리뷰 20개 가져온다.
+2. 리뷰를 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다.
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
-4. 유사도 0.2 이상만 추천하고 0.2 미만은 다른 객체로 빼놓는다.
+4. 유사도 0.2 이상만 객체1(post_obj)에 저장하고 0.2 미만은 객체2(post_obj2)로 빼놓는다.
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
-6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
-7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
-8. 유사도 0.2 이상 리뷰들을 모두 추천했으면 따로 빼놓은 유사도 0.2 미만 리뷰들을 이전과 같이 정렬한 post_obj2로 추천해준다.
-9. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
-
-문제점 : 
-1. 추천된 리뷰가 20~39개이다.
+6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 0~39개가 객체1(post_obj)에 추가된다. 객체1(post_obj)에는 추천된 리뷰들이 정렬되어있다. 
+7. 유사도 0.2 이상 리뷰들(객체1)을 모두 보여줬으면 따로 빼놓은 유사도 0.2 미만 리뷰들(객체2)을 보여준다.
+8. 카테고리나 사용자가 본 리뷰가 없거나 비로그인 사용자에게는 리뷰 작성일자 기준으로만 추천한다.(비로그인 사용자는 카테고리 필터링도 X -> 로그인 유도)
 
 해야할 것 :
-1. 로그인한 사용자에게 추천된 리뷰 다 보여주면 객체2 보지게 해야됨
-2. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
+1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 */
 
 var excludedPostIDs = [];
@@ -23,6 +18,7 @@ var post_obj = []; //유사도 0.2 이상 리뷰 객체
 var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
+var counter2 = 0;
 var condition = true;
 //var filter;
 
@@ -235,32 +231,17 @@ module.exports = {
     runQueries,
 }
 
-async function modal_filter(user_id) {//모달 필터 받아오기
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT filter FROM users WHERE UID = "${user_id}"', (error, results, fields) => {
-        if (error) reject(error);
-        resolve(results);
-      });
-      connection.end();
-    });
-}
-
-async function user_history(user_id) {//유저 리뷰 조회기록 받아오기
-    return new Promise((resolve, reject) => {
-      connection.query(`SELECT * FROM history WHERE UID = "${user_id}" ORDER BY watch_at DESC LIMIT 10`, (error, results, fields) => {
-        if (error) reject(error);
-        resolve(results);
-      });
-      connection.end();
-    });
-}
-
-
 async function runQueries(UID, isFirst) {
-    if (condition == false) {
-        return post_obj2;
+
+    if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
+        for (let i = 0; i < 20; i++) {
+            let post_obj2_20 = [];
+            post_obj2_20.push(post_obj2[i + counter2]);
+        }
+        counter2+=20;
+        return post_obj2_20;
     }
-    
+
     let result1 = [];
     let total_document = [];
 
@@ -270,6 +251,7 @@ async function runQueries(UID, isFirst) {
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
         historyNone = false;
         counter = 1;
+        counter2 = 0;
         condition = true;
 
         return
@@ -291,14 +273,16 @@ async function runQueries(UID, isFirst) {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
         const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
+        //const modal_filter = 'SELECT filter FROM users WHERE UID = "${UID}"';
         const results = await query(user_history);
+        //filter = await query(modal_filter);
 
         result1 = results;
         
         //const result1_modal = await modal_filter(UID);
         //filter = result1_modal[0].filter.toString().split("");
     } else if (UID == null) {
-        historyNone = true;c
+        historyNone = true;
     }
 
     //리뷰가 없다면
