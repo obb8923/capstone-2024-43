@@ -85,14 +85,14 @@ export const saveReviewPost = async (book) => {
     hundred_list.forEach(review => {
         connection.query(
             "INSERT IGNORE INTO posts (postID, body, UID, status, create_at, isbn, title) VALUE (?, ?, ?, ?, ?, ?, ?);",
-            [getHash(uid+review), review, uid, "good", today, book.isbn, ""]
+            [getHash(uid+review), review, uid, "good", today, book.isbn13, ""]
         );
     });
     
     my_review_list.forEach(review => {
         connection.query(
             "INSERT IGNORE INTO posts (postID, body, UID, status, create_at, isbn, title) VALUE (?, ?, ?, ?, ?, ?, ?);",
-            [getHash(uid+review), review, uid, "good", today, book.isbn, ""]
+            [getHash(uid+review), review, uid, "good", today, book.isbn13, ""]
         );
     });
 
