@@ -233,8 +233,8 @@ module.exports = {
 
 async function runQueries(UID, isFirst) {
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
+        let post_obj2_20 = [];
         for (let i = 0; i < 20; i++) {
-            let post_obj2_20 = [];
             post_obj2_20.push(post_obj2[i + counter2]);
         }
         counter2+=20;
@@ -319,6 +319,11 @@ async function runQueries(UID, isFirst) {
                 excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
                 
                 for (let i = 0; i < result2.length; i++) {
+                    let a = result2[i].name;
+                    let b = result2[i].author;
+                    let c = a + ' ' + b;
+                    let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                    result2[i].body = spoilerFilter(result2[i].body, spoilerWord);
                     post_obj.push(result2[i]);
                 }
             }
@@ -364,10 +369,10 @@ async function runQueries(UID, isFirst) {
                     for (let j = 0; j < result2.length; j++) {
                         if (result2[j].body == obj[i].body) {
                             obj2[i] = result2[j];
-
-                            let spoilerWord = [];
-                            spoilerWord.push(obj2[i].name);
-                            spoilerWord.push(obj2[i].author);
+                            let a = obj2[i].name;
+                            let b = obj2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
                             obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
                         }
                     }
@@ -377,10 +382,10 @@ async function runQueries(UID, isFirst) {
                     for (let j = 0; j < result2.length; j++) {
                         if (result2[j].body == obj_sim_not[i].body) {
                             obj_sim_not2[i] = result2[j];
-
-                            let spoilerWord = [];
-                            spoilerWord.push(obj_sim_not2[i].name);
-                            spoilerWord.push(obj_sim_not2[i].author);
+                            let a = obj_sim_not2[i].name;
+                            let b = obj_sim_not2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
                             obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
                         }
                     }
