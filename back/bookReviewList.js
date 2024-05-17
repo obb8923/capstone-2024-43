@@ -83,7 +83,9 @@ async function bookList(UID, post_id, isFirst) {
             return [post_obj2, condition];
         }
     }
-    return [post_obj, true];
+
+    return [post_obj,true];
+
 }
 
 module.exports = {
