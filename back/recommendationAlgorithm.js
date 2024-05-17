@@ -1,7 +1,7 @@
 /*
 컨텐츠 기반 유사도 계산을 한다. 
-1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
-2. 리뷰를 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다.
+1. 최근에 사용자가 본 리뷰 작성날짜기준으로 10개를 데이터베이스에서 가져온다. (1번 리뷰)
+2. 데이터베이스에 있는 모든 리뷰에서 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다. (2번 리뷰)
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
 //term frequency 단어 반복수
 //idf inverse document freqency 전체문서에서 몇번 나왔는지
@@ -30,7 +30,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     const regex = new RegExp(pattern, 'gi');
 
     for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '*');
+        reviewData[i] = reviewData[i].replace(regex, '***');
     }
 
     return reviewData
@@ -235,17 +235,8 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
-
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
-        // let post_obj2_20;
-        // for (let i = 0; i < 20; i++) {
-        //     post_obj2_20 = [];
-        //     post_obj2_20.push(post_obj2[i + counter2]);
-        //     console.log("2: ",post_obj2);
-        //     console.log("in iter: ",post_obj2_20);
-        // }
-        // counter2+=20;
-        // console.log("return: ",post_obj2_20);
+
         return post_obj2;
     }
 
@@ -327,6 +318,13 @@ async function runQueries(UID, isFirst) {
                 excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
                 
                 for (let i = 0; i < result2.length; i++) {
+                    let a = result2[i].name;
+                    let b = result2[i].author;
+                    let c = a + ' ' + b;
+                    let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                    let body = [];
+                    body.push(result2[i].body);
+                    result2[i].body = spoilerFilter(body, spoilerWord)[0];
                     post_obj.push(result2[i]);
                 }
             }
@@ -372,11 +370,13 @@ async function runQueries(UID, isFirst) {
                     for (let j = 0; j < result2.length; j++) {
                         if (result2[j].body == obj[i].body) {
                             obj2[i] = result2[j];
-
-                            let spoilerWord = [];
-                            spoilerWord.push(obj2[i].name);
-                            spoilerWord.push(obj2[i].author);
-                            obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
+                            let a = obj2[i].name;
+                            let b = obj2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                            let body = [];
+                            body.push(obj2[i].body);
+                            obj2[i].body = spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }
@@ -385,11 +385,13 @@ async function runQueries(UID, isFirst) {
                     for (let j = 0; j < result2.length; j++) {
                         if (result2[j].body == obj_sim_not[i].body) {
                             obj_sim_not2[i] = result2[j];
-
-                            let spoilerWord = [];
-                            spoilerWord.push(obj_sim_not2[i].name);
-                            spoilerWord.push(obj_sim_not2[i].author);
-                            obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
+                            let a = obj_sim_not2[i].name;
+                            let b = obj_sim_not2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                            let body = [];
+                            body.push(obj_sim_not2[i].body);
+                            obj_sim_not2[i].body = spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }

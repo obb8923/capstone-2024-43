@@ -7,7 +7,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     const regex = new RegExp(pattern, 'gi');
 
     for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '*');
+        reviewData[i] = reviewData[i].replace(regex, '***');
     }
 
     return reviewData
@@ -51,12 +51,13 @@ async function bookList(UID, post_id, isFirst) {
         
         if (results.length != 0) {
             for (let i = 0; i < results.length; i++) {
-                let spoilerWord = [];
-
-                spoilerWord.push(results[i].name);
-                spoilerWord.push(results[i].author);
-
-                results[i].body = spoilerFilter(results[i].body, spoilerWord);
+                let a = results[i].name;
+                let b = results[i].author;
+                let c = a + ' ' + b;
+                let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                let body = [];
+                body.push(results[i].body);
+                results[i].body = spoilerFilter(body, spoilerWord)[0];
                 post_obj.push(results[i]);
             }
         }
