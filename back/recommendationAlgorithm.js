@@ -235,15 +235,10 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
-    if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
-
-        return post_obj2;
-    }
-
-    let result1 = [];
-    let total_document = [];
-
-    if (isFirst == true) {
+    console.log(isFirst);
+    console.log(typeof(isFirst));
+    if (isFirst === true) {
+        console.log("dd");
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
@@ -254,6 +249,15 @@ async function runQueries(UID, isFirst) {
 
         return
     }
+    if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
+
+        return post_obj2;
+    }
+
+    let result1 = [];
+    let total_document = [];
+
+    
 
     //MYSQL 연결
     const mysql = require('mysql2');
