@@ -11,7 +11,8 @@ const reviewListAlgo = require("./bookReviewList");
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
 app.use(cors()) // cors() middleware 사용
-
+// URL-encoded 형식의 요청 본문을 파싱하기 위한 미들웨어 form 제출 파싱
+app.use(express.urlencoded({ extended: true }));
 //MYSQL 연결
 const mysql = require('mysql2');
 var db_config  = require('./db-config.json');
@@ -77,7 +78,7 @@ app.delete('/api/post/:postId', (req, res) => {
 //
 app.post('/api/ScrollView', async(req, res) => {
   const {pathname,postID,UID,isFirst} = req.body; 
-  console.log("ll",pathname,postID,UID,isFirst); 
+  console.log("***@@@ scrollview log @@@***\npathname: ",pathname,"\npostID: ",postID,"\nUID: ",UID,"\nisFirst: ",isFirst); 
   if(pathname==='/'){//main page
     const data =await recommendAlgo.runQueries(UID,isFirst);
     res.json(data);
@@ -219,6 +220,9 @@ app.post('/api/library',(req,res)=>{
       res.json({result});
     }
   })
+})
+app.post('/api/like',(req,res)=>{
+  console.log("like: ",req.body.checked);
 })
 
   //react에서 route 사용하기 - 맨 밑에 둘 것
