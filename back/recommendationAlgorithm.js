@@ -232,6 +232,7 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
+
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
         let post_obj2_20 = [];
         for (let i = 0; i < 20; i++) {
