@@ -9,7 +9,7 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     for (let i = 0; i < reviewData.length; i++) {
         reviewData[i] = reviewData[i].replace(regex, '***');
     }
-
+    
     return reviewData
 }
 
