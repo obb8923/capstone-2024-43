@@ -55,7 +55,9 @@ async function bookList(UID, post_id, isFirst) {
                 let b = results[i].author;
                 let c = a + ' ' + b;
                 let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
-                results[i].body = spoilerFilter(results[i].body, spoilerWord);
+                let body = [];
+                body.push(results[i].body);
+                results[i].body = spoilerFilter(body, spoilerWord)[0];
                 post_obj.push(results[i]);
             }
         }

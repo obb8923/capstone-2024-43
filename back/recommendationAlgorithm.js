@@ -325,7 +325,9 @@ async function runQueries(UID, isFirst) {
                     let b = result2[i].author;
                     let c = a + ' ' + b;
                     let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
-                    result2[i].body = spoilerFilter(result2[i].body, spoilerWord);
+                    let body = [];
+                    body.push(result2[i].body);
+                    result2[i].body = spoilerFilter(body, spoilerWord)[0];
                     post_obj.push(result2[i]);
                 }
             }
@@ -375,7 +377,9 @@ async function runQueries(UID, isFirst) {
                             let b = obj2[i].author;
                             let c = a + ' ' + b;
                             let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
-                            obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
+                            let body = [];
+                            body.push(obj2[i].body);
+                            obj2[i].body = spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }
@@ -388,7 +392,9 @@ async function runQueries(UID, isFirst) {
                             let b = obj_sim_not2[i].author;
                             let c = a + ' ' + b;
                             let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
-                            obj_sim_not2[i].body = spoilerFilter(obj_sim_not2[i].body, spoilerWord);
+                            let body = [];
+                            body.push(obj_sim_not2[i].body);
+                            obj_sim_not2[i].body = spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }
