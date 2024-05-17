@@ -79,26 +79,13 @@ app.post('/api/ScrollView', async(req, res) => {
   const {pathname,postID,UID,isFirst} = req.body; 
   console.log("ll",pathname,postID,UID,isFirst); 
   if(pathname==='/'){//main page
-    console.log('in index: ',isFirst);
-    console.log('in index: ',typeof(isFirst));
     const data =await recommendAlgo.runQueries(UID,isFirst);
-    console.log('in index2: ',isFirst);
-    console.log('in index2: ',typeof(isFirst));
     res.json(data);
-  
-    // console.log("1",data[1].length,"\nlength: ",data[0].length);
-    // console.log("")
-    // if(data[0].length===0){
-    //   res.json(data[1]);
-    // }else{
-    //   res.json(data[0]);
-    // }
   }else if(pathname==='/announcement'){//announcement page
     connection.query('select * from announcements order by create_at DESC',(error,result)=>{
       if(error){
         res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
       }else{
-        console.log("result~!: ",result);
         res.json(result);
       }
     })
