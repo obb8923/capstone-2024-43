@@ -33,7 +33,7 @@ function PostViewPage() {
           console.log("json: ", json);
           console.log("json[0]:", json[0]);
           setData(json[0]);
-          fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기
+          
           return json[0];
         })
         .then((data) => {
@@ -92,6 +92,7 @@ function PostViewPage() {
     }
   }
 
+
   function fetchBookInfo(isbn) {
     if (isbn) {
       fetch(`http://localhost:8080/api/books/search/${isbn}`)
@@ -103,6 +104,7 @@ function PostViewPage() {
         .catch(error => console.log(error));
     }
   }
+
 
   return (
     <>

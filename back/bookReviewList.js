@@ -9,19 +9,29 @@ function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 
     for (let i = 0; i < reviewData.length; i++) {
         reviewData[i] = reviewData[i].replace(regex, '***');
     }
-    
+
     return reviewData
 }
 
 var excludedPostIDs = [];
 var post_obj = [];
+var post_obj2 = [];
+var lastcount = false;
+var condition = true;
 
 async function bookList(UID, post_id, isFirst) {
     if (isFirst == true) {
         excludedPostIDs = [];
         post_obj = [];
+        post_obj2 = [];
+        lastcount = false;
+        condition = true;
 
         return
+    }
+
+    if (lastcount === true) {
+        return [[],false];
     }
 
     //MYSQL 연결
@@ -60,14 +70,22 @@ async function bookList(UID, post_id, isFirst) {
                 results[i].body = spoilerFilter(body, spoilerWord)[0];
                 post_obj.push(results[i]);
             }
+        } else if (results.length == 0) {
+            condition = false;
         }
     
     } catch (error) {
         throw error;
     } finally {
         connection.end();
+        if(condition == false){
+            lastcount = true
+            return [post_obj2, condition];
+        }
     }
+
     return [post_obj,true];
+
 }
 
 module.exports = {

@@ -21,9 +21,7 @@ const TextEditor = ({initialData, setData}) => {
 				'outdent',
 				'indent',
 				'|',
-				'imageUpload',
 				'blockQuote',
-				'insertTable',
 				'|',
 				'undo',
 				'redo'
