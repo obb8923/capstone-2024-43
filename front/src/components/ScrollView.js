@@ -13,15 +13,17 @@ function ScrollView() {
   const count = 10;
   let index = 0;
   const [fragments, setFragments] = useState([]);
+  useEffect(()=>{
+    fetch("/api/ScrollViewIsFirst", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({pathname: pathname,isFirst:isFirst})
+  })},[])
   useEffect(() => {
     if(pathname==='/announcement')setListEndVisibility("none");
-    fetch("/api/ScrollView", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({isFirst:isFirst})
-          })
+    
     const options = {
       root: null,
       threshold: 0.1 

@@ -73,12 +73,17 @@ app.delete('/api/post/:postId', (req, res) => {
   });
 });
 
+
 //
 app.post('/api/ScrollView', async(req, res) => {
   const {pathname,postID,UID,isFirst} = req.body; 
   console.log("ll",pathname,postID,UID,isFirst); 
   if(pathname==='/'){//main page
+    console.log('in index: ',isFirst);
+    console.log('in index: ',typeof(isFirst));
     const data =await recommendAlgo.runQueries(UID,isFirst);
+    console.log('in index2: ',isFirst);
+    console.log('in index2: ',typeof(isFirst));
     res.json(data);
   
     // console.log("1",data[1].length,"\nlength: ",data[0].length);
@@ -103,6 +108,18 @@ app.post('/api/ScrollView', async(req, res) => {
     res.json(data);
   }
 });
+
+app.post('/api/ScrollViewIsFirst', async(req, res) => {
+  const {pathname,postID,UID,isFirst} = req.body; 
+  if(pathname==='/'){//main page
+    const data =await recommendAlgo.runQueries(UID,isFirst);
+  }else if(pathname==='/announcement'){//announcement page
+  }
+  else{//post page
+    const data = await reviewListAlgo.bookList(UID,postID,isFirst);
+  }
+});
+
 
 // /api/postpage/{postid} 로 post 정보 보내기
 app.get('/api/postpage/:postId',(req,res)=>{
