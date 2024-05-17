@@ -234,7 +234,11 @@ module.exports = {
 }
 
 async function runQueries(UID, isFirst) {
+<<<<<<< HEAD
     if (isFirst == true) {
+=======
+    if (isFirst === true) {    
+>>>>>>> 0de442a8aa4b2ec987e02357625b8f87d0e4473b
         excludedPostIDs = [];
         post_obj = []; //유사도 0.2 이상 리뷰 객체
         post_obj2 = []; //유사도 0.2 이하 리뷰 객체
@@ -244,6 +248,15 @@ async function runQueries(UID, isFirst) {
 
         return
     }
+    // if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
+
+    //     return [post_obj2,condition];
+    // }
+
+    let result1 = [];
+    let total_document = [];
+
+    
 
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
         return post_obj2;
@@ -343,6 +356,7 @@ async function runQueries(UID, isFirst) {
 
                 if (result2.length == 0) {
                     condition = false;
+                    
                     break;
                 }
 
@@ -406,7 +420,10 @@ async function runQueries(UID, isFirst) {
             throw error;
         } finally {
             connection.end();
+            if(condition===false){
+                return [post_obj2,condition];
+            }
         }
     }
-    return post_obj;
+    return [post_obj,condition];
 }

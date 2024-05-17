@@ -11,7 +11,6 @@ function PostViewPage() {
   const [_li,set_Li]=useState([]);
   const [bookInfoContainerDisplay,setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay,setButtonDisplay] = useState("block");
-  const [bookData, setBookData] = useState({});
   const UID = (localStorage.getItem('UID'))==null?'null':localStorage.getItem('UID');
   const navigate = useNavigate();
 
@@ -31,7 +30,7 @@ function PostViewPage() {
           console.log("json: ",json);
           console.log("json[0]:", json[0]);
           setData(json[0]);
-          fetchBookInfo(json[0].isbn); // postId에 해당하는 책 정보 가져오기
+          
           return json[0];
         })
         .then((data)=>{
@@ -90,17 +89,6 @@ function PostViewPage() {
     }
   }
 
-  function fetchBookInfo(isbn) {
-    if (isbn) {
-      fetch(`http://localhost:8080/api/books/search/${isbn}`)
-        .then(res => res.json())
-        .then(json => {
-          console.log("bookData:", json);
-          setBookData(json[0]);
-        })
-        .catch(error => console.log(error));
-    }
-  }
   return (
     <>
       <article>

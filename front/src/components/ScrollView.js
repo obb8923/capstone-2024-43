@@ -1,31 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PostFragment from './PostFragment';
 import styles from "../css/ScrollView.module.css";
 import { useParams, useLocation } from 'react-router-dom';
 
 function ScrollView() {
-  const {pathname} = useLocation();
-  console.log("scrollView pathname: ", pathname);
-  const {postId} = useParams();
+  const { pathname } = useLocation();
+  const { postId } = useParams();
   const UID = localStorage.getItem('UID');
-  const [isFirst, setIsFirst] = useState(true); // isFirst 상태 관리 추가
+  const [isFirst, setIsFirst] = useState(true);
   const [listEndVisibility, setListEndVisibility] = useState("visible");
   const count = 10;
-  let index = 0;
+  const indexRef = useRef(0); // index를 useRef로 관리
   const [fragments, setFragments] = useState([]);
+
   useEffect(() => {
-    if(pathname==='/announcement')setListEndVisibility("none");
-    fetch("/api/ScrollView", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({isFirst:isFirst})
-          })
+    fetch("/api/ScrollViewIsFirst", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ pathname: pathname, isFirst: isFirst })
+    }).then(() => setIsFirst(false)); // 초기 요청 후 isFirst 업데이트
+  }, []);
+
+  useEffect(() => {
+    if (pathname === '/announcement') setListEndVisibility("none");
+
     const options = {
       root: null,
-      threshold: 0.1 
-    };  
+      threshold: 0.1
+    };
+
     const callback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -44,38 +49,39 @@ function ScrollView() {
           })
           .then(res => res.json())
           .then(json => {
-            
-            setIsFirst(false); // 첫 로딩 후 isFirst를 false로 설정
-            console.log(json)
+            console.log(json);
             const newFragments = [];
-            const jsonLength=json.length;
-            console.log("jsonL: ",jsonLength)
-            for (let i = index; i < jsonLength; i++) {
-              if(jsonLength===0 || json[i]==null || json[i]==undefined){
-              //if (json[i] === undefined) {
-                setListEndVisibility("hidden");
-                console.log("lack");
-                break;
-              }
-              newFragments.push(<PostFragment key={i} postId={json[i].postID === undefined ? json[i].id : json[i].postID} post={json[i].body} />);
+            const jsonLength = json[0].length;
+            if(json[1]===false){
+              indexRef.current=0;
             }
+            if (jsonLength === 0) {
+              setListEndVisibility("hidden");
+              console.log("No more data");
+              return;
+            }
+            console.log("<",indexRef.current," , ",jsonLength,">");
+            for (let i = indexRef.current; i < jsonLength; i++) {
+              newFragments.push(<PostFragment key={i} postId={json[0][i].postID || json[0][i].id} post={json[0][i].body} />);
+            }
+            
             setFragments(prevFragments => [...prevFragments, ...newFragments]);
-            index += jsonLength;
+            indexRef.current = jsonLength;
           })
           .catch((error) => {
-            console.log("error: " + error)
-          })
+            console.log("error: " + error);
+          });
         }
       });
     }
+
     const observer = new IntersectionObserver(callback, options);
-    
     const target = document.querySelector(`.${styles.listEnd}`);
     if (target) {
       observer.observe(target);
     }
     return () => observer.disconnect();
-  }, []);
+  }, [pathname, postId, UID]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--listEndVisibility', listEndVisibility);
