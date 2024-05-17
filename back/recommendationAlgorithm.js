@@ -416,7 +416,7 @@ async function runQueries(UID, isFirst) {
             connection.end();
             if(condition == false){
                 lastcount = true
-                return [[post_obj2, condition]];
+                return [post_obj2, condition];
             }
         }
     }
