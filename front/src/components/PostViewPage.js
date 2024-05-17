@@ -130,17 +130,18 @@ function PostViewPage() {
     <div className={styles.bookInfoBox}>
         <button className={styles.stateButton} onClick={changeBlurBoxState}>책 정보 확인하기</button>
         <div className={styles.bookInfoContainer}>
-      <div className={styles.bookImg}>
-        {/* <img src="" alt="bookImg"></img> */}
-      </div>
-      <div className={styles.bookInfo}>
-      <form action="https://www.google.com/search" method="get" target="_blank">
-        <ul className={styles.ul}>
-          {_li}
-        </ul>
-      </form>
-      </div>
-      </div>
+          <div className={styles.bookInfo}>
+            <form action="https://www.google.com/search" method="get" target="_blank">
+              <ul className={styles.ul}>
+                {_li}
+              </ul>
+            </form>
+          </div>
+          <div className={styles.likeOrNot}>
+            <div></div>
+            
+          </div>
+        </div>
     </div>
     <hr className={styles.line}></hr>
     <ScrollView/>

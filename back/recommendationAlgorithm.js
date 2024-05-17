@@ -3,6 +3,9 @@
 1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
 2. 리뷰를 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다.
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
+//term frequency 단어 반복수
+//idf inverse document freqency 전체문서에서 몇번 나왔는지
+//단어들을 벡터화해서 코사인 유사도 계산
 4. 유사도 0.2 이상만 객체1(post_obj)에 저장하고 0.2 미만은 객체2(post_obj2)로 빼놓는다.
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 0~39개가 객체1(post_obj)에 추가된다. 객체1(post_obj)에는 추천된 리뷰들이 정렬되어있다. 
@@ -234,12 +237,16 @@ module.exports = {
 async function runQueries(UID, isFirst) {
 
     if (condition == false) {//객체2(유사도 0.2이하)를 20개씩 리턴
-        for (let i = 0; i < 20; i++) {
-            let post_obj2_20 = [];
-            post_obj2_20.push(post_obj2[i + counter2]);
-        }
-        counter2+=20;
-        return post_obj2_20;
+        // let post_obj2_20;
+        // for (let i = 0; i < 20; i++) {
+        //     post_obj2_20 = [];
+        //     post_obj2_20.push(post_obj2[i + counter2]);
+        //     console.log("2: ",post_obj2);
+        //     console.log("in iter: ",post_obj2_20);
+        // }
+        // counter2+=20;
+        // console.log("return: ",post_obj2_20);
+        return post_obj2;
     }
 
     let result1 = [];
