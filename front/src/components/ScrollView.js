@@ -13,10 +13,9 @@ function ScrollView() {
   const count = 10;
   let index = 0;
   const [fragments, setFragments] = useState([]);
-  
   useEffect(() => {
     if(pathname==='/announcement')setListEndVisibility("none");
-    fetch("http://localhost:8080/api/ScrollView", {
+    fetch("/api/ScrollView", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -51,8 +50,8 @@ function ScrollView() {
             const newFragments = [];
             const jsonLength=json.length;
             console.log("jsonL: ",jsonLength)
-            for (let i = 0; i <  jsonLength; i++) {
-              if(jsonLength===0){
+            for (let i = index; i <  jsonLength; i++) {
+              if(jsonLength===0 || json[i]==null || json[i]==undefined){
               //if (json[i] === undefined) {
                 setListEndVisibility("hidden");
                 console.log("lack");

@@ -21,3 +21,8 @@ html{
     transform-origin: 50% 50%;
     opacity: 0.4;
 }
+.likeOrNot{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
