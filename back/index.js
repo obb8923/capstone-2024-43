@@ -79,7 +79,15 @@ app.post('/api/ScrollView', async(req, res) => {
   console.log("ll",pathname,postID,UID,isFirst); 
   if(pathname==='/'){//main page
     const data =await recommendAlgo.runQueries(UID,isFirst);
-   res.json(data);
+    res.json(data);
+  
+    // console.log("1",data[1].length,"\nlength: ",data[0].length);
+    // console.log("")
+    // if(data[0].length===0){
+    //   res.json(data[1]);
+    // }else{
+    //   res.json(data[0]);
+    // }
   }else if(pathname==='/announcement'){//announcement page
     connection.query('select * from announcements order by create_at DESC',(error,result)=>{
       if(error){

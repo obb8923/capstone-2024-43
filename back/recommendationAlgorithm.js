@@ -257,6 +257,10 @@ async function user_history(user_id) {//유저 리뷰 조회기록 받아오기
 
 
 async function runQueries(UID, isFirst) {
+    if (condition == false) {
+        return post_obj2;
+    }
+    
     let result1 = [];
     let total_document = [];
 

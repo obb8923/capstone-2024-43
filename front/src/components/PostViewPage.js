@@ -108,7 +108,7 @@ function PostViewPage() {
           {/* data가 로드되지 않았거나 body가 없는 경우를 고려하여 조건부 렌더링 */}
           {data ? (
            <>
-            {<h1>{data.title}</h1>}
+            {/* {<h1>{data.title}</h1>} */}
             {UID && data.UID && (UID.toString() === data.UID.toString()) && (
               <div className={styles.buttoncontainer}>
                 <button className={styles.editButtons} onClick={handleEdit}>수정</button>

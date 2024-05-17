@@ -8,23 +8,14 @@ function ScrollView() {
   console.log("scrollView pathname: ", pathname);
   const {postId} = useParams();
   const UID = localStorage.getItem('UID');
-  
   const [isFirst, setIsFirst] = useState(true); // isFirst 상태 관리 추가
   const [listEndVisibility, setListEndVisibility] = useState("visible");
-  const count = 15;
+  const count = 10;
   let index = 0;
   const [fragments, setFragments] = useState([]);
-  useEffect(()=>{
-    fetch("http://localhost:8080/api/ScrollView", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({isFirst:isFirst})
-          })
-          .then(res => res.json())
-  },[])
+  
   useEffect(() => {
+    if(pathname==='/announcement')setListEndVisibility("none");
     fetch("http://localhost:8080/api/ScrollView", {
             method: "POST",
             headers: {
@@ -32,7 +23,6 @@ function ScrollView() {
             },
             body: JSON.stringify({isFirst:isFirst})
           })
-          .then(res => res.json())
     const options = {
       root: null,
       threshold: 0.1 
@@ -41,11 +31,10 @@ function ScrollView() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
-          const reqObject = { // reqObject를 여기서 정의
+          const reqObject = {
             pathname: pathname,
             postID: postId,
             UID: UID,
-            //isFirst: isFirst, // isFirst 상태 사용
           };
           fetch("http://localhost:8080/api/ScrollView", {
             method: "POST",
@@ -56,11 +45,15 @@ function ScrollView() {
           })
           .then(res => res.json())
           .then(json => {
+            
             setIsFirst(false); // 첫 로딩 후 isFirst를 false로 설정
-            console.log(json);
+            console.log(json)
             const newFragments = [];
-            for (let i = index; i < index + count; i++) {
-              if (json[i] === undefined) {
+            const jsonLength=json.length;
+            console.log("jsonL: ",jsonLength)
+            for (let i = 0; i <  jsonLength; i++) {
+              if(jsonLength===0){
+              //if (json[i] === undefined) {
                 setListEndVisibility("hidden");
                 console.log("lack");
                 break;
@@ -68,7 +61,7 @@ function ScrollView() {
               newFragments.push(<PostFragment key={i} postId={json[i].postID === undefined ? json[i].id : json[i].postID} post={json[i].body} />);
             }
             setFragments(prevFragments => [...prevFragments, ...newFragments]);
-            index += count;
+            index += jsonLength;
           })
           .catch((error) => {
             console.log("error: " + error)
@@ -83,7 +76,7 @@ function ScrollView() {
       observer.observe(target);
     }
     return () => observer.disconnect();
-  }, []); // isFirst를 의존성 배열에 추가
+  }, []);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--listEndVisibility', listEndVisibility);

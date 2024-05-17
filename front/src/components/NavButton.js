@@ -31,6 +31,7 @@ function NavButton(props) {
       return;
     } else if (nav === "logo"){
        navigate(`/`);
+      window.location.reload();
     } else {//비회원 post 기능 허용할지 의논필요 
        if(UID===null)openModal2();
        else navigate(`/${nav}`);
@@ -72,7 +73,13 @@ function NavButton(props) {
        //subtitle.style.color = '#f00';
   }
   function closeModal(num) {
-    num===1?setIsOpen(false):setIsOpen2(false);
+    if(num===1){
+      setIsOpen(false);window.location.reload();
+      return;
+    }else{
+      setIsOpen2(false);
+      return ;
+    }
   }
   // 체크박스 상태
   const [checkboxStates, setCheckboxStates] = useState({
@@ -105,8 +112,8 @@ function NavButton(props) {
       })
       .then(response => response.json())
       .then(data => {
-        console.log('Success:', data);
-        closeModal();
+        console.log('modal submit success:', data);
+        closeModal(1);
       })
       .catch((error) => {
         console.error('Error:', error);
