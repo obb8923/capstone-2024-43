@@ -1,0 +1,12 @@
+.likeOrNotBox{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.likeOrNotButton{
+    border-radius: 30px;
+    border: 1px solid #8F9092;
+}
+input[type=radio]{
+    display: none;
+}
