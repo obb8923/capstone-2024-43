@@ -22,7 +22,6 @@ var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
 var condition = true;
-var lastcount = false;
 //var filter;
 
 function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
@@ -242,13 +241,12 @@ async function runQueries(UID, isFirst) {
         historyNone = false;
         counter = 1;
         condition = true;
-        lastcount = false;
 
         return
     }
 
-    if (lastcount === true) {
-        return [[],false];
+    if (condition === false) {
+        return [[],condition];
     }
     
     let result1 = [];
@@ -299,24 +297,14 @@ async function runQueries(UID, isFirst) {
 
     if (historyNone == true) {
         try {
-            while (post_obj.length < counter * 20 && condition) {
-                const placeholders = excludedPostIDs.map(() => '?').join(',');
-                const sqlQuery = placeholders ?
-                    //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
-                let result2 = await query(sqlQuery, excludedPostIDs);
+            const placeholders = excludedPostIDs.map(() => '?').join(',');
+            const sqlQuery = placeholders ?
+                //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
+                `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+            let result2 = await query(sqlQuery, excludedPostIDs);
 
-                if (result2.length == 0) {
-                    condition = false;
-                    
-                    break;
-                }
-                
-                // 다음 쿼리에서 제외할 postID 목록 업데이트
-                const newPostIDs = result2.map(post => post.postID);
-                excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
-                
+            if (result2.length != 0) {
                 for (let i = 0; i < result2.length; i++) {
                     let a = result2[i].name;
                     let b = result2[i].author;
@@ -327,14 +315,18 @@ async function runQueries(UID, isFirst) {
                     result2[i].body = spoilerFilter(body, spoilerWord)[0];
                     post_obj.push(result2[i]);
                 }
+            } else if (result2.length == 0) {
+                condition = false;
             }
-            counter++;
+                
+            // 다음 쿼리에서 제외할 postID 목록 업데이트
+            const newPostIDs = result2.map(post => post.postID);
+            excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
         } catch (error) {
             throw error;
         } finally {
             connection.end();
             if(condition == false){
-                lastcount = true
                 return [post_obj2, condition];
             }
         }
@@ -415,7 +407,6 @@ async function runQueries(UID, isFirst) {
         } finally {
             connection.end();
             if(condition == false){
-                lastcount = true
                 return [post_obj2, condition];
             }
         }
