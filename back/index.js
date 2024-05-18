@@ -87,7 +87,7 @@ app.post('/api/ScrollView', async(req, res) => {
       if(error){
         res.status(500).json({ error: '데이터베이스에서 데이터를 가져오는 중 오류가 발생했습니다.' });
       }else{
-        res.json(result);
+        res.json([result,true]);
       }
     })
   }

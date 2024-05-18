@@ -12,6 +12,10 @@ function ScrollView() {
   const count = 10;
   const indexRef = useRef(0); // index를 useRef로 관리
   const [fragments, setFragments] = useState([]);
+  useEffect(()=>{
+    if (pathname === '/announcement') setListEndVisibility("hidden");
+  },[pathname])
+  
 
   useEffect(() => {
     fetch("/api/ScrollViewIsFirst", {
@@ -24,8 +28,7 @@ function ScrollView() {
   }, []);
 
   useEffect(() => {
-    if (pathname === '/announcement') setListEndVisibility("none");
-
+    
     const options = {
       root: null,
       threshold: 0.1
