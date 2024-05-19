@@ -11,9 +11,6 @@
 6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 0~39개가 객체1(post_obj)에 추가된다. 객체1(post_obj)에는 추천된 리뷰들이 정렬되어있다. 
 7. 유사도 0.2 이상 리뷰들(객체1)을 모두 보여줬으면 따로 빼놓은 유사도 0.2 미만 리뷰들(객체2)을 보여준다.
 8. 카테고리나 사용자가 본 리뷰가 없거나 비로그인 사용자에게는 리뷰 작성일자 기준으로만 추천한다.(비로그인 사용자는 카테고리 필터링도 X -> 로그인 유도)
-
-해야할 것 :
-1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 */
 const spoilerFilter = require("./spoilerFilter");
 
@@ -324,10 +321,22 @@ async function runQueries(UID, isFirst) {
         try {
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
-                const sqlQuery = placeholders ?
-                    //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = "${filter}" ORDER BY create_at DESC LIMIT 20` :
-                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = "${filter}" ORDER BY create_at DESC LIMIT 20`;
+                //데이터베이스에서 모달 카테고리로 필터링한 후 최근 작성된 리뷰들을 20개씩 가져옴
+                let sqlQuery;
+                if (filter == '00') {//다 보여주기
+                    sqlQuery = placeholders ?
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                } else if (filter == '01') {//비문학 필터링
+                    sqlQuery = placeholders ?
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = '문학' ORDER BY create_at DESC LIMIT 20` :
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = '문학' ORDER BY create_at DESC LIMIT 20`;
+                } else if (filter == '10') {//문학 필터링
+                    sqlQuery = placeholders ?
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = '비문학' ORDER BY create_at DESC LIMIT 20` :
+                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = '비문학' ORDER BY create_at DESC LIMIT 20`;
+                }
+
                 let result2 = await query(sqlQuery, excludedPostIDs);
 
                 if (result2.length == 0) {
