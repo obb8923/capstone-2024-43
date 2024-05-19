@@ -145,6 +145,7 @@ app.post('/api/post/:postId',(req,res)=>{
         }
       }) 
     }
+
     //스포일러 필터링X 리뷰 result[0], 스포일러 필터링된 리뷰 result[1]
     result.push(result[0]);
     let a = result[0].name;
@@ -154,6 +155,7 @@ app.post('/api/post/:postId',(req,res)=>{
     let body = [];
     body.push(results[0].body);
     result[1].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
+
     res.json(result);
   });
 });
@@ -178,9 +180,11 @@ app.get('/api/books/search/:identifier', (req, res) => {
 
 //filter정보 받아오기
 app.post('/api/filter', (req, res) => {
-  const {literature,history,science,art,language,philosophy}= req.body;
+  const {literature,nonFiction} = req.body;
+  //const {literature,history,science,art,language,philosophy}= req.body;
   const UID = req.body.UID;
-  const filter = [literature,history,science,art,language,philosophy];
+  const filter = [literature,nonFiction];
+  //const filter = [literature,history,science,art,language,philosophy];
   const filter_db = filter.map(value=>value?1:0).join("");
   console.log('Received filter:', req.body);
   console.log('filter_db: ',filter_db);

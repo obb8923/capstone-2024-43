@@ -84,11 +84,12 @@ function NavButton(props) {
   // 체크박스 상태
   const [checkboxStates, setCheckboxStates] = useState({
       literature: false,
-      history: false,
-      science: false,
-      art: false,
-      language: false,
-      philosophy: false,
+      nonFiction:false,
+      // history: false,
+      // science: false,
+      // art: false,
+      // language: false,
+      // philosophy: false,
       UID:UID
  });
   
@@ -145,11 +146,12 @@ function NavButton(props) {
         <form name="filter" onSubmit={handleSubmit}>
         {/* 총류 / 철학,심리학,윤리학 / 종교 / 사회과학 / 자연과학 / 기술과학 / 예술 / 언어 / 역사 / 문학 */}
           <label><input name="literature" type="checkbox" checked={checkboxStates.literature} onChange={handleCheckboxChange} />문학</label>
-          <label><input name="history" type="checkbox" checked={checkboxStates.history} onChange={handleCheckboxChange} />역사, 사회과학</label>
+          <label><input name="nonFiction" type="checkbox" checked={checkboxStates.nonFiction} onChange={handleCheckboxChange} />비문학</label>
+          {/* <label><input name="history" type="checkbox" checked={checkboxStates.history} onChange={handleCheckboxChange} />역사, 사회과학</label>
           <label><input name="science" type="checkbox" checked={checkboxStates.science} onChange={handleCheckboxChange} />기술, 자연과학</label>
           <label><input name="art" type="checkbox" checked={checkboxStates.art} onChange={handleCheckboxChange} />예술</label>
           <label><input name="language" type="checkbox" checked={checkboxStates.language} onChange={handleCheckboxChange} />언어</label>
-          <label><input name="philosophy" type="checkbox" checked={checkboxStates.philosophy} onChange={handleCheckboxChange} />철학,심리,윤리</label>
+          <label><input name="philosophy" type="checkbox" checked={checkboxStates.philosophy} onChange={handleCheckboxChange} />철학,심리,윤리</label> */}
           <input type="submit" value="확인"/>
         </form>
       </Modal>
