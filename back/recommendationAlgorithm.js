@@ -258,7 +258,8 @@ async function runQueries(UID, isFirst) {
         const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
         const modal_filter = `SELECT filter FROM users WHERE UID = "${UID}"`;
         const results = await query(user_history);
-        filter = await query(modal_filter);
+        let filter_obj = await query(modal_filter);
+        filter = filter_obj[0].filter;
         result1 = results;
         
         //const result1_modal = await modal_filter(UID);
@@ -321,22 +322,11 @@ async function runQueries(UID, isFirst) {
         try {
             while (post_obj.length < counter * 20 && condition) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
+                
                 //데이터베이스에서 모달 카테고리로 필터링한 후 최근 작성된 리뷰들을 20개씩 가져옴
-                let sqlQuery;
-                if (filter == '00') {//다 보여주기
-                    sqlQuery = placeholders ?
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
-                } else if (filter == '01') {//비문학 필터링
-                    sqlQuery = placeholders ?
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = '문학' ORDER BY create_at DESC LIMIT 20` :
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = '문학' ORDER BY create_at DESC LIMIT 20`;
-                } else if (filter == '10') {//문학 필터링
-                    sqlQuery = placeholders ?
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = '비문학' ORDER BY create_at DESC LIMIT 20` :
-                        `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = '비문학' ORDER BY create_at DESC LIMIT 20`;
-                }
-
+                const sqlQuery = placeholders ?
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
                 let result2 = await query(sqlQuery, excludedPostIDs);
 
                 if (result2.length == 0) {
@@ -393,11 +383,23 @@ async function runQueries(UID, isFirst) {
                 }
                 
                 for (let i = 0; i < obj2.length; i++) {
-                    post_obj.push(obj2[i]);
+                    if (filter == '01') {//비문학 필터링
+                        if (obj2[i].filter == '문학') post_obj.push(obj2[i]);
+                    } else if (filter == '10') {//문학 필터링
+                        if (obj2[i].filter == '비문학') post_obj.push(obj2[i]);
+                    } else {
+                        post_obj.push(obj2[i]);
+                    }
                 }
                 
                 for (let i = 0; i < obj_sim_not2.length; i++) {
-                    post_obj2.push(obj_sim_not2[i]);
+                    if (filter == '01') {//비문학 필터링
+                        if (obj_sim_not2[i].filter == '문학') post_obj2.push(obj_sim_not2[i]);
+                    } else if (filter == '10') {//문학 필터링
+                        if (obj_sim_not2[i].filter == '비문학') post_obj2.push(obj_sim_not2[i]);
+                    } else {
+                        post_obj2.push(obj_sim_not2[i]);
+                    }
                 }
             }
             counter++;
