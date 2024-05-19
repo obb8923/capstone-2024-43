@@ -15,6 +15,7 @@
 해야할 것 :
 1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
 */
+const spoilerFilter = require("./spoilerFilter");
 
 var excludedPostIDs = [];
 var post_obj = []; //유사도 0.2 이상 리뷰 객체
@@ -22,18 +23,7 @@ var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
 var historyNone = false;
 var counter = 1;
 var condition = true;
-//var filter;
-
-function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
-    const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
-    const regex = new RegExp(pattern, 'gi');
-
-    for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '***');
-    }
-
-    return reviewData
-}
+var filter = '';
 
 function tokenizer(document){//모든 단어 추출
     let mecab = require('mecab-ya');
@@ -241,6 +231,7 @@ async function runQueries(UID, isFirst) {
         historyNone = false;
         counter = 1;
         condition = true;
+        filter = '';
 
         return
     }
@@ -251,7 +242,7 @@ async function runQueries(UID, isFirst) {
     
     let result1 = [];
     let total_document = [];
-
+    
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
@@ -268,10 +259,9 @@ async function runQueries(UID, isFirst) {
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
     if (UID != null) {
         const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
-        //const modal_filter = 'SELECT filter FROM users WHERE UID = "${UID}"';
+        const modal_filter = `SELECT filter FROM users WHERE UID = "${UID}"`;
         const results = await query(user_history);
-        //filter = await query(modal_filter);
-
+        filter = await query(modal_filter);
         result1 = results;
         
         //const result1_modal = await modal_filter(UID);
@@ -300,8 +290,8 @@ async function runQueries(UID, isFirst) {
             const placeholders = excludedPostIDs.map(() => '?').join(',');
             const sqlQuery = placeholders ?
                 //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
             let result2 = await query(sqlQuery, excludedPostIDs);
 
             if (result2.length != 0) {
@@ -312,7 +302,7 @@ async function runQueries(UID, isFirst) {
                     let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
                     let body = [];
                     body.push(result2[i].body);
-                    result2[i].body = spoilerFilter(body, spoilerWord)[0];
+                    result2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
                     post_obj.push(result2[i]);
                 }
             } else if (result2.length == 0) {
@@ -336,8 +326,8 @@ async function runQueries(UID, isFirst) {
                 const placeholders = excludedPostIDs.map(() => '?').join(',');
                 const sqlQuery = placeholders ?
                     //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                    `SELECT posts.*, books.author, books.name FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) AND books.filter = "${filter}" ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE books.filter = "${filter}" ORDER BY create_at DESC LIMIT 20`;
                 let result2 = await query(sqlQuery, excludedPostIDs);
 
                 if (result2.length == 0) {
@@ -373,7 +363,7 @@ async function runQueries(UID, isFirst) {
                             let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
                             let body = [];
                             body.push(obj2[i].body);
-                            obj2[i].body = spoilerFilter(body, spoilerWord)[0];
+                            obj2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }
@@ -388,7 +378,7 @@ async function runQueries(UID, isFirst) {
                             let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
                             let body = [];
                             body.push(obj_sim_not2[i].body);
-                            obj_sim_not2[i].body = spoilerFilter(body, spoilerWord)[0];
+                            obj_sim_not2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
                         }
                     }
                 }

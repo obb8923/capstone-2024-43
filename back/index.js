@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());//post요청 body parser
 const recommendAlgo = require("./recommendationAlgorithm");
 const reviewListAlgo = require("./bookReviewList");
-
+const spoilerFilter = require("./spoilerFilter");
 
 //클라이언트에서 서버로의 HTTP 요청이 서로 다른 출처에서 오더라도 정상적으로 처리
 const cors = require('cors');
@@ -37,7 +37,6 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
-
 
 //저장 구현
 app.post('/api/postpage', (req, res) => {
@@ -146,6 +145,16 @@ app.post('/api/post/:postId',(req,res)=>{
         }
       }) 
     }
+
+    //스포일러 필터링X 리뷰 result[0], 스포일러 필터링된 리뷰 result[1]
+    result.push(result[0]);
+    let a = result[0].name;
+    let b = result[0].author;
+    let c = a + ' ' + b;
+    let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+    let body = [];
+    body.push(results[0].body);
+    result[1].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
 
     res.json(result);
   });
