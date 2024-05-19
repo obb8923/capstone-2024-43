@@ -146,6 +146,7 @@ app.post('/api/post/:postId',(req,res)=>{
         }
       }) 
     }
+
     res.json(result);
   });
 });
@@ -170,9 +171,11 @@ app.get('/api/books/search/:identifier', (req, res) => {
 
 //filter정보 받아오기
 app.post('/api/filter', (req, res) => {
-  const {literature,history,science,art,language,philosophy}= req.body;
+  const {literature,nonFiction} = req.body;
+  //const {literature,history,science,art,language,philosophy}= req.body;
   const UID = req.body.UID;
-  const filter = [literature,history,science,art,language,philosophy];
+  const filter = [literature,nonFiction];
+  //const filter = [literature,history,science,art,language,philosophy];
   const filter_db = filter.map(value=>value?1:0).join("");
   console.log('Received filter:', req.body);
   console.log('filter_db: ',filter_db);

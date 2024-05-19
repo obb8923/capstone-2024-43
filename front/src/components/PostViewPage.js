@@ -50,7 +50,7 @@ function PostViewPage() {
             }
           }} /></li>);
 
-          li_.push(<li key="search"><input type="submit" value="책 정보 검색" onClick={(e) => {
+          li_.push(<li key="search"><input type="submit" value="책 정보 검색하기" onClick={(e) => {
             if (data.url !== null) {// when url is null
               e.preventDefault();// prevent submit
               window.open(data.url, '_blank');//open url in a new tab
