@@ -57,7 +57,6 @@ function SignIn(){
             {/* 메인화면으로 이동 버튼 */}
         <button className={styles.toMainButton}onClick={()=>{navigate('/')}}>메인화면으로 이동하기</button>
             {/* 구글 로그인 버튼 */}
-        
         <button className={styles.googleButton} onClick={auth_google}>
     {googleLogo}
     <span>구글로 시작하기</span>

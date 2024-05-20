@@ -36,7 +36,8 @@ html{
     justify-content: space-between;
     min-height:100px;
 }
-button{
+
+.toMainbutton{
     border-radius: 48px;
     font-size :1.1em;
     border:1px solid #E3E5E5;
@@ -46,7 +47,16 @@ button{
     background-color: #fff;
     padding: 10px 35px;
 }
-
+.googleButton{
+    border-radius: 48px;
+    font-size :1.1em;
+    border:1px solid #E3E5E5;
+    display: flex; /* 버튼 내에서 flexbox 사용 */
+    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    background-color: #fff;
+    padding: 10px 35px;
+}
 .googleButton svg{
     margin-right: 10px; /* 로고와 텍스트 사이의 간격 조정 */
 }

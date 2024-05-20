@@ -153,7 +153,7 @@ app.post('/api/post/:postId',(req,res)=>{
     let c = a + ' ' + b;
     let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
     let body = [];
-    body.push(results[0].body);
+    body.push(result[0].body);
     result[1].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
 
     res.json(result);

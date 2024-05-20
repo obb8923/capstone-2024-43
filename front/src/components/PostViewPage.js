@@ -8,14 +8,14 @@ import parse from 'html-react-parser'; // HTML 문자열을 React 구성 요소�
 
 function PostViewPage() {
   const {postId} = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [_li, set_Li] = useState([]);
   const [bookInfoContainerDisplay, setbookInfoContainerDisplay] = useState("none");
   const [buttonDisplay, setButtonDisplay] = useState("block");
   const [bookData, setBookData] = useState({});
   const UID = (localStorage.getItem('UID')) == null ? 'null' : localStorage.getItem('UID');
   const navigate = useNavigate();
-  
+  const [selectedBody,setSelectedBody]=useState({body:""});
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });//화면 맨 위로 이동
     changeBlurBoxState();//blurBox state변경
@@ -31,9 +31,11 @@ function PostViewPage() {
         .then(res => res.json())
         .then(json => {
           console.log("json: ", json);
-          console.log("json[0]:", json[0]);
-          setData(json[0]);
-          
+          //console.log("json[0]:", json[0]);
+          //setData(json[0]);
+          setData([json[0],json[1]]);
+          setSelectedBody(json[0]);
+          console.log("setSB: ",json[0]);
           return json[0];
         })
         .then((data) => {
@@ -63,6 +65,8 @@ function PostViewPage() {
   }, [postId]);
 
   function changeBlurBoxState() {
+    setSelectedBody(data[1]);
+    console.log('SB: ',data[1]);
     setbookInfoContainerDisplay(bookInfoContainerDisplay === "flex" ? "none" : "flex");
     setButtonDisplay(buttonDisplay === "block" ? "none" : "block");
     document.documentElement.style.setProperty('--bookInfoContainer-display', bookInfoContainerDisplay);
@@ -120,8 +124,13 @@ function PostViewPage() {
                 <button className={styles.editButtons} onClick={handleDelete}>삭제</button>
               </div>
             )}
-            {<h1> </h1>}
-            {data.body && parse(data.body)}
+            <div id="bodyContainer">
+              {console.log("data in XML: ",data)}
+              {console.log("sB in XML: ",selectedBody)}
+            {selectedBody? parse(selectedBody.body) :null}
+
+            </div>
+            
            </>
           ) : (
            <Routes>
