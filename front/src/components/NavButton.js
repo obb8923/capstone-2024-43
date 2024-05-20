@@ -72,7 +72,7 @@ function NavButton(props) {
     more:  "더보기",
     library: "서재",
     post: "글쓰기",
-    logo: "로고",
+    logo: "문향",
 
   }
   //여기서 부터 모달 관리
@@ -150,9 +150,9 @@ function NavButton(props) {
   return (
     <>
     <span id={styles.buttonBody} onClick={onclickHandler}>
-      {image[`${nav}`]}
+      {/* {image[`${nav}`]} */}
        {/* <img id={styles.img}src={image} alt={nav}/> */}
-       <span id={styles.buttonName}>{nav==='logo'?null:imageName[nav]}</span>
+       <span id={styles.buttonName}>{imageName[nav]}</span>
     </span>
       
     <div id="modalContainer">
