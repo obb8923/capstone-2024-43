@@ -218,9 +218,11 @@ function PostPage() {
         />
         <button className="post-search-button" onClick={handlePost}>포스팅</button>
       </div>
-      <div className="ck-editor__editable">
-        <TextEditor initialData={editorData} setData={setEditorData} />
-        {console.log(editorData)}
+      <div className="editor-container">
+        <div className="ck ck-sticky-panel ck-editor__editable">
+          <TextEditor initialData={editorData} setData={setEditorData} />
+          {console.log(editorData)}
+        </div>
       </div>
        <div className="book-search-container">
         <input
