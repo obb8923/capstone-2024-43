@@ -72,7 +72,7 @@ function NavButton(props) {
     more:  "더보기",
     library: "서재",
     post: "글쓰기",
-    logo: "문향",
+    logo: "\"문향\"",
 
   }
   //여기서 부터 모달 관리
