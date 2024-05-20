@@ -1,7 +1,11 @@
+html{
+    --listEndVisibility :visible;
+}
 .mainBox{
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 50px;
 }
 @keyframes rotation {
     100% {
@@ -9,6 +13,7 @@
     }
 }
 .listEnd{
+    visibility:var(--listEndVisibility);
     width: 1.8vw;
     aspect-ratio: 1 / 1;
     background-image: url("../imgs/logo.svg");

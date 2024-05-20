@@ -2,23 +2,30 @@
 리뷰를 클릭하면 해당 리뷰 책의 다른 리뷰를 보여준다.
 클릭한 객체(리뷰)의 isbn을 DB에서 조회해 같은 isbn을 가진 리뷰들을 작성일자 기준으로 정렬해서 보여준다.
 */
+const spoilerFilter = require("./spoilerFilter");
 
-function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
-    const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
-    const regex = new RegExp(pattern, 'gi');
+var excludedPostIDs = [];
+var post_obj = [];
+var post_obj2 = [];
+var condition = true;
 
-    for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '*');
+async function bookList(UID, post_id, isFirst) {
+    if (isFirst == true) {
+        excludedPostIDs = [];
+        post_obj = [];
+        post_obj2 = [];
+        lastcount = false;
+        condition = true;
+
+        return
     }
 
-    return reviewData
-}
+    if (condition === false) {
+        return [[], condition];
+    }
 
-let excludedPostIDs = [];
-let post_obj = [];
-
-async function bookList(post_id) {
     //MYSQL 연결
+    console.log(post_id);
     const mysql = require('mysql2');
     const util = require('util');
     var db_config  = require('./db-config.json');
@@ -30,48 +37,45 @@ async function bookList(post_id) {
     });
 
     const query = util.promisify(connection.query).bind(connection);
-    let end = false;
-    
+
     try {
         const placeholders = excludedPostIDs.map(() => '?').join(',');
         const sqlQuery = placeholders ?
             //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = ? NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-            `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID = ? ORDER BY create_at DESC LIMIT 20`;
+            `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') AND postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20`:
+            `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE posts.isbn IN (SELECT isbn FROM posts WHERE postID = '${post_id}') ORDER BY create_at DESC LIMIT 20`;
         let results = await query(sqlQuery, excludedPostIDs);
 
-        const newPostIDs = result2.map(post => post.postID);
+        const newPostIDs = results.map(post => post.postID);
         excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
         
         if (results.length != 0) {
             for (let i = 0; i < results.length; i++) {
-                let spoilerWord = [];
-
-                spoilerWord.push(results[i].title);
-                spoilerWord.push(results[i].author);
-
-                results[i].body = spoilerFilter(results[i].body, spoilerWord);
+                let a = results[i].name;
+                let b = results[i].author;
+                let c = a + ' ' + b;
+                let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                let body = [];
+                body.push(results[i].body);
+                results[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
                 post_obj.push(results[i]);
             }
+        } else if (results.length == 0) {
+            condition = false;
         }
-        else if (results.length == 0) {
-            end = true;
-        }
+    
     } catch (error) {
         throw error;
     } finally {
         connection.end();
+        if(condition == false){
+            return [post_obj2, condition];
+        }
     }
-
-    if (end == true) {
-        let none = [];
-        none.push('none');
-
-        return none;
-    }
-
-    return post_obj;
+    return [post_obj, condition];
 }
+
 module.exports = {
     bookList,
-};
+}
+

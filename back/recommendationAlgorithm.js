@@ -1,33 +1,26 @@
 /*
 컨텐츠 기반 유사도 계산을 한다. 
-1. 최근에 사용자가 본 리뷰 10개를 데이터베이스에서 가져온다.
-2. 카테고리, 최근 작성된 리뷰 20개 가져온다.
+1. 최근에 사용자가 본 리뷰 작성날짜기준으로 10개를 데이터베이스에서 가져온다. (1번 리뷰)
+2. 데이터베이스에 있는 모든 리뷰에서 카테고리, 작성날짜기준으로 필터링하고 20개 가져온다. (2번 리뷰)
 3. 1번 리뷰들 기준으로 2번 리뷰들을 tf-idf계산 후 코사인 유사도 계산한다.
-4. 유사도 0.2 미만은 추천하지 않게 필터링한다.
+//term frequency 단어 반복수
+//idf inverse document freqency 전체문서에서 몇번 나왔는지
+//단어들을 벡터화해서 코사인 유사도 계산
+4. 유사도 0.2 이상만 객체1(post_obj)에 저장하고 0.2 미만은 객체2(post_obj2)로 빼놓는다.
 5. 추천된 리뷰들이 20개 미만이면 위의 과정을 반복한다.
-6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 20~39개가 post_obj에 추가된다. post_obj에는 추천된 리뷰들이 정렬되어있다.
-7. 웹사이트에 post_obj를 인덱스 0부터 순서대로 20개씩 보여주면 된다. 스크롤 될 때마다 0~19, 20~39, 40~ 59 ... 이런식으로
-
-문제점 : 
-1. 추천된 리뷰가 20~39개이다.
-
-해야할 것 :
-1. 모달에서 카테고리 받아와서 1차 필터링 추가 (0을 보여줘야함)
-2. 카테고리나 사용자가 본 리뷰가 없으면 리뷰 작성일자 기준으로 추천
-3. 더 이상 추천해줄만한 리뷰가 없으면 유사도 0.2 이하도 추천(객체2를 만듦)
-4. @@@@@데이터 크롤링 완료되면 1번 리뷰 DB연결@@@@@
+6. 스크롤될 때마다 runQueries()를 실행하고 추천된 리뷰 0~39개가 객체1(post_obj)에 추가된다. 객체1(post_obj)에는 추천된 리뷰들이 정렬되어있다. 
+7. 유사도 0.2 이상 리뷰들(객체1)을 모두 보여줬으면 따로 빼놓은 유사도 0.2 미만 리뷰들(객체2)을 보여준다.
+8. 카테고리나 사용자가 본 리뷰가 없거나 비로그인 사용자에게는 리뷰 작성일자 기준으로만 추천한다.(비로그인 사용자는 카테고리 필터링도 X -> 로그인 유도)
 */
+const spoilerFilter = require("./spoilerFilter");
 
-function spoilerFilter(reviewData, spoilerWord) { //리뷰 텍스트, 필터링 단어
-    const pattern = spoilerWord.map(word => `(${word})`).join('|'); // 필터링 단어 사이에 다른 문자가 들어가는 경우도 필터링
-    const regex = new RegExp(pattern, 'gi');
-
-    for (let i = 0; i < reviewData.length; i++) {
-        reviewData[i] = reviewData[i].replace(regex, '*');
-    }
-
-    return reviewData
-}
+var excludedPostIDs = [];
+var post_obj = []; //유사도 0.2 이상 리뷰 객체
+var post_obj2 = []; //유사도 0.2 이하 리뷰 객체
+var historyNone = false;
+var counter = 1;
+var condition = true;
+var filter = '';
 
 function tokenizer(document){//모든 단어 추출
     let mecab = require('mecab-ya');
@@ -38,7 +31,6 @@ function tokenizer(document){//모든 단어 추출
                 console.error(err);
                 return;
             }
-            //console.log(result);
         }));
     }
     return tokenized_document;
@@ -56,7 +48,6 @@ function build_bag_of_words(tokenized_document){//문서 내 단어 등장횟수
             total_document.push(tokenized_document[index][j]);
         }
     }
-    //console.log('total document : ', total_document);
     
     // 단어에 index 맵핑
     for(let word in total_document){
@@ -90,10 +81,7 @@ function build_bag_of_words(tokenized_document){//문서 내 단어 등장횟수
         
         bow.push(bow_temp);
     }
-    
-    //console.log('vocabulary : ', word_to_index);
-    //console.log('bag of words vectors(term frequency) : ', bow);
-    
+        
     return [word_to_index, bow];
 }
 
@@ -110,7 +98,6 @@ function get_idf(bow){//단어별 중요도 구하기 - 많이 나온 단어는 
             }
         }
     }
-    //console.log('document frequency : ', df);
 
     let idf = [];
     let N = bow.length; // 전체 문서의 수
@@ -121,7 +108,6 @@ function get_idf(bow){//단어별 중요도 구하기 - 많이 나온 단어는 
     for(let i in idf){
         idf[i] = 1 + Math.log(N / (1 + df[i])); // 자연로그
     }
-    //console.log('inverse document frequency : ',idf);
     
     return idf;
 }
@@ -141,7 +127,6 @@ function get_tfidf(bow, idf){//build_bag_of_words * get_idf 총 중요도 구하
         
         tfidf.push(tfidf_temp);
     }
-    //console.log('TF-IDF : ', tfidf);
     
     return tfidf;
 }
@@ -188,7 +173,6 @@ function cosine_similarity(tfidf, docIndex, document_/**/){//1번 리뷰랑 2번
 function similarity_test(document, Index){//다른 함수들 실행시켜줌
     // 문서 토큰화
     let tokenized_document = tokenizer(document);
-    //console.log('tokenized_document : ', tokenized_document);
     
     // 모든 단어에 index 맵핑
     let result = build_bag_of_words(tokenized_document);
@@ -203,15 +187,17 @@ function similarity_test(document, Index){//다른 함수들 실행시켜줌
     
     // 0번 문서와 나머지 문서의 유사도 검사
     let cos_sim = cosine_similarity(tfidf, Index, document/**/);
-    
+    let cos_sim_not = [];
+
     // 유사도 0.2이하는 삭제(절대적 추천 수치)
     for (let i = cos_sim.length - 1; i >= 0; i--) {
         if (cos_sim[i].similarity < 0.2) {
+            cos_sim_not.push(cos_sim[i]);
             cos_sim.splice(i, 1);
         }
     }    
 
-    return cos_sim
+    return [cos_sim, cos_sim_not];
 }
 
 function normalize(vector){//벡터 정규화 기능
@@ -232,12 +218,28 @@ module.exports = {
     cosine_similarity,
     similarity_test,
     runQueries,
-};
+}
 
-let excludedPostIDs = [];
-let post_obj = [];
+async function runQueries(UID, isFirst) {
+    if (isFirst == true) {
+        excludedPostIDs = [];
+        post_obj = []; //유사도 0.2 이상 리뷰 객체
+        post_obj2 = []; //유사도 0.2 이하 리뷰 객체
+        historyNone = false;
+        counter = 1;
+        condition = true;
+        filter = '';
 
-async function runQueries() {
+        return
+    }
+
+    if (condition === false) {
+        return [[],condition];
+    }
+    
+    let result1 = [];
+    let total_document = [];
+    
     //MYSQL 연결
     const mysql = require('mysql2');
     const util = require('util');
@@ -250,143 +252,165 @@ async function runQueries() {
     });
 
     const query = util.promisify(connection.query).bind(connection);
-    /*
+
     //데이터베이스에서 유저가 본 리뷰를 시간 순으로 10개를 가져옴
-    const result1 = await query('SELECT * FROM 유저 기록 테이블 WHERE user_id = '해당 사용자의 ID' ORDER BY 리뷰를 본 날짜 DESC LIMIT 10');
-
-    let document = [];
-    for (let i = 0; i < result1.length; i++) {
-        document.push(result1[i].body);
+    if (UID != null) {
+        const user_history = `SELECT * FROM history JOIN posts ON history.postID = posts.postID WHERE history.UID = "${UID}" ORDER BY watch_at DESC LIMIT 10`;
+        const modal_filter = `SELECT filter FROM users WHERE UID = "${UID}"`;
+        const results = await query(user_history);
+        let filter_obj = await query(modal_filter);
+        filter = filter_obj[0].filter;
+        result1 = results;
+        
+        //const result1_modal = await modal_filter(UID);
+        //filter = result1_modal[0].filter.toString().split("");
+    } else if (UID == null) {
+        historyNone = true;
     }
 
-    //1번 리뷰들 하나의 문서로 퉁합
-    let total_document = [];
-    for(let i in document){
-        total_document += document[i];
-    }
-    */
+    //리뷰가 없다면
+    if (result1.length == 0) {
+        historyNone = true;
+    } else if (result1.length != 0) {
+        let document = [];
+        for (let i = 0; i < result1.length; i++) {
+            document.push(result1[i].body);
+        }
 
-    //1번 리뷰 데이터
-    let document = [];
-    document.push('출간소식 전해지자마자 샀네요 ~~^^ 읽는 내내 힘이되고 술술 잘읽혀 너무 신기했습니다. 지혜의 보물창고입니다. 책을 읽는 것과 운동하는 것을 특히 강조하셨는데 자극이됩니다. 손웅정님 너무 존경하고 사랑합니다. 앞으로도 함께하겠습니다. 항상 건강하시고 복많이 받으십시오. ^^ 감사합니다'); 
-    document.push('제목처럼 읽었고 쓰는 대신 밑줄치고 버렸습니다. 인터뷰 내용이 너무 산만하게 느껴져서 차라리 노트와 생각을 정리해서 출간했으면 어땠을까 아쉬웠습니다. ');
-    document.push('독서와 사색의 시간으로 다져진 손웅정 감독님의 삶을 읽는 통찰이 다양한 시각에서 공감을 불러 일으키는 내용으로 묻어났습니다. 인터뷰 형식으로 작성되어 읽기에도 편했구요. 친한 동생에게 조언보다 이 책을 선물하고 싶은 그런 마음입니다.');
-    document.push('첫 번째 책이랑 비슷하겠지? 하고 두번째 책을 샀는데인터뷰형식이라 느낌이 완전 달라 또 다르네요.바로 앞에서 손웅정님이 말해주는 것 처럼 그 분의 어법이 바로 느껴져 쉽게 전달이 됐어요. 손웅정님의 인생ㆍ가정교육ㆍ축구에 대한 철학을 이 책 한권으로 또 배워나갑니다.');
-    document.push('책장을 한장 넘겼을 뿐인데 2시간이 훌쩍 흘렀습니다. 인터뷰 형식으로 되어 있어 호불호가 갈릴 수 있겠으나 저의 경우에는 오히려 더 좋았습니다. 여러 주제에 대한 감독님의 생각을 두루두루 들을 수 있어 간만에 뜻깊은 독서시간이었습니다.');
-
-    //1번 리뷰들 하나의 문서로 퉁합
-    let total_document = [];
-    for(let i in document){
-        total_document += document[i];
+        //1번 리뷰들 하나의 문서로 퉁합
+        for(let i in document){
+            total_document += document[i];
+        }
     }
 
-    let condition = true;
-    let counter = 1;
-
-    try {
-        while (post_obj.length < counter * 20 && condition) {
+    if (historyNone == true) {
+        try {
             const placeholders = excludedPostIDs.map(() => '?').join(',');
             const sqlQuery = placeholders ?
                 //데이터베이스에서 최근 작성된 리뷰들을 20개씩 가져옴
-                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
-                `SELECT posts.*, books.author FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
             let result2 = await query(sqlQuery, excludedPostIDs);
 
-            if (result2.length == 0) {
+            if (result2.length != 0) {
+                for (let i = 0; i < result2.length; i++) {
+                    let a = result2[i].name;
+                    let b = result2[i].author;
+                    let c = a + ' ' + b;
+                    let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                    let body = [];
+                    body.push(result2[i].body);
+                    result2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
+                    post_obj.push(result2[i]);
+                }
+            } else if (result2.length == 0) {
                 condition = false;
-                break;
             }
-
+                
             // 다음 쿼리에서 제외할 postID 목록 업데이트
             const newPostIDs = result2.map(post => post.postID);
             excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
-            
-            let data = [];
-            data.push(total_document);
-
-            for (let i = 0; i < result2.length; i++) {
-                data.push(result2[i].body);
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.end();
+            if(condition == false){
+                return [post_obj2, condition];
             }
+        }
+    } else if (historyNone == false) {
+        try {
+            while (post_obj.length < counter * 20 && condition) {
+                const placeholders = excludedPostIDs.map(() => '?').join(',');
+                
+                //데이터베이스에서 모달 카테고리로 필터링한 후 최근 작성된 리뷰들을 20개씩 가져옴
+                const sqlQuery = placeholders ?
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn WHERE postID NOT IN (${placeholders}) ORDER BY create_at DESC LIMIT 20` :
+                    `SELECT posts.*, books.author, books.name, books.filter FROM posts JOIN books ON posts.isbn = books.isbn ORDER BY create_at DESC LIMIT 20`;
+                let result2 = await query(sqlQuery, excludedPostIDs);
 
-            //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
+                if (result2.length == 0) {
+                    condition = false;
+                    
+                    break;
+                }
 
-            let obj = similarity_test(data, 0, result2);
-            let obj2 = [];
-            obj.splice(0, 1);
+                // 다음 쿼리에서 제외할 postID 목록 업데이트
+                const newPostIDs = result2.map(post => post.postID);
+                excludedPostIDs = [...excludedPostIDs, ...newPostIDs];
+                
+                let data = [];
+                data.push(total_document);
 
-            for (let i = 0; i < obj.length; i++) {
-                for (let j = 0; j < result2.length; j++) {
-                    if (result2[j].body == obj[i].body) {
-                        obj2[i] = result2[j];
+                for (let i = 0; i < result2.length; i++) {
+                    data.push(result2[i].body);
+                }
 
-                        let spoilerWord = [];
-                        spoilerWord.push(obj2[i].title);
-                        spoilerWord.push(obj2[i].author);
-                        obj2[i].body = spoilerFilter(obj2[i].body, spoilerWord);
+                //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
+                let [obj, obj_sim_not] = similarity_test(data, 0);
+                let obj2 = [];
+                let obj_sim_not2 = [];
+                obj.splice(0, 1);
+
+                for (let i = 0; i < obj.length; i++) {
+                    for (let j = 0; j < result2.length; j++) {
+                        if (result2[j].body == obj[i].body) {
+                            obj2[i] = result2[j];
+                            let a = obj2[i].name;
+                            let b = obj2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                            let body = [];
+                            body.push(obj2[i].body);
+                            obj2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
+                        }
+                    }
+                }
+
+                for (let i = 0; i < obj_sim_not.length; i++) {
+                    for (let j = 0; j < result2.length; j++) {
+                        if (result2[j].body == obj_sim_not[i].body) {
+                            obj_sim_not2[i] = result2[j];
+                            let a = obj_sim_not2[i].name;
+                            let b = obj_sim_not2[i].author;
+                            let c = a + ' ' + b;
+                            let spoilerWord = c.split(/[^\p{L}\p{N}]+/u);
+                            let body = [];
+                            body.push(obj_sim_not2[i].body);
+                            obj_sim_not2[i].body = spoilerFilter.spoilerFilter(body, spoilerWord)[0];
+                        }
+                    }
+                }
+                
+                for (let i = 0; i < obj2.length; i++) {
+                    if (filter == '01') {//비문학 필터링
+                        if (obj2[i] &&obj2[i].filter == '문학') post_obj.push(obj2[i]);
+                    } else if (filter == '10') {//문학 필터링
+                        if (obj2[i] &&obj2[i].filter == '비문학') post_obj.push(obj2[i]);
+                    } else {
+                        post_obj.push(obj2[i]);
+                    }
+                }
+                
+                for (let i = 0; i < obj_sim_not2.length; i++) {
+                    if (filter == '01') {//비문학 필터링
+                        if (obj_sim_not2[i].filter == '문학') post_obj2.push(obj_sim_not2[i]);
+                    } else if (filter == '10') {//문학 필터링
+                        if (obj_sim_not2[i].filter == '비문학') post_obj2.push(obj_sim_not2[i]);
+                    } else {
+                        post_obj2.push(obj_sim_not2[i]);
                     }
                 }
             }
-            
-            for (let i = 0; i < obj2.length; i++) {
-                post_obj.push(obj2[i]);
+            counter++;
+        } catch (error) {
+            throw error;
+        } finally {
+            connection.end();
+            if(condition == false){
+                return [post_obj2, condition];
             }
         }
-        counter++;
-    } catch (error) {
-        throw error;
-    } finally {
-        connection.end();
     }
-
-    return post_obj;
+    return [post_obj,condition];
 }
-
-// async function run(){
-//     console.log(await runQueries());
-// }
-
-//run();
-/*
-//1번 리뷰 데이터
-let document = [];
-document.push('출간소식 전해지자마자 샀네요 ~~^^ 읽는 내내 힘이되고 술술 잘읽혀 너무 신기했습니다. 지혜의 보물창고입니다. 책을 읽는 것과 운동하는 것을 특히 강조하셨는데 자극이됩니다. 손웅정님 너무 존경하고 사랑합니다. 앞으로도 함께하겠습니다. 항상 건강하시고 복많이 받으십시오. ^^ 감사합니다'); 
-document.push('제목처럼 읽었고 쓰는 대신 밑줄치고 버렸습니다. 인터뷰 내용이 너무 산만하게 느껴져서 차라리 노트와 생각을 정리해서 출간했으면 어땠을까 아쉬웠습니다. ');
-document.push('독서와 사색의 시간으로 다져진 손웅정 감독님의 삶을 읽는 통찰이 다양한 시각에서 공감을 불러 일으키는 내용으로 묻어났습니다. 인터뷰 형식으로 작성되어 읽기에도 편했구요. 친한 동생에게 조언보다 이 책을 선물하고 싶은 그런 마음입니다.');
-document.push('첫 번째 책이랑 비슷하겠지? 하고 두번째 책을 샀는데인터뷰형식이라 느낌이 완전 달라 또 다르네요.바로 앞에서 손웅정님이 말해주는 것 처럼 그 분의 어법이 바로 느껴져 쉽게 전달이 됐어요. 손웅정님의 인생ㆍ가정교육ㆍ축구에 대한 철학을 이 책 한권으로 또 배워나갑니다.');
-document.push('책장을 한장 넘겼을 뿐인데 2시간이 훌쩍 흘렀습니다. 인터뷰 형식으로 되어 있어 호불호가 갈릴 수 있겠으나 저의 경우에는 오히려 더 좋았습니다. 여러 주제에 대한 감독님의 생각을 두루두루 들을 수 있어 간만에 뜻깊은 독서시간이었습니다.');
-
-//1번 리뷰들 하나의 문서로 퉁합
-let total_document = [];
-for(let i in document){
-    total_document += document[i];
-}
-
-let data = [];
-data.push(total_document);
-
-// 2번 리뷰 데이터
-data.push('읽고 쓰고 버린 후에 남은 문장들. 그 문장들이 핑과 퐁으로 만나 핑퐁 같은 대화가 죽 이어진다. 대화가 거듭될수록 펑펑 터지는 앎, 푹푹 빠지는 삶. 유쾌하고도 깊고, 날렵하면서도 묵직한 책이다.');
-data.push('인터뷰집을 좋아하는데 손웅정님 인터뷰라 더 말할 나위 없이 좋았다. 에너지를 듬뿍 받아가는 느낌. 전작의 손웅정이 튀어나와 나에게 말을 건네는, 나와 대화하는 느낌이었다. 대가들은 다 다르지만 또 다 비슷하다. 육십대의 육체와 정신이 이렇게 파릇파릇할 수 있다니 놀라울 뿐이다. 간만에 나를 반성하고 의미있는 삶을 살려고 노력해본다.');
-data.push('보자마자 망설임없이 구매합니다. 이렇게라도 쌤께 감사한 마음을 전할수 있어 기쁘네요.^^');
-data.push('친필 싸인본이어서 더 바로 사야하는 이유가 생겼어요. 편히 보려고 분철까지 했어요. ');
-data.push('교보랑 예스랑 싸인본 마감되서 알라딘 들어왔는데 알라딘은 아직있네요 다행 휴');
-data.push('하루종일 책 때문에 온 인터넷 서점을 돌아댕기고 여기저기 눌러보며 서로 의견 교환하며 기다렸던책!!?!! 드디어 구매하니 한결 마음이 편합니다. 정말 축하드리고 쇄를 거듭하는 베스트셀러로 등극 하시길 기원합니다.');
-data.push('하이큐!! 매거진 2024 MAY 최고입니다. !!');
-data.push('극장판 개봉특집인가 매거진과 잡지 같이 나왔네용~!! ');
-data.push('스마트폰중독자 스마트폰과 멀어지는 방법 필사 짧은 집중력을 긴 여운으로 바꿔줍니다.');
-data.push('사랑에 빠졌을 때를 떠 올리며 온 세상이 가득했을 그 때를 생각하면서 이 그림책을 기대해 봅니다. 의욕이 넘치고 분홍빛깔일 때의 세상.');
-data.push('읽고 쓰고 버린 후에 남은 문장들. 그 문장들이 핑과 퐁으로 만나 핑퐁 같은 대화가 죽 이어진다. 대화가 거듭될수록 펑펑 터지는 앎, 푹푹 빠지는 삶. 유쾌하고도 깊고, 날렵하면서도 묵직한 책이다.');
-data.push('인터뷰집을 좋아하는데 손웅정님 인터뷰라 더 말할 나위 없이 좋았다. 에너지를 듬뿍 받아가는 느낌. 전작의 손웅정이 튀어나와 나에게 말을 건네는, 나와 대화하는 느낌이었다. 대가들은 다 다르지만 또 다 비슷하다. 육십대의 육체와 정신이 이렇게 파릇파릇할 수 있다니 놀라울 뿐이다. 간만에 나를 반성하고 의미있는 삶을 살려고 노력해본다.');
-data.push('보자마자 망설임없이 구매합니다. 이렇게라도 쌤께 감사한 마음을 전할수 있어 기쁘네요.^^');
-data.push('친필 싸인본이어서 더 바로 사야하는 이유가 생겼어요. 편히 보려고 분철까지 했어요. ');
-data.push('교보랑 예스랑 싸인본 마감되서 알라딘 들어왔는데 알라딘은 아직있네요 다행 휴');
-data.push('하루종일 책 때문에 온 인터넷 서점을 돌아댕기고 여기저기 눌러보며 서로 의견 교환하며 기다렸던책!!?!! 드디어 구매하니 한결 마음이 편합니다. 정말 축하드리고 쇄를 거듭하는 베스트셀러로 등극 하시길 기원합니다.');
-data.push('하이큐!! 매거진 2024 MAY 최고입니다. !!');
-data.push('극장판 개봉특집인가 매거진과 잡지 같이 나왔네용~!! ');
-data.push('스마트폰중독자 스마트폰과 멀어지는 방법 필사 짧은 집중력을 긴 여운으로 바꿔줍니다.');
-data.push('사랑에 빠졌을 때를 떠 올리며 온 세상이 가득했을 그 때를 생각하면서 이 그림책을 기대해 봅니다. 의욕이 넘치고 분홍빛깔일 때의 세상.');
-
-let post_obj = [];
-post_obj = similarity_test(data, 0); //1번 리뷰들(인덱스 0번) 기준으로 2번 리뷰들(인덱스 1 ~ N) 유사도 계산
-console.log(post_obj.length);
-*/

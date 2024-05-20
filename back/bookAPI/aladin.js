@@ -62,15 +62,13 @@ outputs:
 import { keys } from "./key.js";
 import { parseStringPromise } from "xml2js";
 
-Object.prototype.prettier = function() {
-    for (const key in this) {
-        if (Object.hasOwnProperty.call(this, key) && Array.isArray(this[key])) {
-            if (this[key].length == 1) {
-                this[key] = this[key][0];
-            } else if (this[key].length > 1) {
-                for (const e of this[key])
-                    e.prettier();
-            }
+export function prettifyObject(obj) {
+    for (const key in obj) {
+        if (Object.hasOwnProperty.call(obj, key) && Array.isArray(obj[key])) {
+            if (obj[key].length == 1)
+                obj[key] = obj[key][0];
+        
+            prettifyObject(obj[key]);
         }
     }
 }
@@ -102,6 +100,10 @@ export async function requestAladin(type, query_or_ISBN, options) {
 
     const res = await fetch(url);
     const data = (await parseStringPromise(await res.text())).object;
-    data.prettier();
+    prettifyObject(data);
     return data;
 }
+
+// requestAladin('lookUp', '9788954442718').then(res => {
+//     console.log(res.item);
+// });

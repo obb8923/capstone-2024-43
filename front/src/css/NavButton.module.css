@@ -1,19 +1,29 @@
 #buttonBody{
-    margin:0px 10px;
+    margin:0px 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     height:auto;
     transition: background-color 0.5s ease;
     border-radius: 8px;
+    
 }
-
+@media (max-width: 600px) {
+    #buttonBody{
+        margin:0px 10px;
+    }
+}
 #buttonBody:hover{
     cursor: pointer;
     background-color: #dfdfdf; 
 }
 #buttonName{
     text-align: center;
+    font-size:2em;
+}
+#buttonName[name="logo"]{
+    font-size: 3em;
+    font-weight:600;
 }
 #img{
     width:32px;

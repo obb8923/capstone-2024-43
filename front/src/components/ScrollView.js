@@ -1,62 +1,99 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PostFragment from './PostFragment';
 import styles from "../css/ScrollView.module.css";
-import { useParams } from 'react-router-dom';
-function ScrollView() {//무한스크롤
-  const {postId} = useParams();
-  const reqPostID = {postID : postId};
-  const count = 1;
-  let index =0;
-  const [fragments, setFragments] = useState([]); // PostFragment 컴포넌트들을 담을 상태
+import { useParams, useLocation } from 'react-router-dom';
+
+function ScrollView() {
+  const { pathname } = useLocation();
+  const { postId } = useParams();
+  const UID = localStorage.getItem('UID');
+  const [isFirst, setIsFirst] = useState(true);
+  const [listEndVisibility, setListEndVisibility] = useState("visible");
+  const count = 10;
+  const indexRef = useRef(0); // index를 useRef로 관리
+  const [fragments, setFragments] = useState([]);
+  useEffect(()=>{
+    if (pathname === '/announcement') setListEndVisibility("hidden");
+  },[pathname])
   
+
   useEffect(() => {
+    fetch("/api/ScrollViewIsFirst", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ pathname: pathname, isFirst: isFirst })
+    }).then(() => setIsFirst(false)); // 초기 요청 후 isFirst 업데이트
+  }, []);
+
+  useEffect(() => {
+    
     const options = {
-      root:null,
+      root: null,
       threshold: 0.1
-    };  
-    const observer = new IntersectionObserver((entries) => {
+    };
+
+    const callback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           console.log("entry.isIntersecting");
-          fetch("http://localhost:8080/api/ScrollView",{
-            method:"POST",
+          const reqObject = {
+            pathname: pathname,
+            postID: postId,
+            UID: UID,
+          };
+          fetch("http://localhost:8080/api/ScrollView", {
+            method: "POST",
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(reqPostID)
+            body: JSON.stringify(reqObject)
           })
-          .then(res=>res.json())
-          .then(json=>{
+          .then(res => res.json())
+          .then(json => {
             console.log(json);
-            console.log(json[1]);
-            if(json[0]==="none");
             const newFragments = [];
-            for (let i = index; i < index + count; i++) {
-              newFragments.push(<PostFragment key={i} postId={json[i].postID} post={json[i].body}/>);//postID만 가지고 검색할 예정
+            const jsonLength = json[0].length;
+            if(json[1]===false){
+              indexRef.current=0;
             }
-            setFragments(prevFragments => [...prevFragments, ...newFragments]); // 기존 fragments에 새로운 fragments를 추가
-            index+=count;}
-          )
-          .catch((error)=>{console.log("erorr: "+error)})
+            if (jsonLength === 0) {
+              setListEndVisibility("hidden");
+              console.log("No more data");
+              return;
+            }
+            console.log("<",indexRef.current," , ",jsonLength,">");
+            for (let i = indexRef.current; i < jsonLength; i++) {
+              newFragments.push(<PostFragment key={i} postId={json[0][i].postID || json[0][i].id} post={json[0][i].body} />);
+            }
             
+            setFragments(prevFragments => [...prevFragments, ...newFragments]);
+            indexRef.current = jsonLength;
+          })
+          .catch((error) => {
+            console.log("error: " + error);
+          });
         }
       });
-    }, options);
-    
-    // list-end 요소를 관찰
+    }
+
+    const observer = new IntersectionObserver(callback, options);
     const target = document.querySelector(`.${styles.listEnd}`);
     if (target) {
       observer.observe(target);
     }
-
-    // IntersectionObserver 객체를 cleanup하기 위해 return에서 disconnect 호출
     return () => observer.disconnect();
-  }, []);
-  //
+  }, [pathname, postId, UID]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--listEndVisibility', listEndVisibility);
+  }, [listEndVisibility]);
+
   return (
     <div className={styles.mainBox}>
       <div className="list">
-        {fragments} {/* fragments 배열을 렌더링 */}
+        {fragments}
       </div>
       <div className={styles.listEnd}></div>
     </div>

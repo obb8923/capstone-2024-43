@@ -6,6 +6,7 @@ import MorePage from './components/MorePage';
 import PostPage from './components/PostPage';
 import EmptyPage from './components/EmptyPage';
 import PostViewPage from './components/PostViewPage';
+import AnnouncementPage from './components/AnnouncementPage';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
@@ -29,6 +30,7 @@ function AppContent() {
         <Route path="/more" element={<MorePage />} />
         <Route path="/post/:postId" element={<PostViewPage />} />
         <Route path="/signIn" element={<SignIn />} />
+        <Route path="/announcement" element={<AnnouncementPage/>} />
         <Route path="*" element={<EmptyPage />} />
       </Routes>
     </>
