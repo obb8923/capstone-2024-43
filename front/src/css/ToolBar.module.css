@@ -2,13 +2,15 @@
 .toolbarBody{
     width: 100vw;
     height:10vh;
-    background-color: #f8f8f8;
+    background-color: #fcfcfc;
 
     display: flex;
     flex-direction: row;
 
     position:fixed;
     top:0;
+
+    border-bottom: 1px solid #181818;
 }
 .box{
     display:flex;
