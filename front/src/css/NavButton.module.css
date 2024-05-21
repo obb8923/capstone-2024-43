@@ -20,10 +20,12 @@
 #buttonName{
     text-align: center;
     font-size:1em;
+    text-decoration: underline;
 }
 #buttonName[name="logo"]{
     font-size: 2em;
     font-weight:600;
+    text-decoration: none;
 }
 #img{
     width:32px;
