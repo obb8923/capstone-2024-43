@@ -5,7 +5,7 @@
 
 This project participated in the Capstone Design course conducted by the College of Software Convergence at Kookmin University in 2024. (March 8, 2024 - May 27, 2024)
 The project 'Moonhyang' is a web service that recommends books through reviews.
-(포스터 추가 예정)
+![포스터](https://github.com/kookmin-sw/capstone-2024-43/assets/85778340/a41b83c4-87e4-40e2-85f5-90e1bd853077)
 ## 👯팀소개
 <table>
   <tr>
