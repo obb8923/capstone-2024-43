@@ -1,3 +1,4 @@
+
 # 캡스톤 디자인 43팀 : 문향
 ## 👋프로젝트 소개
 2024년 국민대학교 소프트웨어융합대학에서 진행한 캡스톤디자인 수업에 참여한 프로젝트입니다. ( 2024-03-08 ~ 2024-05-27 )
@@ -65,9 +66,30 @@ The project 'Moonhyang' is a web service that recommends books through reviews.
 
 ## 📢주요 기능 , 시스템 구조 소개
 ### 사진
-(사진 첨부 예정)
-### 영상
-(영상 첨부 예정)
+<table>
+  <tr>
+    <th>후기 본문</th>
+    <th>책 정보 확인 버튼off</th>
+    <th>책 정보 확인 버튼on</th>
+    <th>후기 작성</th>
+    <th>책 검색</th>
+    <th>내 서재(후기)</th>
+  </tr>
+  <tr>
+    <td>
+      <img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/2965d626-897d-441b-b6c1-6345f4884c19 width=200>
+    </td>
+    <td><img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/cf5fd1a9-1fd4-4443-bd56-6c51b5a44831
+width=200></td>
+    <td><img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/f2b144b6-f857-40db-8795-88a1cbb1d3ab width=200></td>
+    <td><img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/60ea2a3a-45c6-4b3b-bee2-78d442f89407 width =200></td>
+    <td><img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/6a5a55e3-d7ed-4136-be4d-ad43af1e7bd0 width=200></td>
+    <td>
+      <img src=https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/eb1135ea-b5f3-4e17-897f-77bb96d75ffc width=200></td>
+    </tr>
+</table>
+
+
 ### 시스템 구조도
 ![구조도](https://github.com/kookmin-sw/capstone-2024-43/assets/59199893/e4180832-a12b-4060-873c-8f731a828626)
 
@@ -90,8 +112,8 @@ The project 'Moonhyang' is a web service that recommends books through reviews.
 ## 📂자료 모음
 + [중간 발표 ppt 링크](https://docs.google.com/presentation/d/1ic5l_8z1M0HQEwmwFP-ypbiUW4xSqV5K/edit?usp=sharing&ouid=105885965673341678510&rtpof=true&sd=true)
 + [중간 보고서 링크](https://drive.google.com/file/d/1l0D16GhmAhauXRc-k0WA7jpPQSjQLIb-/view?usp=sharing)
-+ [기말 발표 ppt 링크]()
-+ [기말 보고서 링크]()
++ [기말 발표 ppt 링크](https://docs.google.com/presentation/d/1_EujXZl0d5-0x8BpDiMyStcsPK1ZAOjS/edit?usp=drive_link&ouid=105885965673341678510&rtpof=true&sd=true)
++ [기말 보고서 링크](https://drive.google.com/file/d/1W1lsjPazmIRATs0N1Vv_Xoay_yFxtVjt/view?usp=sharing)
 + [포스터 링크](https://drive.google.com/file/d/1H5UpHAELGMGlb4UcnMhP-kMgnYlS9RY3/view?usp=drivesdk)
 
 
